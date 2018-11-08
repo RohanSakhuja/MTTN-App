@@ -20,7 +20,7 @@ class Feed extends StatefulWidget {
 }
 
 Future<List<Post>> _getPosts(int index) async{
-  final String postApi = 'http://manipalthetalk.org/wp-json/wp/v2/posts?page=$index';
+  final String postApi = 'http://manipalthetalk.org/wp-json/wp/v2/posts?page=${index}';
   final response = await http.get(Uri.encodeFull(postApi));
   if (response.statusCode == 200){
     var jsonData = json.decode(response.body);
@@ -36,32 +36,59 @@ Future<List<Post>> _getPosts(int index) async{
 }
 
 class FeedState extends State<Feed>{
-  int _pageIndex = 1;
   @override
   Widget build(BuildContext context) {
       return new Container(
-        child: FutureBuilder(
-          future: _getPosts(_pageIndex),
-          builder: (context, snapshot){
-            if(snapshot.hasData && snapshot.data != null){
-              return ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (context, i){
-                  int _postIndex = i%(_pageIndex*10);
-                  return CreateCard(snapshot.data[_postIndex].title, snapshot.data[_postIndex].imageUrl, snapshot.data[_postIndex].excerpt, snapshot.data[_postIndex].link);
-                },
-              );
-            } else if(snapshot.hasError){
-              return Center(
-                child: Text('No Internet Connectivity')
-              );
-            } else{
-              return Center(
-                child: Text('Loading...')
-              );
-            }
+        child: new ListView.builder(
+          itemBuilder: (context, pageNumber){
+            return FutureBuilder(
+              future: _getPosts(1),
+              builder: (context, snapshot){
+                switch(snapshot.connectionState){
+                  case ConnectionState.none:
+                  case ConnectionState.waiting:
+                  case ConnectionState.active:
+                    return CircularProgressIndicator();
+                  case ConnectionState.done:
+                  if(snapshot.hasError){
+                    return Text('ERROR: ${snapshot.error}');
+                  } else {
+                    var pageData = snapshot.data;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      primary: false,
+                      itemCount: 10,
+                      itemBuilder: (context, index){
+                        return CreateCard(pageData[index].title, pageData[index].img, pageData[index].excerpt, pageData[index].link);
+                      },
+                    );
+                  }
+                }
+              },
+            );
           },
-        ),
+        ), 
+        // FutureBuilder(
+        //   future: _getPosts(_pageIndex),
+        //   builder: (context, snapshot){
+        //     if(snapshot.hasData && snapshot.data != null){
+        //       return ListView.builder(
+        //         itemBuilder: (context, i){
+        //           int _postIndex = i%10;
+        //           return CreateCard(snapshot.data[_postIndex].title, snapshot.data[_postIndex].imageUrl, snapshot.data[_postIndex].excerpt, snapshot.data[_postIndex].link);
+        //         },
+        //       );
+        //     } else if(snapshot.hasError){
+        //       return Center(
+        //         child: Text('No Internet Connectivity')
+        //       );
+        //     } else{
+        //       return Center(
+        //         child: Text('Loading...')
+        //       );
+        //     }
+        //   },
+        // ),
       );
     }
 }
