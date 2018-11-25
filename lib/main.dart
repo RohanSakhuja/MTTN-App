@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
       return new MaterialApp(
         title: 'MTTN App',
         home: new Scaffold(
-          backgroundColor: Color.fromRGBO(230, 230, 250, 1.0),
+          backgroundColor: Color.fromRGBO(240, 240, 240, 1.0),
           body: Feed(),
           appBar: AppBar(
             title: Text('Feed', textAlign: TextAlign.center,),

@@ -9,7 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_html_view:
+  http:
+  html:
 
 dev_dependencies:
   flutter_test:
@@ -17,3 +18,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: Open Sans
+      fonts:
+        - asset: assets/fonts/Open_Sans/OpenSans-Regular.ttf
+        - asset: assets/fonts/Open_Sans/OpenSans-Italic.ttf
+          style: italic

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:html/parser.dart';
 import 'dart:async';
 import 'dart:convert';
 
@@ -14,95 +15,106 @@ class Post {
   Post(this.id, this.link, this.title, this.content, this.excerpt, this.imageUrl);
 }
 
+// Have to fix the status codes thrown other than 200
+Future<List<Post>> _getPosts(int index) async{
+  final String postApi = 'http://manipalthetalk.org/wp-json/wp/v2/posts?page=$index';
+  final response = await http.get(Uri.encodeFull(postApi));
+  var jsonData = json.decode(response.body);
+  List<Post> posts = [];
+  for(var json in jsonData){
+    Post post = Post(json['id'].toString(),json['link'],json['title']['rendered'],json['content']['rendered'],json['excerpt']['rendered'],json['better_featured_image']['source_url']);
+    posts.add(post);
+  }
+  return posts;      
+}
+
+// Feed
 class Feed extends StatefulWidget {
   @override
   FeedState createState() => new FeedState();
 }
-
-Future<List<Post>> _getPosts(int index) async{
-  final String postApi = 'http://manipalthetalk.org/wp-json/wp/v2/posts?page=${index}';
-  final response = await http.get(Uri.encodeFull(postApi));
-  if (response.statusCode == 200){
-    var jsonData = json.decode(response.body);
-    List<Post> posts = [];
-    for(var json in jsonData){
-      Post post = Post(json['id'].toString(),json['link'],json['title']['rendered'],json['content']['rendered'],json['excerpt']['rendered'],json['better_featured_image']['source_url']);
-      posts.add(post);
-    }
-    return posts;      
-  } else{
-    throw Exception(response.statusCode);
-  }
-}
-
 class FeedState extends State<Feed>{
-  @override
-  Widget build(BuildContext context) {
-      return new Container(
-        child: new ListView.builder(
+
+  Widget _render(){
+    return new ListView.builder(
           itemBuilder: (context, pageNumber){
-            return FutureBuilder(
-              future: _getPosts(1),
+            return KeepAliveFutureBuilder(
+              intialData: Container(
+                width: MediaQuery.of(context).size.height,
+                height: MediaQuery.of(context).size.width,
+              ),
+              future: _getPosts(pageNumber+1),
               builder: (context, snapshot){
                 switch(snapshot.connectionState){
+                  case ConnectionState.active:
                   case ConnectionState.none:
                   case ConnectionState.waiting:
-                  case ConnectionState.active:
-                    return CircularProgressIndicator();
+                  print("CircularProgressIndicator returned");
+                  return SizedBox(
+                  height: MediaQuery.of(context).size.height * 2,
+                  // child: Align(
+                  //     alignment: Alignment.bottomCenter,
+                  //     child: CircularProgressIndicator()
+                  // ),
+                );
                   case ConnectionState.done:
                   if(snapshot.hasError){
-                    return Text('ERROR: ${snapshot.error}');
-                  } else {
+                    print("ERROR: "+snapshot.error);
+                    return Text("Error returned");                    
+                  }else {
+                    print(pageNumber);
                     var pageData = snapshot.data;
                     return ListView.builder(
                       shrinkWrap: true,
                       primary: false,
                       itemCount: 10,
                       itemBuilder: (context, index){
-                        return CreateCard(pageData[index].title, pageData[index].img, pageData[index].excerpt, pageData[index].link);
+                        return CreateCard(pageData[index].id ,pageData[index].title, pageData[index].imageUrl, pageData[index].excerpt, pageData[index].link);
                       },
                     );
+                    }
                   }
-                }
-              },
-            );
-          },
-        ), 
-        // FutureBuilder(
-        //   future: _getPosts(_pageIndex),
-        //   builder: (context, snapshot){
-        //     if(snapshot.hasData && snapshot.data != null){
-        //       return ListView.builder(
-        //         itemBuilder: (context, i){
-        //           int _postIndex = i%10;
-        //           return CreateCard(snapshot.data[_postIndex].title, snapshot.data[_postIndex].imageUrl, snapshot.data[_postIndex].excerpt, snapshot.data[_postIndex].link);
-        //         },
-        //       );
-        //     } else if(snapshot.hasError){
-        //       return Center(
-        //         child: Text('No Internet Connectivity')
-        //       );
-        //     } else{
-        //       return Center(
-        //         child: Text('Loading...')
-        //       );
-        //     }
-        //   },
-        // ),
+                  }
+              );
+            },
+          );
+  }
+
+  Future<Null> _refresh(){
+    setState(() {});
+    Completer<Null> completer = new Completer<Null>();
+    completer.complete();
+    return completer.future;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+      return new Container(
+        child: new RefreshIndicator(child:_render(),
+        onRefresh: _refresh,
+        )
       );
     }
 }
 
 class CreateCard extends StatelessWidget{
+  final String id;
   final String title;
   final String img;
   final String excerpt;
   final String link;
 
-  CreateCard(this.title, this.img, this.excerpt, this.link);
+  CreateCard(this.id, this.title, this.img, this.excerpt, this.link);
+
+  String _parseExcerpt(String htmlString){
+    var document = parse(htmlString);
+    String parsedString = parse(document.body.text).documentElement.text;
+    return parsedString;
+  }
 
   @override
     Widget build(BuildContext context) {
+
       return new GestureDetector(
         onTap: (){
           print(link);  // code to navigate to article here
@@ -110,16 +122,80 @@ class CreateCard extends StatelessWidget{
         child: Card(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              new Text(title, softWrap: true),
-              new Image.network(img),
-              new Text(excerpt, softWrap: true)
 
+            children: <Widget>[
+              Padding(padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
+              child: new Text(title, softWrap: true, style: TextStyle(fontSize: 20.0, fontStyle: FontStyle.italic),textAlign: TextAlign.center,),),
+              new Container(
+                padding: EdgeInsets.all(5.0),
+                height: 240,
+                width: 330,
+                child: new Image.network(img, fit: BoxFit.fitWidth,),
+              ),
+              new Padding(padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
+              child: new Text(_parseExcerpt(excerpt), softWrap: true,),),
             ],
           ),
           margin: const EdgeInsets.all(25.0),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0)))
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          elevation: 10.0,
           ),
       );
     }
 }
+
+class KeepAliveFutureBuilder extends StatefulWidget {
+
+  final Future future;
+  final AsyncWidgetBuilder builder;
+  final intialData;
+  KeepAliveFutureBuilder({
+    this.future,
+    this.intialData,
+    this.builder
+  });
+
+  @override
+  _KeepAliveFutureBuilderState createState() => _KeepAliveFutureBuilderState();
+}
+
+class _KeepAliveFutureBuilderState extends State<KeepAliveFutureBuilder> with AutomaticKeepAliveClientMixin {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: widget.future,
+      initialData: widget.intialData,
+      builder: widget.builder,
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+}
+
+  // if(snapshot.connectionState == ConnectionState.done){
+                //   if(snapshot.hasData && snapshot.data != null){
+                //     print(pageNumber);
+                //     var pageData = snapshot.data;
+                //     return ListView.builder(
+                //       shrinkWrap: true,
+                //       primary: false,
+                //       itemCount: 10,
+                //       itemBuilder: (context, index){
+                //         return CreateCard(pageData[index].title, pageData[index].imageUrl, pageData[index].excerpt, pageData[index].link);
+                //       },
+                //     );
+                //   }else if(snapshot.hasError){
+                //     print("ERROR: "+snapshot.error);
+                //     return Text("Error returned");
+                //   }
+                // } else{
+                //   print("CircularProgressIndicator returned");
+                //   SizedBox(
+                //   height: MediaQuery.of(context).size.height * 2,
+                //   child: Align(
+                //       alignment: Alignment.topCenter,
+                //       child: CircularProgressIndicator()
+                //   ),
+                // );
+                // }
