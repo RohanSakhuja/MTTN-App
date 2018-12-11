@@ -69,7 +69,7 @@ class FeedState extends State<Feed>{
                       primary: false,
                       itemCount: 10,
                       itemBuilder: (context, index){
-                        return CreateCard(pageData[index].id ,pageData[index].title, pageData[index].imageUrl, pageData[index].excerpt, pageData[index].link);
+                        return CreateCard(pageData[index].id ,pageData[index].title, pageData[index].imageUrl, pageData[index].excerpt, pageData[index].link, pageData[index].content);
                       },
                     );
                     }
@@ -103,8 +103,9 @@ class CreateCard extends StatelessWidget{
   final String img;
   final String excerpt;
   final String link;
+  final String content;
 
-  CreateCard(this.id, this.title, this.img, this.excerpt, this.link);
+  CreateCard(this.id, this.title, this.img, this.excerpt, this.link, this.content);
 
   String _parseExcerpt(String htmlString){
     var document = parse(htmlString);
@@ -117,7 +118,10 @@ class CreateCard extends StatelessWidget{
 
       return new GestureDetector(
         onTap: (){
-          print(link);  // code to navigate to article here
+          print(link);
+          Navigator.push(
+            context, 
+            MaterialPageRoute(builder: (context) => Article(content: content,)));
         },
         child: Card(
           child: Column(
@@ -127,10 +131,13 @@ class CreateCard extends StatelessWidget{
               Padding(padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
               child: new Text(title, softWrap: true, style: TextStyle(fontSize: 20.0, fontStyle: FontStyle.italic),textAlign: TextAlign.center,),),
               new Container(
-                padding: EdgeInsets.all(5.0),
+                padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                 height: 240,
                 width: 330,
-                child: new Image.network(img, fit: BoxFit.fitWidth,),
+                child: new ClipRRect(
+                  borderRadius: BorderRadius.circular(10.0),
+                  child: new Image.network(img, fit: BoxFit.fitWidth,),
+                )
               ),
               new Padding(padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
               child: new Text(_parseExcerpt(excerpt), softWrap: true,),),
@@ -142,6 +149,48 @@ class CreateCard extends StatelessWidget{
           ),
       );
     }
+}
+
+class ArticleState extends State<Article>{
+
+  String _parseContent(String htmlString){
+    var document = parse(htmlString);
+    String parsedString = parse(document.body.text).documentElement.text;
+    return parsedString;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: (){
+              Navigator.pop(context);
+            },
+          ),
+          backgroundColor: Color.fromRGBO(0, 0, 0, 0.75),
+          ),
+        body: Container(
+          padding: EdgeInsets.all(10.0),
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                flex: 1,
+                child: SingleChildScrollView(
+                  child: Text(_parseContent(widget.content) , softWrap: true,),
+                ),
+              ),
+            ]
+          ),
+        ),
+      );
+    }
+}
+class Article extends StatefulWidget{
+  final String content;
+  Article({this.content});
+  ArticleState createState() => ArticleState();
 }
 
 class KeepAliveFutureBuilder extends StatefulWidget {

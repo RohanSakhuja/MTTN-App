@@ -18,6 +18,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - manipal.jpg
+    - astro.png
   fonts:
     - family: Open Sans
       fonts:
