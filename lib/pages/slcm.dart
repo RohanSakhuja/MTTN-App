@@ -58,22 +58,6 @@ class StudentInfoState extends State<StudentInfo>{
                     );
                   },
                 ),
-        // child: ListView(
-        //   primary: false,
-        //   padding: EdgeInsets.only(
-        //     top: MediaQuery.of(context).size.width * .05,
-        //     left: MediaQuery.of(context).size.width * .03,
-        //     right: MediaQuery.of(context).size.width * .03,
-        //     bottom: MediaQuery.of(context).size.width * .03
-        //   ),
-        //   children: <Widget>[
-        //     Column(
-        //       children: <Widget>[
-                
-        //       ],
-        //     )
-        //   ],
-        // ),
       ),
     );
   }
@@ -125,16 +109,17 @@ class StudentInfoState extends State<StudentInfo>{
                       top: MediaQuery.of(context).size.height * 0.01,
                       left: MediaQuery.of(context).size.width * 0.01
                   ),
-                  width: MediaQuery.of(context).size.width * 0.3,
+                  width: MediaQuery.of(context).size.width * 0.4,
                   height: MediaQuery.of(context).size.height * 0.12,
                   //color: Colors.red,
                   child: Center(
                     child: Text(
                       subPercentage + "%",
                       style: TextStyle(
-                          fontSize: 50.0,
+                          fontSize: 35.0,
                           fontWeight: FontWeight.w300
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
@@ -142,7 +127,7 @@ class StudentInfoState extends State<StudentInfo>{
                   height: MediaQuery.of(context).size.height * 0.12,
                   width: MediaQuery.of(context).size.width * 0.5,
                   margin: EdgeInsets.only(
-                    left: MediaQuery.of(context).size.width * 0.07,
+                    left: MediaQuery.of(context).size.width * 0,
                   ),
                   //color: Colors.blueGrey,
                   child: Column(

@@ -11,6 +11,8 @@ dependencies:
     sdk: flutter
   http:
   html:
+  flutter_html:
+  share:
 
 dev_dependencies:
   flutter_test:

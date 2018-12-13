@@ -21,20 +21,44 @@ class LoginState extends State<Login>{
   bool obs = true;
   Icon visibility = Icon(Icons.visibility_off);
 
-  Future<http.Response> _getResponse(String reg, String pass) async {
-    final String _slcmApi = 'https://slcm-att.herokuapp.com/';
-    var match = {
-      'username': reg,
-      'password': pass
-    };
-    final response = await http.post(_slcmApi,
-    headers: {
-      HttpHeaders.contentTypeHeader : 'application/json'
-    },
-    body: json.encode(match),
+  void _showDialog(String title, String content) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text(title),
+          content: new Text(content),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
-    print(response.statusCode);
-    return response;
+  }
+
+  Future<http.Response> _getResponse(String reg, String pass) async {
+     try { 
+      final String _slcmApi = 'https://slcm-att.herokuapp.com/';
+      var match = {
+        'username': reg,
+        'password': pass
+      };
+      final response = await http.post(_slcmApi,
+      headers: {
+        HttpHeaders.contentTypeHeader : 'application/json'
+      },
+      body: json.encode(match),
+      );
+      return response;
+     } on SocketException catch(e){
+       _showDialog("No Internet", "Please check your internet connection and try again!");
+       print(e);
+     }
   }
 
   void _checkCredentials(String reg, String pass) {
@@ -44,14 +68,15 @@ class LoginState extends State<Login>{
         if(JSON['login'] == 'successful'){
           Navigator.push(context,
           MaterialPageRoute(builder: (context) => StudentInfo(json: JSON,)));
-          print('Login Successful');
+          } else {
+          _showDialog("Invalid Credentials", "Please enter a valid email and/or password.");
+          controllerReg.clear();
+          controllerPass.clear();
+          }
         } else {
-          print('Invalid Registration No. or Password');
+          _showDialog("Server Down", "It seems SLCM is down, please try again in some time.");
         }
-      } else{
-        print(response.statusCode);
-      }
-    });
+      });
   }
 
   @override
@@ -144,7 +169,6 @@ class LoginState extends State<Login>{
                 child: Container(
                   height: 50.0,
                   width: 150.0,
-                  //color: Colors.black,
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(color: Colors.black38, blurRadius: 1.0, spreadRadius: 1.0),

@@ -1,6 +1,8 @@
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart';
+import 'package:share/share.dart';
 import 'dart:async';
 import 'dart:convert';
 
@@ -52,10 +54,6 @@ class FeedState extends State<Feed>{
                   print("CircularProgressIndicator returned");
                   return SizedBox(
                   height: MediaQuery.of(context).size.height * 2,
-                  // child: Align(
-                  //     alignment: Alignment.bottomCenter,
-                  //     child: CircularProgressIndicator()
-                  // ),
                 );
                   case ConnectionState.done:
                   if(snapshot.hasError){
@@ -89,11 +87,19 @@ class FeedState extends State<Feed>{
 
   @override
   Widget build(BuildContext context) {
-      return new Container(
-        child: new RefreshIndicator(child:_render(),
-        onRefresh: _refresh,
-        )
-      );
+      return new Scaffold(
+        backgroundColor: Color.fromRGBO(240, 240, 240, 1.0),
+        body: new Container(
+          child: new RefreshIndicator(child:_render(),
+          onRefresh: _refresh,
+          )
+        ),
+        appBar: AppBar(
+          title: Text('Feed', textAlign: TextAlign.center,style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.75)),),
+          backgroundColor: Colors.white,
+          ),         
+        );
+        
     }
 }
 
@@ -121,7 +127,7 @@ class CreateCard extends StatelessWidget{
           print(link);
           Navigator.push(
             context, 
-            MaterialPageRoute(builder: (context) => Article(content: content,)));
+            MaterialPageRoute(builder: (context) => Article(title: title,content: content,link: link,)));
         },
         child: Card(
           child: Column(
@@ -153,43 +159,46 @@ class CreateCard extends StatelessWidget{
 
 class ArticleState extends State<Article>{
 
-  String _parseContent(String htmlString){
-    var document = parse(htmlString);
-    String parsedString = parse(document.body.text).documentElement.text;
-    return parsedString;
-  }
-
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: (){
-              Navigator.pop(context);
-            },
-          ),
-          backgroundColor: Color.fromRGBO(0, 0, 0, 0.75),
-          ),
-        body: Container(
-          padding: EdgeInsets.all(10.0),
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: SingleChildScrollView(
-                  child: Text(_parseContent(widget.content) , softWrap: true,),
-                ),
-              ),
-            ]
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Color.fromRGBO(0, 0, 0, 0.75),),
+          onPressed: (){
+            Navigator.pop(context);
+          },
         ),
-      );
-    }
+        backgroundColor: Colors.white,
+        ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(10.0),
+        child: new Column(
+          children: <Widget>[
+            new Text(widget.title, style: TextStyle(fontSize: 30.0, fontStyle: FontStyle.italic),textAlign: TextAlign.center,),
+            new Html(
+              data: widget.content,
+
+            )
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        elevation: 5.0,
+        child: Icon(Icons.share, color: Colors.grey,),
+        backgroundColor: Colors.white,
+        onPressed: (){
+          Share.share("Check out this post by MTTN\n${widget.link}");
+        },
+      ),
+    );
+  }
 }
 class Article extends StatefulWidget{
   final String content;
-  Article({this.content});
+  final String title;
+  final String link;
+  Article({this.title, this.content, this.link});
   ArticleState createState() => ArticleState();
 }
 
@@ -221,30 +230,3 @@ class _KeepAliveFutureBuilderState extends State<KeepAliveFutureBuilder> with Au
   @override
   bool get wantKeepAlive => true;
 }
-
-  // if(snapshot.connectionState == ConnectionState.done){
-                //   if(snapshot.hasData && snapshot.data != null){
-                //     print(pageNumber);
-                //     var pageData = snapshot.data;
-                //     return ListView.builder(
-                //       shrinkWrap: true,
-                //       primary: false,
-                //       itemCount: 10,
-                //       itemBuilder: (context, index){
-                //         return CreateCard(pageData[index].title, pageData[index].imageUrl, pageData[index].excerpt, pageData[index].link);
-                //       },
-                //     );
-                //   }else if(snapshot.hasError){
-                //     print("ERROR: "+snapshot.error);
-                //     return Text("Error returned");
-                //   }
-                // } else{
-                //   print("CircularProgressIndicator returned");
-                //   SizedBox(
-                //   height: MediaQuery.of(context).size.height * 2,
-                //   child: Align(
-                //       alignment: Alignment.topCenter,
-                //       child: CircularProgressIndicator()
-                //   ),
-                // );
-                // }
