@@ -1,3 +1,8 @@
+# Never add keystore to the repo
+# Keystore files
+key.jks
+android/key.properties
+
 # Build Folder
 build/
 

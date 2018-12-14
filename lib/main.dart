@@ -22,7 +22,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  int _currentIndex = 0;
+  int _currentIndex = 1;
   final List<Widget> _tabs = [new Feed(), new Login()];
 
   void onTabTapped(int index) {
@@ -33,7 +33,8 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
+    return SafeArea(
+      child: Scaffold(
         body: _tabs[_currentIndex],
         bottomNavigationBar: new BottomNavigationBar(
           fixedColor: Color.fromRGBO(0, 0, 0, 0.75),
@@ -50,6 +51,7 @@ class HomePageState extends State<HomePage> {
             ),
           ],
         ),
-      );
-    }
+      ),
+    );
+  }
 }

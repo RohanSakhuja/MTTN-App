@@ -1,7 +1,6 @@
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:html/parser.dart';
 import 'package:share/share.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -13,8 +12,9 @@ class Post {
   final String content;
   final String excerpt;
   final String imageUrl;
+  final String date;
 
-  Post(this.id, this.link, this.title, this.content, this.excerpt, this.imageUrl);
+  Post(this.id, this.link, this.title, this.content, this.excerpt, this.imageUrl, this.date);
 }
 
 // Have to fix the status codes thrown other than 200
@@ -24,7 +24,7 @@ Future<List<Post>> _getPosts(int index) async{
   var jsonData = json.decode(response.body);
   List<Post> posts = [];
   for(var json in jsonData){
-    Post post = Post(json['id'].toString(),json['link'],json['title']['rendered'],json['content']['rendered'],json['excerpt']['rendered'],json['better_featured_image']['source_url']);
+    Post post = Post(json['id'].toString(),json['link'],json['title']['rendered'],json['content']['rendered'],json['excerpt']['rendered'],json['better_featured_image']['source_url'], json['date']);
     posts.add(post);
   }
   return posts;      
@@ -67,7 +67,7 @@ class FeedState extends State<Feed>{
                       primary: false,
                       itemCount: 10,
                       itemBuilder: (context, index){
-                        return CreateCard(pageData[index].id ,pageData[index].title, pageData[index].imageUrl, pageData[index].excerpt, pageData[index].link, pageData[index].content);
+                        return CreateCard(pageData[index].id ,pageData[index].title, pageData[index].imageUrl, pageData[index].excerpt, pageData[index].link, pageData[index].content, pageData[index].date);
                       },
                     );
                     }
@@ -110,14 +110,9 @@ class CreateCard extends StatelessWidget{
   final String excerpt;
   final String link;
   final String content;
+  final String date;
 
-  CreateCard(this.id, this.title, this.img, this.excerpt, this.link, this.content);
-
-  String _parseExcerpt(String htmlString){
-    var document = parse(htmlString);
-    String parsedString = parse(document.body.text).documentElement.text;
-    return parsedString;
-  }
+  CreateCard(this.id, this.title, this.img, this.excerpt, this.link, this.content, this.date);
 
   @override
     Widget build(BuildContext context) {
@@ -138,7 +133,7 @@ class CreateCard extends StatelessWidget{
               child: new Text(title, softWrap: true, style: TextStyle(fontSize: 20.0, fontStyle: FontStyle.italic),textAlign: TextAlign.center,),),
               new Container(
                 padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                height: 240,
+                height: 200,
                 width: 330,
                 child: new ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
@@ -146,12 +141,13 @@ class CreateCard extends StatelessWidget{
                 )
               ),
               new Padding(padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-              child: new Text(_parseExcerpt(excerpt), softWrap: true,),),
+              child: new Text(date.substring(0,10), softWrap: true,style: TextStyle(fontSize: 15.0),),
+              ),
             ],
           ),
           margin: const EdgeInsets.all(25.0),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0))),
-          elevation: 10.0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15.0))),
+          elevation: 5.0,
           ),
       );
     }
