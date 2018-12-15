@@ -58,16 +58,17 @@ class LoginState extends State<Login>{
      } on SocketException catch(e){
        _showDialog("No Internet", "Please check your internet connection and try again!");
        print(e);
+       return null;
      }
   }
 
   void _checkCredentials(String reg, String pass) {
     _getResponse(reg, pass).then((response){
       if(response.statusCode == 200){
-        var JSON = json.decode(response.body);
-        if(JSON['login'] == 'successful'){
+        var res = json.decode(response.body);
+        if(res['login'] == 'successful'){
           Navigator.push(context,
-          MaterialPageRoute(builder: (context) => StudentInfo(json: JSON,)));
+          MaterialPageRoute(builder: (context) => StudentInfo(json: res,)));
           } else {
           _showDialog("Invalid Credentials", "Please enter a valid email and/or password.");
           controllerReg.clear();

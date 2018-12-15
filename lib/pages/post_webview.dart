@@ -1,7 +1,9 @@
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:html/parser.dart' show parse;
 import 'package:share/share.dart';
+import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 
@@ -17,71 +19,92 @@ class Post {
   Post(this.id, this.link, this.title, this.content, this.excerpt, this.imageUrl, this.date);
 }
 
-// Have to fix the status codes thrown other than 200
-Future<List<Post>> _getPosts(int index) async{
-  final String postApi = 'http://manipalthetalk.org/wp-json/wp/v2/posts?page=$index';
-  final response = await http.get(Uri.encodeFull(postApi));
-  var jsonData = json.decode(response.body);
-  List<Post> posts = [];
-  for(var json in jsonData){
-    Post post = Post(json['id'].toString(),json['link'],json['title']['rendered'],json['content']['rendered'],json['excerpt']['rendered'],json['better_featured_image']['source_url'], json['date']);
-    posts.add(post);
-  }
-  return posts;      
-}
-
 // Feed
 class Feed extends StatefulWidget {
   @override
   FeedState createState() => new FeedState();
 }
-class FeedState extends State<Feed>{
+class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin{
 
-  Widget _render(){
-    return new ListView.builder(
-          itemBuilder: (context, pageNumber){
-            return KeepAliveFutureBuilder(
-              intialData: Container(
-                width: MediaQuery.of(context).size.height,
-                height: MediaQuery.of(context).size.width,
-              ),
-              future: _getPosts(pageNumber+1),
-              builder: (context, snapshot){
-                switch(snapshot.connectionState){
-                  case ConnectionState.active:
-                  case ConnectionState.none:
-                  case ConnectionState.waiting:
-                  print("CircularProgressIndicator returned");
-                  return SizedBox(
-                  height: MediaQuery.of(context).size.height * 2,
-                );
-                  case ConnectionState.done:
-                  if(snapshot.hasError){
-                    print("ERROR: "+snapshot.error);
-                    return Text("Error returned");                    
-                  }else {
-                    print(pageNumber);
-                    var pageData = snapshot.data;
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      primary: false,
-                      itemCount: 10,
-                      itemBuilder: (context, index){
-                        return CreateCard(pageData[index].id ,pageData[index].title, pageData[index].imageUrl, pageData[index].excerpt, pageData[index].link, pageData[index].content, pageData[index].date);
-                      },
-                    );
-                    }
-                  }
-                  }
-              );
-            },
-          );
+  @override
+  bool get wantKeepAlive => true;
+
+  final timeout = const Duration(seconds: 15);
+
+  handleTimeout(){
+
+  }
+
+  List<Post> articles = [];
+
+  ScrollController _scrollController = new ScrollController();
+  bool isPerformingRequest = false;
+  bool isFabActive = false;
+  @override
+  void initState(){
+    super.initState();
+    _scrollController.addListener((){
+      if(_scrollController.position.pixels > 100){
+        setState(() => isFabActive = true);
+      } else{
+        setState(() => isFabActive=false);
+      }
+      if(_scrollController.position.pixels == _scrollController.position.maxScrollExtent){
+        _getData();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  _getData() async{
+    try{
+      if(!isPerformingRequest){
+        setState(() => isPerformingRequest = true);
+        List<Post> newData = await _getPosts((articles.length/10).round()+1);
+        setState(() {
+              articles.addAll(newData);
+              isPerformingRequest = false;
+            });
+      }
+    }on NoSuchMethodError catch(e){
+      print(e);
+    }
+  }
+
+  Widget _buildProgressIndicator() {
+    return new Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: new Center(
+        child: new Opacity(
+          opacity: isPerformingRequest ? 1.0 : 0.0,
+          child: new CircularProgressIndicator(
+            backgroundColor: Colors.black,
+            valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+          ),
+        ),
+      ),
+    );
   }
 
   Future<Null> _refresh(){
-    setState(() {});
+    bool _needRefresh = true;
     Completer<Null> completer = new Completer<Null>();
-    completer.complete();
+    (_getPosts(1)).then((List<Post> newData){
+      completer.complete();
+      if(newData[0].id != articles[0].id){
+        _needRefresh = true;
+      } else{
+        _needRefresh = false;
+      }
+    });
+    if(_needRefresh){
+      setState(() {});
+    }
     return completer.future;
   }
 
@@ -89,18 +112,96 @@ class FeedState extends State<Feed>{
   Widget build(BuildContext context) {
       return new Scaffold(
         backgroundColor: Color.fromRGBO(240, 240, 240, 1.0),
+        floatingActionButton: isFabActive?FloatingActionButton(
+          child: Icon(Icons.arrow_upward),
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          onPressed: (){
+            _scrollController.animateTo(0, duration: new Duration(seconds: 2), curve: Curves.ease);
+          },
+        ):null,
         body: new Container(
-          child: new RefreshIndicator(child:_render(),
-          onRefresh: _refresh,
+          child: new RefreshIndicator(
+            color: Colors.black,
+            child: articles.length == 0?
+            FutureBuilder(
+              future: _getData(),
+              builder: (context, snapshot){
+                if(articles.length == 0){
+                  return _buildProgressIndicator();
+                }
+              },):
+            ListView.builder(
+              addAutomaticKeepAlives: true,
+              itemCount: articles.length,
+              controller: _scrollController,
+              itemBuilder: (context, index){
+                if(articles.length == index){
+                  return _buildProgressIndicator();
+                } else {
+                  return CreateCard(
+                    id: articles[index].id,
+                    title: articles[index].title,
+                    img: articles[index].imageUrl,
+                    excerpt: articles[index].excerpt,
+                    link: articles[index].link,
+                    content: articles[index].content,
+                    date: articles[index].date,
+                  );
+                }
+              },
+            ),
+            onRefresh: _refresh,
           )
         ),
         appBar: AppBar(
-          title: Text('Feed', textAlign: TextAlign.center,style: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.75)),),
+          title: Text('MTTN', textAlign: TextAlign.center,style: TextStyle(color: Colors.black,)),
           backgroundColor: Colors.white,
-          ),         
-        );
-        
+          ),
+        );   
     }
+
+  void _showDialog(String title, String content) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text(title),
+          content: new Text(content),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+    // Have to fix the status codes thrown other than 200
+  Future<List<Post>> _getPosts(int index) async{
+    try{
+      final String postApi = 'http://manipalthetalk.org/wp-json/wp/v2/posts?page=$index';
+      final response = await http.get(Uri.encodeFull(postApi));
+      if(response.statusCode == 200){
+        var jsonData = json.decode(response.body);
+        List<Post> posts = [];
+        for(var json in jsonData){
+          Post post = Post(json['id'].toString(),json['link'],json['title']['rendered'],json['content']['rendered'],json['excerpt']['rendered'],json['better_featured_image']['source_url'], json['date']);
+          posts.add(post);
+        }
+        return posts;
+      } else{
+        _showDialog("Server Down", "Please try again in some time.");
+      }
+    }on SocketException catch(e){
+      print(e);
+      _showDialog("No Internet", "Please check your internet connection and try again!");
+    }
+  }
 }
 
 class CreateCard extends StatelessWidget{
@@ -112,8 +213,14 @@ class CreateCard extends StatelessWidget{
   final String content;
   final String date;
 
-  CreateCard(this.id, this.title, this.img, this.excerpt, this.link, this.content, this.date);
+  CreateCard({this.id, this.title, this.img, this.excerpt, this.link, this.content, this.date});
 
+  String parseTitle(String title){
+    String raw = parse(title).outerHtml;
+    int start = raw.indexOf("<body>")+6;
+    int last = raw.indexOf("</body>");
+    return raw.substring(start, last);
+  }
   @override
     Widget build(BuildContext context) {
 
@@ -127,10 +234,9 @@ class CreateCard extends StatelessWidget{
         child: Card(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-
             children: <Widget>[
               Padding(padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
-              child: new Text(title, softWrap: true, style: TextStyle(fontSize: 20.0, fontStyle: FontStyle.italic),textAlign: TextAlign.center,),),
+              child: new Text(parseTitle(title), softWrap: true, style: TextStyle(fontSize: 20.0, fontStyle: FontStyle.italic),textAlign: TextAlign.center,),),
               new Container(
                 padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                 height: 200,
@@ -160,7 +266,7 @@ class ArticleState extends State<Article>{
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Color.fromRGBO(0, 0, 0, 0.75),),
+          icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: (){
             Navigator.pop(context);
           },
@@ -174,14 +280,13 @@ class ArticleState extends State<Article>{
             new Text(widget.title, style: TextStyle(fontSize: 30.0, fontStyle: FontStyle.italic),textAlign: TextAlign.center,),
             new Html(
               data: widget.content,
-
             )
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         elevation: 5.0,
-        child: Icon(Icons.share, color: Colors.grey,),
+        child: Icon(Icons.share, color: Colors.black,),
         backgroundColor: Colors.white,
         onPressed: (){
           Share.share("Check out this post by MTTN\n${widget.link}");
@@ -196,33 +301,4 @@ class Article extends StatefulWidget{
   final String link;
   Article({this.title, this.content, this.link});
   ArticleState createState() => ArticleState();
-}
-
-class KeepAliveFutureBuilder extends StatefulWidget {
-
-  final Future future;
-  final AsyncWidgetBuilder builder;
-  final intialData;
-  KeepAliveFutureBuilder({
-    this.future,
-    this.intialData,
-    this.builder
-  });
-
-  @override
-  _KeepAliveFutureBuilderState createState() => _KeepAliveFutureBuilderState();
-}
-
-class _KeepAliveFutureBuilderState extends State<KeepAliveFutureBuilder> with AutomaticKeepAliveClientMixin {
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: widget.future,
-      initialData: widget.intialData,
-      builder: widget.builder,
-    );
-  }
-
-  @override
-  bool get wantKeepAlive => true;
 }

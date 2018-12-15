@@ -22,7 +22,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  int _currentIndex = 1;
+  int _currentIndex = 0;
   final List<Widget> _tabs = [new Feed(), new Login()];
 
   void onTabTapped(int index) {
@@ -37,7 +37,7 @@ class HomePageState extends State<HomePage> {
       child: Scaffold(
         body: _tabs[_currentIndex],
         bottomNavigationBar: new BottomNavigationBar(
-          fixedColor: Color.fromRGBO(0, 0, 0, 0.75),
+          fixedColor: Colors.black,
           currentIndex: _currentIndex,
           onTap: onTabTapped,
           items: [
