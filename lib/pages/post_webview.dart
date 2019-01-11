@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:share/share.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
@@ -117,7 +118,7 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin{
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
           onPressed: (){
-            _scrollController.animateTo(0, duration: new Duration(seconds: 2), curve: Curves.ease);
+            _scrollController.animateTo(0, duration: new Duration(seconds: 1), curve: Curves.ease);
           },
         ):null,
         body: new Container(
@@ -190,7 +191,7 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin{
         var jsonData = json.decode(response.body);
         List<Post> posts = [];
         for(var json in jsonData){
-          Post post = Post(json['id'].toString(),json['link'],json['title']['rendered'],json['content']['rendered'],json['excerpt']['rendered'],json['better_featured_image']['source_url'], json['date']);
+          Post post = Post(json['id'].toString(),json['link'],parseTitle(json['title']['rendered']),json['content']['rendered'],json['excerpt']['rendered'],json['better_featured_image']['source_url'], json['date']);
           posts.add(post);
         }
         return posts;
@@ -201,6 +202,13 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin{
       print(e);
       _showDialog("No Internet", "Please check your internet connection and try again!");
     }
+  }
+
+  String parseTitle(String title){
+    String raw = parse(title).outerHtml;
+    int start = raw.indexOf("<body>")+6;
+    int last = raw.indexOf("</body>");
+    return raw.substring(start, last);
   }
 }
 
@@ -214,13 +222,7 @@ class CreateCard extends StatelessWidget{
   final String date;
 
   CreateCard({this.id, this.title, this.img, this.excerpt, this.link, this.content, this.date});
-
-  String parseTitle(String title){
-    String raw = parse(title).outerHtml;
-    int start = raw.indexOf("<body>")+6;
-    int last = raw.indexOf("</body>");
-    return raw.substring(start, last);
-  }
+  
   @override
     Widget build(BuildContext context) {
 
@@ -236,14 +238,18 @@ class CreateCard extends StatelessWidget{
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Padding(padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
-              child: new Text(parseTitle(title), softWrap: true, style: TextStyle(fontSize: 20.0, fontStyle: FontStyle.italic),textAlign: TextAlign.center,),),
+              child: new Text(title, softWrap: true, style: TextStyle(fontSize: 20.0, fontStyle: FontStyle.italic),textAlign: TextAlign.center,),),
               new Container(
                 padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                 height: 200,
-                width: 330,
+                width: 360,
                 child: new ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
-                  child: new Image.network(img, fit: BoxFit.fitWidth,),
+                  child: CachedNetworkImage(
+                    imageUrl: img,
+                    fit: BoxFit.cover,
+                  ),
+                  // new Image.network(img, fit: BoxFit.fitWidth,),
                 )
               ),
               new Padding(padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
@@ -261,6 +267,8 @@ class CreateCard extends StatelessWidget{
 
 class ArticleState extends State<Article>{
 
+  double _size = 10;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -271,6 +279,25 @@ class ArticleState extends State<Article>{
             Navigator.pop(context);
           },
         ),
+        actions: <Widget>[
+          PopupMenuButton(
+            offset: Offset(20.0, 50.0),
+            icon: Icon(Icons.format_size, color: Colors.black,),
+            itemBuilder: (context) => <PopupMenuEntry>[
+              PopupMenuItem(
+                child: Icon(Icons.add),
+              )
+            ],
+          ),
+          // IconButton(
+          //   icon: Icon(Icons.format_size, color: Colors.black,),
+          //   onPressed: (){
+          //     setState(() {
+          //       _size = 15.0;
+          //     });
+          //   },
+          // )
+        ],
         backgroundColor: Colors.white,
         ),
       body: SingleChildScrollView(
@@ -278,9 +305,11 @@ class ArticleState extends State<Article>{
         child: new Column(
           children: <Widget>[
             new Text(widget.title, style: TextStyle(fontSize: 30.0, fontStyle: FontStyle.italic),textAlign: TextAlign.center,),
-            new Html(
+            Html(
               data: widget.content,
-            )
+              padding: EdgeInsets.fromLTRB(20.0, 20.0, 10.0, 20.0),
+              defaultTextStyle: TextStyle(fontSize: _size),
+            ),
           ],
         ),
       ),
