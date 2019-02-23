@@ -12,10 +12,11 @@ dependencies:
   http: 0.12.0
   flutter_html: 0.8.2
   share: 0.5.3
-  firebase_core:
-  firebase_messaging:
-  firebase_database:
+  firebase_core: 0.2.5+1
+  firebase_messaging: 2.1.0
+  firebase_database: 1.0.5
   cached_network_image:
+  url_launcher:
 
 dev_dependencies:
   flutter_test:
@@ -26,6 +27,22 @@ flutter:
   assets:
     - manipal.jpg
     - astro.png
+    - facebook.png
+    - instagram.png
+    - youtube.png
+    - freshers.png
+    # - 1122.jpg
+    # - adv.jpg
+    # - Bojack.jpg
+    # - Color.jpg
+    # - Firefox_wallpaper.png
+    # - john.jpg
+    # - Lion.jpg
+    # - nat.jpg
+    # - Ultra.png
+    # - yose.jpg
+    # - sunset_minimal.jpg
+
   fonts:
     - family: Open Sans
       fonts:

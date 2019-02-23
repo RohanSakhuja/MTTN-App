@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'pages/post_webview.dart';
+import 'pages/Feed.dart';
+import 'pages/Alerts.dart';
 import 'pages/login.dart';
+import 'pages/Directory.dart';
+import 'pages/Social.dart';
 
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -16,7 +18,7 @@ class MyApp extends StatelessWidget {
       home: HomePage(),
       debugShowCheckedModeBanner: false,
     );
-    }
+  }
 }
 
 class HomePage extends StatefulWidget {
@@ -25,10 +27,9 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-
   final FirebaseMessaging _messaging = FirebaseMessaging();
 
-  update(String token){
+  update(String token) {
     DatabaseReference databaseReference = new FirebaseDatabase().reference();
     databaseReference.child('fcm-token/$token').set({"token": token});
   }
@@ -40,7 +41,7 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _pageController = new PageController();
-    _messaging.getToken().then((token){
+    _messaging.getToken().then((token) {
       print(token);
       update(token);
     });
@@ -72,24 +73,33 @@ class HomePageState extends State<HomePage> {
           controller: _pageController,
           onPageChanged: onPageChanged,
           scrollDirection: Axis.horizontal,
-          children: <Widget>[
-            new Feed(),
-            new Login()
-            ],
+          children: <Widget>[new Container(), new Container(), new Container(), new SocialBody(), new Container()],
+          // children: <Widget>[new Feed(), new DirectoryHomePage(), new Login(), new SocialBody(), new AlertsHomePage()],
         ),
         bottomNavigationBar: new BottomNavigationBar(
-          fixedColor: Colors.black,
           currentIndex: _page,
           onTap: navigationTapped,
           items: [
             new BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              title: Text('Home'),
+              icon: Icon(Icons.home, color: Colors.black,),
+              title: Text('Home', style: TextStyle(color: Colors.black),),
             ),
             new BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle),
-              title: Text('SLCM'),
+              icon: Icon(Icons.import_contacts, color: Colors.black,),
+              title: Text('Directory', style: TextStyle(color: Colors.black),)
             ),
+            new BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle, color: Colors.black,),
+              title: Text('SLCM', style: TextStyle(color: Colors.black),),
+            ),
+            new BottomNavigationBarItem(
+              icon: Icon(Icons.public, color: Colors.black,),
+              title: Text('Social', style: TextStyle(color: Colors.black),),
+            ),
+            new BottomNavigationBarItem(
+              icon: Icon(Icons.notifications, color: Colors.black,),
+              title: Text('Alerts', style: TextStyle(color: Colors.black),),
+            )
           ],
         ),
       ),
