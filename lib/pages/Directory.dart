@@ -53,7 +53,7 @@ class _DirectoryHomePageState extends State<DirectoryHomePage> {
     data.clear();
     for (var cat in json.keys) {
       // print(cat);
-      ent.clear();
+      // ent.clear();
       if (cat != null) {
         for (var i in json['$cat'].keys) {
           // print(i);

@@ -29,9 +29,9 @@ class _UpcomingEventsState extends State<UpcomingEvents> {
     var snapshot = await databaseReference.once();
     print(snapshot.value['Upcoming Events'].runtimeType);
     List<dynamic> json = snapshot.value['Upcoming Events'];
-    for (var item in json) {
-      print(item);
-    }
+    // for (var item in json) {
+    //   print(item);
+    // }
     // Map<dynamic, dynamic> json = snapshot.value['Upcoming Events'];
     // print(json);
     // List<Event> temp = new List();

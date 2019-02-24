@@ -25,8 +25,8 @@ class SocialBodyState extends State<SocialBody>{
       body: ListView(
       children: <Widget>[ 
         new BuildSocial().createState().build(context),
-        Padding(padding: EdgeInsets.only(top: 15.0),),
-        new UpcomingEvents(_scaffoldkey).createState().build(context),
+        // Padding(padding: EdgeInsets.only(top: 15.0),),
+        // new UpcomingEvents(_scaffoldkey).createState().build(context),
         Padding(padding: EdgeInsets.only(top: 20.0),),
         new InstagramFeed().createState().build(context),
         Padding(padding: EdgeInsets.only(top: 25.0),),

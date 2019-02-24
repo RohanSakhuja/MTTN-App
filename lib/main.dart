@@ -73,8 +73,8 @@ class HomePageState extends State<HomePage> {
           controller: _pageController,
           onPageChanged: onPageChanged,
           scrollDirection: Axis.horizontal,
-          children: <Widget>[new Container(), new Container(), new Container(), new SocialBody(), new Container()],
-          // children: <Widget>[new Feed(), new DirectoryHomePage(), new Login(), new SocialBody(), new AlertsHomePage()],
+          // children: <Widget>[new Container(), new Container(), new Container(), new SocialBody(), new Container()],
+          children: <Widget>[new Feed(), new DirectoryHomePage(), new Login(), new SocialBody(), new AlertsHomePage()],
         ),
         bottomNavigationBar: new BottomNavigationBar(
           currentIndex: _page,

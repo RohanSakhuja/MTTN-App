@@ -208,7 +208,7 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
               parseTitle(json['title']['rendered']),
               json['content']['rendered'],
               json['excerpt']['rendered'],
-              json['better_featured_image']['media_details']['sizes']['thumbnail'],
+              json['better_featured_image']['media_details']['sizes']['thumbnail']['source_url'],
               json['date']);
           posts.add(post);
         }
