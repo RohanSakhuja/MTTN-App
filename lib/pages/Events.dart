@@ -29,22 +29,18 @@ class _UpcomingEventsState extends State<UpcomingEvents> {
     var snapshot = await databaseReference.once();
     print(snapshot.value['Upcoming Events'].runtimeType);
     List<dynamic> json = snapshot.value['Upcoming Events'];
-    // for (var item in json) {
-    //   print(item);
-    // }
-    // Map<dynamic, dynamic> json = snapshot.value['Upcoming Events'];
-    // print(json);
-    // List<Event> temp = new List();
-    // // for (var entry in json.keys) {
-    // //   if (entry != null) {
-    // //     temp.add(new Event(
-    // //         imageUri: json['$entry']['Image Url'],
-    // //         title: json['$entry']['Name']));
-    // //   }
-    // // }
-    // print('fetched');
-    // _upcoming.clear();
-    // _upcoming.addAll(temp);
+    print(json.length);
+    List<Event> temp = new List();
+    for(var item in json){
+      if(item != null){
+        temp.add(new Event(
+            imageUri: item['Image Url'],
+            title: item['Name']));
+      }
+    }
+    print('fetched');
+    _upcoming.clear();
+    _upcoming.addAll(temp);
     return 69;
   }
 
@@ -56,9 +52,6 @@ class _UpcomingEventsState extends State<UpcomingEvents> {
       builder: (context, snapshot) {
         print(snapshot.data);
         if (snapshot.hasData == true && snapshot.data == 69) {
-          // print(_upcoming[0].imageUri);
-          // print(_upcoming[0].title);
-          return Container();
           return Column(
             children: <Widget>[
               Center(
@@ -114,14 +107,11 @@ class _UpcomingEventsState extends State<UpcomingEvents> {
   void _persistentBottomSheet(Event current) {
     _scaffoldKey.currentState.showBottomSheet((context) {
       return Container(
-        color: Colors.red,
         height: 1000.0,
         width: 1000.0,
         child: Center(
-            child: Text(
-          "POSTER OF THE EVENT",
-          style: TextStyle(fontSize: 20.0),
-        )),
+            child: Image.network(current.imageUri)
+            ),
       );
     });
   }

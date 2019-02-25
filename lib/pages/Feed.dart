@@ -202,13 +202,18 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
         var jsonData = json.decode(response.body);
         List<Post> posts = [];
         for (var json in jsonData) {
+          String img = (jsonEncode(json['better_featured_image']['media_details']['sizes']).indexOf('medium_large') != -1)?
+          json['better_featured_image']['media_details']['sizes']['medium_large']['source_url']:
+          ((jsonEncode(json['better_featured_image']['media_details']['sizes']).indexOf('medium') != -1)?
+          json['better_featured_image']['media_details']['sizes']['medium']['source_url']:
+          json['better_featured_image']['source_url']);
           Post post = Post(
               json['id'].toString(),
               json['link'],
               parseTitle(json['title']['rendered']),
               json['content']['rendered'],
               json['excerpt']['rendered'],
-              json['better_featured_image']['media_details']['sizes']['thumbnail']['source_url'],
+              img,
               json['date']);
           posts.add(post);
         }
@@ -283,11 +288,12 @@ class CreateCard extends StatelessWidget {
                 width: 360,
                 child: new ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
-                  child: CachedNetworkImage(
-                    imageUrl: img,
-                    fit: BoxFit.cover,
-                  ),
-                  // new Image.network(img, fit: BoxFit.fitWidth,),
+                  child: 
+                  // CachedNetworkImage(
+                  //   imageUrl: img,
+                  //   fit: BoxFit.cover,
+                  // ),
+                  new Image.network(img, fit: BoxFit.fitWidth,),
                 )),
             new Padding(
               padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),

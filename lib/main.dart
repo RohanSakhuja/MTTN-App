@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'pages/test.dart';
 import 'pages/Feed.dart';
 import 'pages/Alerts.dart';
 import 'pages/login.dart';
@@ -73,7 +74,7 @@ class HomePageState extends State<HomePage> {
           controller: _pageController,
           onPageChanged: onPageChanged,
           scrollDirection: Axis.horizontal,
-          // children: <Widget>[new Container(), new Container(), new Container(), new SocialBody(), new Container()],
+          // children: <Widget>[new Feed(), new Container(), new Container(), new Container(), new Container()],
           children: <Widget>[new Feed(), new DirectoryHomePage(), new Login(), new SocialBody(), new AlertsHomePage()],
         ),
         bottomNavigationBar: new BottomNavigationBar(

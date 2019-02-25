@@ -43,7 +43,7 @@ class LoginState extends State<Login>{
 
   Future<http.Response> _getResponse(String reg, String pass) async {
      try { 
-      final String _slcmApi = 'https://slcm-att.herokuapp.com/';
+      final String _slcmApi = 'http://139.59.65.42:8080/';
       var match = {
         'username': reg,
         'password': pass
