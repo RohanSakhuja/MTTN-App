@@ -1,0 +1,60 @@
+name: mttn_app
+description: A new Flutter project.
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^0.11.3
+  flutter_html: 0.8.2
+  share: 0.5.3
+  firebase_core: 0.2.5+1
+  firebase_messaging: 2.1.0
+  firebase_database: 1.0.5
+  cached_network_image: ^0.6.2
+  url_launcher:
+  percent_indicator: ^1.0.13
+  liquid_pull_to_refresh: ^1.1.0
+  progress_button: ^0.0.1
+  flutter_parallax: ^0.1.2
+  flare_flutter: 1.0.2
+  curved_navigation_bar: ^0.1.22
+  flutter_cache_manager: ^0.3.2
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - manipal.jpg
+    - astro.png
+    - facebook.png
+    - instagram.png
+    - youtube.png
+    - freshers.png
+    - first1.flr
+    # - 1122.jpg
+    # - adv.jpg
+    # - Bojack.jpg
+    # - Color.jpg
+    # - Firefox_wallpaper.png
+    # - john.jpg
+    # - Lion.jpg
+    # - nat.jpg
+    # - Ultra.png
+    # - yose.jpg
+    # - sunset_minimal.jpg
+
+  fonts:
+    - family: Open Sans
+      fonts:
+        - asset: assets/fonts/Open_Sans/OpenSans-Regular.ttf
+        - asset: assets/fonts/Open_Sans/OpenSans-Italic.ttf
+          style: italic

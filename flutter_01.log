@@ -1,0 +1,61 @@
+Flutter crash report; please file at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter build bundle --suppress-analytics --target /home/akshit/Downloads/MTTN-App-RohanSakhuja/lib/main.dart --track-widget-creation --target-platform android-arm64 --depfile /home/akshit/Downloads/MTTN-App-RohanSakhuja/build/app/intermediates/flutter/debug/snapshot_blob.bin.d --asset-dir /home/akshit/Downloads/MTTN-App-RohanSakhuja/build/app/intermediates/flutter/debug/flutter_assets --debug
+
+## exception
+
+FileSystemException: FileSystemException: Cannot open file, path = 'build/frontend_server.d' (OS Error: No such file or directory, errno = 2)
+
+```
+#0      _File.open.<anonymous closure> (dart:io/file_impl.dart:368:9)
+#1      _rootRunUnary (dart:async/zone.dart:1132:38)
+#2      _CustomZone.runUnary (dart:async/zone.dart:1029:19)
+#3      _FutureListener.handleValue (dart:async/future_impl.dart:129:18)
+#4      Future._propagateToListeners.handleValueCallback (dart:async/future_impl.dart:642:45)
+#5      Future._propagateToListeners (dart:async/future_impl.dart:671:32)
+#6      Future._completeWithValue (dart:async/future_impl.dart:486:5)
+#7      Future._asyncComplete.<anonymous closure> (dart:async/future_impl.dart:516:7)
+#8      _rootRun (dart:async/zone.dart:1124:13)
+#9      _CustomZone.run (dart:async/zone.dart:1021:19)
+#10     _CustomZone.bindCallback.<anonymous closure> (dart:async/zone.dart:947:23)
+#11     _microtaskLoop (dart:async/schedule_microtask.dart:41:21)
+#12     _startMicrotaskLoop (dart:async/schedule_microtask.dart:50:5)
+#13     _runPendingImmediateCallback (dart:isolate/runtime/libisolate_patch.dart:115:13)
+#14     _RawReceivePortImpl._handleMessage (dart:isolate/runtime/libisolate_patch.dart:172:5)
+```
+
+## flutter doctor
+
+```
+[✓] Flutter (Channel stable, v1.0.0, on Linux, locale en_IN)
+    • Flutter version 1.0.0 at /home/akshit/flutter-dev/flutter
+    • Framework revision 5391447fae (3 months ago), 2018-11-29 19:41:26 -0800
+    • Engine revision 7375a0f414
+    • Dart version 2.1.0 (build 2.1.0-dev.9.4 f9ebf21297)
+
+[!] Android toolchain - develop for Android devices (Android SDK 28.0.3)
+    • Android SDK at /home/akshit/Android/Sdk
+    • Android NDK location not configured (optional; useful for native profiling support)
+    • Platform android-28, build-tools 28.0.3
+    • ANDROID_HOME = /home/akshit/Android/Sdk
+    • Java binary at: /opt/android-studio/jre/bin/java
+    • Java version OpenJDK Runtime Environment (build 1.8.0_152-release-1136-b06)
+    ! Some Android licenses not accepted.  To resolve this, run: flutter doctor --android-licenses
+
+[✓] Android Studio (version 3.2)
+    • Android Studio at /opt/android-studio
+    • Flutter plugin version 31.3.1
+    • Dart plugin version 181.5656
+    • Java version OpenJDK Runtime Environment (build 1.8.0_152-release-1136-b06)
+
+[✓] VS Code (version 1.30.1)
+    • VS Code at /usr/share/code
+    • Flutter extension version 2.23.1
+
+[✓] Connected device (1 available)
+    • motorola one power • ZF6223SHNX • android-arm64 • Android 9 (API 28)
+
+! Doctor found issues in 1 category.
+```

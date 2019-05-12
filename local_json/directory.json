@@ -1,0 +1,292 @@
+[
+    {
+        "catName" : "Flights",
+        "type" : [
+            {
+                "typeName" : "United Airlines",
+                "number" : "+91XXXXXX" 
+            },
+            {
+                "typeName" : "Jet Airways",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Luftansa",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Air India",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Indigo",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Air France",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Go Air",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Fly Emirates",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "United Airlines",
+                "number" : "+91XXXXXX" 
+            },
+            {
+                "typeName" : "Jet Airways",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Luftansa",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Air India",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Indigo",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Air France",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Go Air",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Fly Emirates",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "United Airlines",
+                "number" : "+91XXXXXX" 
+            },
+            {
+                "typeName" : "Jet Airways",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Luftansa",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Air India",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Indigo",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Air France",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Go Air",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Fly Emirates",
+                "number" : "+91XXXXXX"
+            }
+        ]
+    },
+    {
+        "catName" : "Trains",
+        "type" : [
+            {
+                "typeName" : "IndiaRails",
+                "number" : "+91XXXXXX" 
+            },
+            {
+                "typeName" : "ABC Express",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Shatabdi",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "XYZ Express",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Gareebrath",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "XYZ Express",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "XYZ Express",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "XYZ Express",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "XYZ Express",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "XYZ Express",
+                "number" : "+91XXXXXX"
+            }
+        ]
+    },
+    {
+        "catName" : "Taxi",
+        "type" : [
+            {
+                "typeName" : "Ola",
+                "number" : "+91XXXXXX" 
+            },
+            {
+                "typeName" : "Uber",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Lyft",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "123 Rides",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "IndiaRides",
+                "number" : "+91XXXXXX"
+            }
+        ]
+    },
+    {
+        "catName" : "Food",
+        "type" : [
+            {
+                "typeName" : "Eye of the tiger",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Apurva",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Dollops",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Eye of the tiger",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Apurva",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Dollops",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Eye of the tiger",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Apurva",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Dollops",
+                "number" : "+91XXXXXX"
+            }
+        ]
+    },
+    {
+        "catName" : "Attractions",
+        "type" : [
+            {
+                "typeName" : "Canara Mall",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "ABX Mall",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Canara Mall",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "ABX Mall",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Canara Mall",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "ABX Mall",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Canara Mall",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "ABX Mall",
+                "number" : "+91XXXXXX"
+            }
+        ]
+    },
+    {
+        "catName" : "Emergency",
+        "type" : [
+            {
+                "typeName" : "Marijuana",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Green Marijjuana",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Greenest Marijuana",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Marijuana",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Green Marijjuana",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Greenest Marijuana",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Marijuana",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Green Marijjuana",
+                "number" : "+91XXXXXX"
+            },
+            {
+                "typeName" : "Greenest Marijuana",
+                "number" : "+91XXXXXX"
+            }
+        ]
+    }
+]
