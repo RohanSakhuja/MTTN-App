@@ -33,13 +33,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - manipal.jpg
-    - astro.png
     - facebook.png
     - instagram.png
     - youtube.png
+    - earthlogin.flr
     - freshers.png
-    - first1.flr
     # - 1122.jpg
     # - adv.jpg
     # - Bojack.jpg

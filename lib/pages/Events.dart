@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'colors/color.dart';
+import 'dart:async';
 
 class Event {
   String imageUri;
   String title;
-  String link; // optional redirection
+  String link;
 
   Event({this.imageUri, this.title, this.link});
 }
@@ -18,42 +19,41 @@ class UpcomingEvents extends StatefulWidget {
   _UpcomingEventsState createState() => _UpcomingEventsState(_scaffoldKey);
 }
 
-class _UpcomingEventsState extends State<UpcomingEvents> with AutomaticKeepAliveClientMixin {
+DatabaseReference databaseReference = new FirebaseDatabase().reference();
+
+List<Event> _upcoming = new List();
+
+Future<int> _fetch() async {
+  var snapshot = await databaseReference.once();
+  List<dynamic> json = snapshot.value['Upcoming Events'];
+  List<Event> temp = new List();
+  for (var item in json) {
+    if (item != null) {
+      temp.add(new Event(imageUri: item['Image Url'], title: item['Name']));
+    }
+  }
+  _upcoming.clear();
+  _upcoming.addAll(temp);
+  return 69;
+}
+
+class _UpcomingEventsState extends State<UpcomingEvents>
+    with AutomaticKeepAliveClientMixin {
   GlobalKey<ScaffoldState> _scaffoldKey;
   _UpcomingEventsState(this._scaffoldKey);
 
+  final Future<int> sixtynine = _fetch();
+
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
-
-  DatabaseReference databaseReference = new FirebaseDatabase().reference();
-  List<Event> _upcoming = new List();
-
-  Future<int> _fetch() async {
-    print('fetching..');
-    var snapshot = await databaseReference.once();
-    print(snapshot.value['Upcoming Events'].runtimeType);
-    List<dynamic> json = snapshot.value['Upcoming Events'];
-    print(json.length);
-    List<Event> temp = new List();
-    for(var item in json){
-      if(item != null){
-        temp.add(new Event(
-            imageUri: item['Image Url'],
-            title: item['Name']));
-      }
-    }
-    print('fetched');
-    _upcoming.clear();
-    _upcoming.addAll(temp);
-    return 69;
-  }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
     double width = MediaQuery.of(context).size.width;
-    return FutureBuilder(
-      future: _fetch(),
+    return FutureBuilder<int>(
+      future: sixtynine,
       builder: (context, snapshot) {
         print(snapshot.data);
         if (snapshot.hasData == true && snapshot.data == 69) {
@@ -65,9 +65,9 @@ class _UpcomingEventsState extends State<UpcomingEvents> with AutomaticKeepAlive
                   "Upcoming Events",
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                  color: colorSec,
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w600),
+                      color: colorSec,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w600),
                 ),
               ),
               Padding(
@@ -117,9 +117,7 @@ class _UpcomingEventsState extends State<UpcomingEvents> with AutomaticKeepAlive
       return Container(
         height: 1000.0,
         width: 1000.0,
-        child: Center(
-            child: Image.network(current.imageUri)
-            ),
+        child: Center(child: Image.network(current.imageUri)),
       );
     });
   }

@@ -87,10 +87,14 @@ class HomePageState extends State<HomePage> {
           // children: <Widget>[new Feed(), new Container(), new Container(), new Container(), new Container()],
           children: <Widget>[
             new Feed(),
+            //new Container(),
             new DirectoryHomePage(),
+            //new Container(),
             new Login(),
+            //new Container(),
             new SocialBody(),
-            new AlertsHomePage()
+            //new AlertsHomePage()
+            new Container(),
           ],
         ),  
         bottomNavigationBar: new BottomNavigationBar(

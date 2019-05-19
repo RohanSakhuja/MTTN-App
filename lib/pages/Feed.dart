@@ -31,8 +31,8 @@ class Feed extends StatefulWidget {
 
 class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
   @override
+  
   bool get wantKeepAlive => true;
-
   final timeout = const Duration(minutes: 10);
 
   handleTimeout() {}
@@ -45,6 +45,7 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
+    _getData(); 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels > 100) {
         setState(() => isFabActive = true);
@@ -55,7 +56,8 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
           _scrollController.position.maxScrollExtent) {
         _getData();
       }
-    });
+    }
+    );
   }
 
   @override
@@ -114,6 +116,9 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
 
   @override
   Widget build(BuildContext context) {
+
+    super.build(context);
+
     return new Scaffold(
       backgroundColor: Colors.white,
       floatingActionButton: isFabActive
@@ -201,13 +206,16 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
 
   // Have to fix the status codes thrown other than 200
   Future<List<Post>> _getPosts(int index) async {
+
+    List<Post> posts = [];
+    
     try {
       final String postApi =
           'http://manipalthetalk.org/wp-json/wp/v2/posts?page=$index';
       final response = await http.get(Uri.encodeFull(postApi));
       if (response.statusCode == 200) {
         var jsonData = json.decode(response.body);
-        List<Post> posts = [];
+
         for (var json in jsonData) {
           String img;
           try {
@@ -239,15 +247,16 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
               json['date']);
           posts.add(post);
         }
-        return posts;
       } else {
         _showDialog("Server Down", "Please try again in some time.");
       }
-    } on SocketException catch (e) {
+    }
+     on SocketException catch (e) {
       print(e);
       _showDialog("No Internet",
           "Please check your internet connection and try again!");
     }
+    return posts;
   }
 
   String parseTitle(String title) {

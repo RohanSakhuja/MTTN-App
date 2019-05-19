@@ -5,8 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flare_flutter/flare_actor.dart';
-
-Color colorMain = Color.fromRGBO(234, 116, 76, 1.0);
+import 'colors/color.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -58,6 +57,9 @@ class LoginState extends State<Login> {
     } on SocketException catch (e) {
       _showDialog("No Internet",
           "Please check your internet connection and try again!");
+      setState(() {
+        isVerifying = false;
+      });
       print(e);
       return null;
     }
@@ -79,7 +81,7 @@ class LoginState extends State<Login> {
                       )));
         } else {
           _showDialog("Invalid Credentials",
-              "Please enter a valid email and/or password.");
+              "Please enter a valid registration number and/or password.");
           controllerReg.clear();
           controllerPass.clear();
           setState(() {
@@ -96,83 +98,44 @@ class LoginState extends State<Login> {
     });
   }
 
-  FlareController flrctrl;
-
-  // Container buildThisShit() {
-  //   return Container(
-  //     height: 120.0,
-  //     width: 300.0,
-  //     child: FlareActor(
-  //       "assets/first1.flr",
-  //       controller: flrctrl,
-  //       alignment: Alignment.center,
-  //       fit: BoxFit.cover,
-  //       animation: isVerifying ? "first" : null,
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-        resizeToAvoidBottomPadding: false,
-        body: Stack(children: <Widget>[
-          SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                Container(
-                  height: height * .40,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("manipal.jpg"),
-                      fit: BoxFit.fill,
-                    ),
-                  ),
-                ),
-                Container(
-                  color: Colors.white,
-                  height: height * .60,
-                )
-              ],
+      resizeToAvoidBottomPadding: true,
+      resizeToAvoidBottomInset: true,
+      body: SafeArea(
+        child: Stack(
+          overflow: Overflow.visible,
+          alignment: Alignment.center,
+          children: <Widget>[
+            Container(
+              child: FlareActor(
+                "assets/earthlogin.flr",
+                alignment: Alignment.center,
+                fit: BoxFit.cover,
+                animation: "Preview2",
+              ),
             ),
-          ),
-          Center(
-              child: Container(
-            child: Center(
+            Container(
+              padding: EdgeInsets.fromLTRB(2.0, height * 0.33, 2.0, 10.0),
+              height: height * 0.6,
+              width: width * 0.9,
               child: ListView(
-                physics: NeverScrollableScrollPhysics(),
                 children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.only(top: height * 0.17),
-                    width: width,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        gradient: LinearGradient(
-                            begin: FractionalOffset.topCenter,
-                            end: FractionalOffset.bottomCenter,
-                            colors: [
-                              Colors.white.withOpacity(0.0),
-                              Colors.white.withOpacity(1.0),
-                            ],
-                            stops: [
-                              0.0,
-                              0.7
-                            ])),
-                    height: height * 0.25,
-                  ),
                   Material(
+                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
                     color: Colors.white,
                     child: Container(
+                      height: height * 0.185,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           SizedBox(
-                            height: 60.0,
-                            width: width * 0.8,
+                            height: height * 0.08,
+                            width: width * 0.9,
                             child: TextField(
                               controller: controllerReg,
                               keyboardType: TextInputType.numberWithOptions(),
@@ -182,74 +145,110 @@ class LoginState extends State<Login> {
                                   prefixIcon: Icon(Icons.person)),
                             ),
                           ),
+                          // Padding(padding: EdgeInsets.all(2.0),),
                           SizedBox(
-                            height: 60.0,
-                            width: width * 0.8,
-                            child: TextField(
-                              obscureText: obsecureText,
-                              controller: controllerPass,
-                              decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  labelText: 'Password',
-                                  prefixIcon: Icon(obsecureText
-                                      ? Icons.lock
-                                      : Icons.lock_open)),
+                            height: height * 0.07,
+                            width: width * 0.9,
+                            child: Container(
+                              child: SizedBox.fromSize(
+                                size: Size.fromHeight(height * 0.08),
+                                child: Row(
+                                  children: <Widget>[
+                                    Container(
+                                      height: height * 0.08,
+                                      width: width * 0.75,
+                                      child: TextField(
+                                        obscureText: obsecureText,
+                                        controller: controllerPass,
+                                        decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            labelText: 'Password',
+                                            prefixIcon: Icon(obsecureText
+                                                ? Icons.lock
+                                                : Icons.lock_open)),
+                                      ),
+                                    ),
+                                    Container(
+                                      height: height * 0.08,
+                                      child: IconButton(
+                                        icon: obsecureText
+                                            ? Icon(
+                                                Icons.visibility_off,
+                                                color: Colors.black
+                                                    .withOpacity(0.5),
+                                              )
+                                            : Icon(
+                                                Icons.visibility,
+                                                color: Colors.black
+                                                    .withOpacity(0.5),
+                                              ),
+                                        onPressed: () => setState(() {
+                                              obsecureText = !obsecureText;
+                                            }),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                          IconButton(
-                            icon: obsecureText
-                                ? Icon(
-                                    Icons.visibility_off,
-                                    color: Colors.black.withOpacity(0.5),
-                                  )
-                                : Icon(
-                                    Icons.visibility,
-                                    color: Colors.black.withOpacity(0.5),
-                                  ),
-                            onPressed: () => setState(() {
-                                  obsecureText = !obsecureText;
-                                }),
-                          ),
                           Padding(
-                            padding: EdgeInsets.all(3.0),
-                          ),
-                          MaterialButton(
-                            minWidth: width * 0.75,
-                            color: colorMain,
-                            child: Text(
-                              "Login",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white,
-                                  fontSize: 18.0),
-                            ),
-                            onPressed: () {
-                              isVerifying = true;
-                              regNo = controllerReg.text;
-                              password = controllerPass.text;
-                              _checkCredentials(regNo, password);
-                            },
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(15.0),
-                          ),
-                          Container(
-                            height: height * 0.05,
-                            width: width * 0.1,
-                            child: isVerifying
-                                ? CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(Color.fromRGBO(120, 188, 196, 1)),
-                                )
-                                : null,
+                            padding: EdgeInsets.all(10.0),
                           )
                         ],
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
-          ))
-        ]));
+            Container(
+              margin: EdgeInsets.only(top: height * 0.425),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                ),
+                width: width * 0.6,
+                height: height * 0.055,
+                child: Material(
+                  color: colorMain,
+                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                  child: InkWell(
+                    splashColor: Colors.white,
+                    child: Center(
+                      child: Text(
+                        "Login",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white,
+                            fontSize: 18.0),
+                      ),
+                    ),
+                    onTap: () {
+                      isVerifying = true;
+                      regNo = controllerReg.text;
+                      password = controllerPass.text;
+                      print(controllerReg.text + controllerPass.text);
+                      _checkCredentials(regNo, password);
+                    },
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: height * 0.7),
+              child: isVerifying
+                  ? CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(colorMain),
+                    )
+                  : null,
+            )
+          ],
+        ),
+      ),
+    );
   }
 }

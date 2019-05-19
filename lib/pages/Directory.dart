@@ -24,21 +24,18 @@ class Category {
   }
 
   Category({this.catName, this.entry}) {
-    // print(this.entry.length);
-    this.tiles = List<Widget>.generate(
-        this.entry.length,
-        (int index) { 
-          String str = this.entry[index].contact;
-          return Card(
-            elevation: 0.0,
-            child: new ListTile(
-                leading: Icon(Icons.phone),
-                title: Text(this.entry[index].name),
-                subtitle: Text(this.entry[index].contact),
-                onTap: () => _launchURL("tel:"+str),
-              ),
-          );
-        });
+    this.tiles = List<Widget>.generate(this.entry.length, (int index) {
+      String str = this.entry[index].contact;
+      return Card(
+        elevation: 0.0,
+        child: new ListTile(
+          leading: Icon(Icons.phone),
+          title: Text(this.entry[index].name),
+          subtitle: Text(this.entry[index].contact),
+          onTap: () => _launchURL("tel:" + str),
+        ),
+      );
+    });
   }
 }
 
@@ -46,18 +43,18 @@ class DirectoryHomePage extends StatefulWidget {
   _DirectoryHomePageState createState() => _DirectoryHomePageState();
 }
 
-class _DirectoryHomePageState extends State<DirectoryHomePage> with AutomaticKeepAliveClientMixin{
+class _DirectoryHomePageState extends State<DirectoryHomePage>
+    with AutomaticKeepAliveClientMixin {
   List<Category> data = new List();
 
   @override
   bool get wantKeepAlive => true;
 
   DatabaseReference databaseReference = new FirebaseDatabase().reference();
-  
+
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Future<String> loadAsset() async {
-
     FirebaseDatabase database;
     database = FirebaseDatabase.instance;
     database.setPersistenceEnabled(true);
@@ -80,19 +77,16 @@ class _DirectoryHomePageState extends State<DirectoryHomePage> with AutomaticKee
         }
         Category temp = new Category(catName: cat, entry: ent);
         data.add(temp);
-        // print('%%%');
-        // print(data[0].entry[0].name);
-        // print(data[0].entry[0].contact);
-        // print(cat);
-        // print('%%%');
       }
     }
     return 'success';
   }
-  // TODO;
 
   @override
   Widget build(BuildContext context) {
+
+    super.build(context);
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -106,12 +100,6 @@ class _DirectoryHomePageState extends State<DirectoryHomePage> with AutomaticKee
         future: loadAsset(),
         builder: (context, snapshot) {
           if (snapshot.hasData == true && snapshot.data == 'success') {
-          //  print('###');
-            for (var i in data) {
-            //  print(i.catName);
-            //  print(i.entry[0]);
-            }
-          //  print('###');
             return Container(
               padding: EdgeInsets.only(bottom: 1.0),
               child: ListView.builder(
@@ -130,8 +118,8 @@ class _DirectoryHomePageState extends State<DirectoryHomePage> with AutomaticKee
               ),
             );
           } else {
-           // print('CircularReturned');
-            return Center(child: CircularProgressIndicator(
+            return Center(
+                child: CircularProgressIndicator(
               backgroundColor: Colors.black,
               valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
             ));
@@ -141,15 +129,6 @@ class _DirectoryHomePageState extends State<DirectoryHomePage> with AutomaticKee
     );
   }
 }
-
-
-
-
-
-
-
-
-
 
 // child: Card(
 //                       elevation: 20.0,
