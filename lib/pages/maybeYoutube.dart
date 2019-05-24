@@ -74,10 +74,10 @@ class _YouTubeFeedState extends State<YouTubeFeed>
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
 
-    return FutureBuilder(
+    return FutureBuilder<List<YouTubeItem>>(
       future: feed,
       builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data == 'success') {
+        if (snapshot.hasData) {
           return Column(
             children: <Widget>[
               Container(

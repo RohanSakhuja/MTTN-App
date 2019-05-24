@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'colors/color.dart';
-import 'dart:async';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class Event {
   String imageUri;
@@ -25,11 +26,12 @@ List<Event> _upcoming = new List();
 
 Future<int> _fetch() async {
   var snapshot = await databaseReference.once();
-  List<dynamic> json = snapshot.value['Upcoming Events'];
+  Map<dynamic, dynamic> json = snapshot.value['Upcoming Events'];
   List<Event> temp = new List();
-  for (var item in json) {
+  for (var item in json.keys) {
     if (item != null) {
-      temp.add(new Event(imageUri: item['Image Url'], title: item['Name']));
+      temp.add(new Event(
+          imageUri: json[item]['Image Url'], title: json[item]['Name']));
     }
   }
   _upcoming.clear();
@@ -50,32 +52,36 @@ class _UpcomingEventsState extends State<UpcomingEvents>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
     double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+
     return FutureBuilder<int>(
       future: sixtynine,
       builder: (context, snapshot) {
         print(snapshot.data);
         if (snapshot.hasData == true && snapshot.data == 69) {
+          print("Bran the Broken will be King");
+          print(_upcoming.length);
           return Column(
             children: <Widget>[
               Container(
+                padding: EdgeInsets.symmetric(vertical: 10.0),
                 width: width * 0.915,
                 child: Text(
                   "Upcoming Events",
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                      color: colorSec,
-                      fontSize: 20.0,
+                    //  color: colorSec,
+                      fontSize: 17.0,
                       fontWeight: FontWeight.w600),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.0),
-              ),
+              // Padding(
+              //   padding: EdgeInsets.symmetric(vertical: 10.0),
+              // ),
               Center(
                 child: SizedBox.fromSize(
-                  size: Size.fromHeight(175.0),
+                  size: Size.fromHeight(height * 0.25),
                   child: ListView.builder(
                     padding: EdgeInsets.only(left: 15.0),
                     scrollDirection: Axis.horizontal,
@@ -83,15 +89,22 @@ class _UpcomingEventsState extends State<UpcomingEvents>
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                         child: Container(
-                          margin: EdgeInsets.only(right: 20.0),
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5.0)),
-                              image: DecorationImage(
-                                  image:
-                                      NetworkImage(_upcoming[index].imageUri),
-                                  fit: BoxFit.fill)),
-                          width: 175.0,
+                          padding: EdgeInsets.all(5.0),
+                          //margin: EdgeInsets.only(right: 10.0),
+                          // decoration: BoxDecoration(
+                          //     borderRadius:
+                          //         BorderRadius.all(Radius.circular(5.0)),
+                          //     image: DecorationImage(
+                          //         image:
+                          //             CachedNetworkImage(_upcoming[index].imageUri),
+                          //         fit: BoxFit.fill)),
+                          child: CachedNetworkImage(
+                            imageUrl: _upcoming[index].imageUri,
+                            fit: BoxFit.cover,
+                            // color: Colors.red,
+                          ),
+                          width: width * 0.35,
+                          height: height * 0.2,
                         ),
                         onTap: () {
                           _persistentBottomSheet(_upcoming[index]);
@@ -100,12 +113,15 @@ class _UpcomingEventsState extends State<UpcomingEvents>
                     },
                   ),
                 ),
-              )
+              ),
             ],
           );
         } else {
           return Container(
             height: MediaQuery.of(context).size.height * 0.3,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         }
       },
@@ -117,7 +133,13 @@ class _UpcomingEventsState extends State<UpcomingEvents>
       return Container(
         height: 1000.0,
         width: 1000.0,
-        child: Center(child: Image.network(current.imageUri)),
+        child: Center(
+          child: CachedNetworkImage(
+            imageUrl: current.imageUri,
+            fit: BoxFit.scaleDown,
+            // color: Colors.red,
+          ),
+        ),
       );
     });
   }

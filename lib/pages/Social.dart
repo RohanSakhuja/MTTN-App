@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'dart:async';    
+import 'dart:async';
 import 'ScrollingSocial.dart';
 import 'Events.dart';
 import 'InstagramSection.dart';
 import 'YouTubeSection.dart';
 import 'colors/color.dart';
+import 'NoirOffers.dart';
 
-class SocialBody extends StatefulWidget{
-  @override 
+class SocialBody extends StatefulWidget {
+  @override
   createState() => new SocialBodyState();
 }
 
-class SocialBodyState extends State<SocialBody> with AutomaticKeepAliveClientMixin{
-
+class SocialBodyState extends State<SocialBody>
+    with AutomaticKeepAliveClientMixin {
   @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 
   final timeout = const Duration(seconds: 15);
@@ -24,26 +24,21 @@ class SocialBodyState extends State<SocialBody> with AutomaticKeepAliveClientMix
   final _scaffoldkey = new GlobalKey<ScaffoldState>();
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      key: _scaffoldkey,
-      appBar: AppBar(
-        title: Text("Social", style: TextStyle(color: Colors.white),),
-        backgroundColor: colorSec,
-        centerTitle: true,
-        ),
-      body: ListView(
-      children: <Widget>[ 
-        new BuildSocial().createState().build(context),
-        new UpcomingEvents(_scaffoldkey).createState().build(context),
-        Padding(padding: EdgeInsets.only(top: 20.0),),
-      //  new InstagramFeed().createState().build(context),
-        Padding(padding: EdgeInsets.only(top: 25.0),),
-        new YouTubeFeed().createState().build(context),
-      ]
-        )
-      );
+        key: _scaffoldkey,
+        body: ListView(children: <Widget>[
+          new BuildSocial().createState().build(context),
+          Card(
+              child: new NoirOffers(_scaffoldkey).createState().build(context)),
+          Padding(padding: EdgeInsets.only(top: 10.0)),
+          Card(
+              child: new UpcomingEvents(_scaffoldkey)
+                  .createState()
+                  .build(context)),
+          Padding(padding: EdgeInsets.only(top: 10.0)),
+          Card(child: YouTubeFeed().createState().build(context)),
+        ]));
   }
 }
-

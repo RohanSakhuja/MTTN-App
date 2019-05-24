@@ -84,18 +84,10 @@ class _DirectoryHomePageState extends State<DirectoryHomePage>
 
   @override
   Widget build(BuildContext context) {
-
     super.build(context);
 
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-          centerTitle: true,
-          title: Text(
-            "Directory",
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: colorSec),
       body: FutureBuilder(
         future: loadAsset(),
         builder: (context, snapshot) {
@@ -109,6 +101,7 @@ class _DirectoryHomePageState extends State<DirectoryHomePage>
                     elevation: 4.0,
                     margin: EdgeInsets.all(3.0),
                     child: ExpansionTile(
+                      leading: _getIcon(data[index].catName),
                       key: PageStorageKey(data[index].catName),
                       title: Text(data[index].catName),
                       children: data[index].tiles,
@@ -120,13 +113,63 @@ class _DirectoryHomePageState extends State<DirectoryHomePage>
           } else {
             return Center(
                 child: CircularProgressIndicator(
-              backgroundColor: Colors.black,
               valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
             ));
           }
         },
       ),
     );
+  }
+
+  _getIcon(String name) {
+    switch(name){
+      case "Auto Service" : {
+        return Icon(Icons.local_taxi);
+      }
+      break;
+      case "Eateries" : {
+        return Icon(Icons.local_dining);
+      }
+      break;
+      case "Emergency and Important Contacts" : {
+        return Icon(Icons.import_contacts);
+      }
+      break;
+      case "Grocery Stores" : {
+        return Icon(Icons.local_grocery_store);
+      }
+      break;
+      case "Hotels and Accommodation" : {
+        return Icon(Icons.local_hotel);
+      }
+      break;
+      case "MAHE Colleges' Departments" : {
+        return Icon(Icons.location_city);
+      }
+      break;
+      case "Medical Services" : {
+        return Icon(Icons.local_hospital);
+      }
+      break;
+      case "Miscellaneous Services" : {
+        return Icon(Icons.hdr_strong);
+      }
+      break;
+      case "Project Work and Tech Stores" : {
+        return Icon(Icons.layers);
+      }
+      break;
+      case "Rent a Bike" : {
+        return Icon(Icons.directions_bike);
+      }
+      break;
+      case "Travel Agencies" : {
+        return Icon(Icons.card_travel);
+      }
+      break;
+      default :
+        return Icon(Icons.chrome_reader_mode);
+    }
   }
 }
 

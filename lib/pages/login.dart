@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'slcm.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -12,7 +13,20 @@ class Login extends StatefulWidget {
   createState() => new LoginState();
 }
 
-class LoginState extends State<Login> {
+DatabaseReference databaseReference = new FirebaseDatabase().reference();
+
+bool isHidden;
+
+class LoginState extends State<Login> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    _fetchState();
+    super.initState();
+  }
+
   TextEditingController controllerReg = new TextEditingController();
   TextEditingController controllerPass = new TextEditingController();
 
@@ -40,6 +54,23 @@ class LoginState extends State<Login> {
       },
     );
   }
+
+  Future<String> _fetchState() async {
+  var snapshot = await databaseReference.once();
+  Map<dynamic, dynamic> stateJson = snapshot.value['SLCM'];
+
+  for (var item in stateJson.keys) {
+    try {
+      isHidden = stateJson["isHidden"];
+      setState(() {
+        isVerifying = false;
+      });
+      print("Eefef");
+    } catch (e) {
+      print(e);
+    }
+  }
+}
 
   Future<http.Response> _getResponse(String reg, String pass) async {
     try {
@@ -100,6 +131,10 @@ class LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+
+    _fetchState();
+
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
 
@@ -120,14 +155,14 @@ class LoginState extends State<Login> {
               ),
             ),
             Container(
-              padding: EdgeInsets.fromLTRB(2.0, height * 0.33, 2.0, 10.0),
-              height: height * 0.6,
+              padding: EdgeInsets.fromLTRB(2.0, height * 0.33, 2.0, 0.0),
+              height: height * 0.52,
               width: width * 0.9,
               child: ListView(
                 children: <Widget>[
                   Material(
                     borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                    color: Colors.white,
+                    //  color: Colors.white,
                     child: Container(
                       height: height * 0.185,
                       child: Column(
@@ -174,13 +209,13 @@ class LoginState extends State<Login> {
                                         icon: obsecureText
                                             ? Icon(
                                                 Icons.visibility_off,
-                                                color: Colors.black
-                                                    .withOpacity(0.5),
+                                                // color: Colors.black
+                                                //     .withOpacity(0.5),
                                               )
                                             : Icon(
                                                 Icons.visibility,
-                                                color: Colors.black
-                                                    .withOpacity(0.5),
+                                                // color: Colors.black
+                                                //     .withOpacity(0.5),
                                               ),
                                         onPressed: () => setState(() {
                                               obsecureText = !obsecureText;
@@ -203,8 +238,10 @@ class LoginState extends State<Login> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: height * 0.425),
+              height: height * 0.06,
+              margin: EdgeInsets.only(top: height * 0.5),
               decoration: BoxDecoration(
+                color: Colors.red,
                 borderRadius: BorderRadius.all(Radius.circular(20.0)),
               ),
               child: Container(
@@ -214,7 +251,7 @@ class LoginState extends State<Login> {
                 width: width * 0.6,
                 height: height * 0.055,
                 child: Material(
-                  color: colorMain,
+                  color: Color.fromRGBO(64, 224, 208, 1.0),
                   borderRadius: BorderRadius.all(Radius.circular(20.0)),
                   child: InkWell(
                     splashColor: Colors.white,
@@ -223,7 +260,7 @@ class LoginState extends State<Login> {
                         "Login",
                         style: TextStyle(
                             fontWeight: FontWeight.w400,
-                            color: Colors.white,
+                            color: Colors.black,
                             fontSize: 18.0),
                       ),
                     ),
@@ -232,14 +269,17 @@ class LoginState extends State<Login> {
                       regNo = controllerReg.text;
                       password = controllerPass.text;
                       print(controllerReg.text + controllerPass.text);
-                      _checkCredentials(regNo, password);
+                      isHidden
+                          ? _showDialog("Oops!",
+                              "It seems like SLCM is down for the time being.")
+                          : _checkCredentials(regNo, password);
                     },
                   ),
                 ),
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: height * 0.7),
+              padding: EdgeInsets.only(top: height * 0.7),
               child: isVerifying
                   ? CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(colorMain),
