@@ -23,7 +23,7 @@ class LoginState extends State<Login> with AutomaticKeepAliveClientMixin {
 
   @override
   void initState() {
-    _fetchState();
+    // _fetchState();
     super.initState();
   }
 
@@ -55,22 +55,22 @@ class LoginState extends State<Login> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  Future<String> _fetchState() async {
-  var snapshot = await databaseReference.once();
-  Map<dynamic, dynamic> stateJson = snapshot.value['SLCM'];
+//   Future<String> _fetchState() async {
+//   var snapshot = await databaseReference.once();
+//   Map<dynamic, dynamic> stateJson = snapshot.value['SLCM'];
 
-  for (var item in stateJson.keys) {
-    try {
-      isHidden = stateJson["isHidden"];
-      setState(() {
-        isVerifying = false;
-      });
-      print("Eefef");
-    } catch (e) {
-      print(e);
-    }
-  }
-}
+//   for (var item in stateJson.keys) {
+//     try {
+//       isHidden = stateJson["isHidden"];
+//       setState(() {
+//         isVerifying = false;
+//       });
+//       print("Eefef");
+//     } catch (e) {
+//       print(e);
+//     }
+//   }
+// }
 
   Future<http.Response> _getResponse(String reg, String pass) async {
     try {
@@ -133,7 +133,7 @@ class LoginState extends State<Login> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
 
-    _fetchState();
+    // _fetchState();
 
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;

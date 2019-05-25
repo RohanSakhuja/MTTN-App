@@ -7,8 +7,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
-import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
-import 'colors/color.dart';
+// import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
+// import 'colors/color.dart';
 
 class Post {
   final String id;

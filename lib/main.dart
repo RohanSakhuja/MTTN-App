@@ -8,7 +8,7 @@ import 'pages/login.dart';
 import 'pages/Directory.dart';
 import 'pages/Social.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
-import 'pages/NoirOffers.dart';
+// import 'pages/NoirOffers.dart';
 
 Color turq = Color.fromRGBO(0, 206, 209, 1.0);
 
@@ -48,26 +48,40 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   final FirebaseMessaging _messaging = FirebaseMessaging();
+  DatabaseReference _databaseReference = new FirebaseDatabase().reference();
+  DatabaseReference slcmRef;
+  // bool isHidden;
 
   update(String token) {
-    DatabaseReference databaseReference = new FirebaseDatabase().reference();
-    databaseReference.child('fcm-token/$token').set({"token": token});
+    // DatabaseReference databaseReference = new FirebaseDatabase().reference();
+    _databaseReference.child('fcm-token/$token').set({"token": token});
   }
 
   PageController _pageController;
   int _page = 0;
 
   String titleOfBar;
+  List<String> titleItem = [
+    "MTTN : Feed",
+    "Directory",
+    "SLCM",
+    "Social",
+    "Alerts"
+  ];
+  List<BottomNavigationBarItem> navBarItem;
+  List<Widget> routes;
 
   @override
   void initState() {
     titleOfBar = "Feed";
+    // isHidden = true;
     super.initState();
     _pageController = new PageController();
     _messaging.getToken().then((token) {
       print(token);
       update(token);
     });
+    slcmRef = _databaseReference.child('SLCM').child("isHidden");
   }
 
   @override
@@ -93,169 +107,166 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: titleOfBar != 'SLCM'
-            ? AppBar(
-                backgroundColor:
-                    DynamicTheme.of(context).data.primaryColor == turq
-                        ? turq
-                        : colorSec,
-                elevation: 8.0,
-                centerTitle: false,
-                title: Text(
-                  titleOfBar,
-                  style: TextStyle(
-                      color:
-                          DynamicTheme.of(context).data.secondaryHeaderColor ==
-                                  Colors.white
-                              ? Colors.white
-                              : Colors.black),
-                ),
-                actions: <Widget>[
-                  IconButton(
-                    icon: Icon(
-                        DynamicTheme.of(context).data.primaryColor == turq
-                            ? Icons.brightness_3
-                            : Icons.brightness_7,
-                        size: 30.0,
-                        color:
-                            DynamicTheme.of(context).data.primaryColor != turq
-                                ? Colors.white
-                                : Colors.black),
-                    onPressed: changeBrightness,
-                  )
-                ],
-              )
-            : null,
-        body: PageView(
-          physics: NeverScrollableScrollPhysics(),
-          controller: _pageController,
-          onPageChanged: onPageChanged,
-          scrollDirection: Axis.horizontal,
-          children: <Widget>[
-            new Feed(),
-            //new Container(),
-            new DirectoryHomePage(),
-            //new Container(),
-            new Login(),
-         //   new Container(),
-            new SocialBody(),
-             //new Container(),
-            new AlertsHomePage(),
-            //new Container(),
-          ],
+    navBarItem = [
+      BottomNavigationBarItem(
+        backgroundColor: DynamicTheme.of(context).data.primaryColor != turq
+            ? colorSec
+            : Colors.black38,
+        title: Text(
+          "Feed",
         ),
-        bottomNavigationBar: new BottomNavigationBar(
-          backgroundColor: DynamicTheme.of(context).data.primaryColor,
-          selectedItemColor:
-              DynamicTheme.of(context).data.primaryColor == colorSec
-                  ? Colors.white
-                  : turq,
-          unselectedItemColor: Colors.white54,
-          currentIndex: _page,
-          type: BottomNavigationBarType.shifting,
-          onTap: (index) {
-            navigationTapped(index);
-            switch (index) {
-              case 0:
-                titleOfBar = "MTTN : Feed";
-                break;
-              case 1:
-                titleOfBar = "Directory";
-                break;
-              case 2:
-                titleOfBar = "SLCM";
-                break;
-              case 3:
-                titleOfBar = "Social";
-                break;
-              case 4:
-                titleOfBar = "Alerts";
-                break;
-              default:
-            }
-          },
-          items: [
-            BottomNavigationBarItem(
-              backgroundColor:
-                  DynamicTheme.of(context).data.primaryColor != turq
-                      ? colorSec
-                      : Colors.black38,
-              title: Text(
-                "Feed",
-              ),
-              activeIcon: Icon(
-                Icons.developer_board,
-              ),
-              icon: Icon(
-                Icons.dashboard,
-              ),
-            ),
-            BottomNavigationBarItem(
-              backgroundColor:
-                  DynamicTheme.of(context).data.primaryColor != turq
-                      ? colorSec
-                      : Colors.black38,
-              title: Text(
-                "Directory",
-              ),
-              activeIcon: Icon(
-                Icons.contact_phone,
-              ),
-              icon: Icon(
-                Icons.contacts,
-              ),
-            ),
-            BottomNavigationBarItem(
-              backgroundColor:
-                  DynamicTheme.of(context).data.primaryColor != turq
-                      ? colorSec
-                      : Colors.black38,
-              title: Text(
-                "SLCM",
-              ),
-              activeIcon: Icon(
-                Icons.local_library,
-              ),
-              icon: Icon(
-                Icons.local_library,
-              ),
-            ),
-            BottomNavigationBarItem(
-              backgroundColor:
-                  DynamicTheme.of(context).data.primaryColor != turq
-                      ? colorSec
-                      : Colors.black38,
-              title: Text(
-                "Social",
-              ),
-              activeIcon: Icon(
-                Icons.gps_fixed,
-              ),
-              icon: Icon(
-                Icons.gps_not_fixed,
-              ),
-            ),
-            BottomNavigationBarItem(
-              backgroundColor:
-                  DynamicTheme.of(context).data.primaryColor != turq
-                      ? colorSec
-                      : Colors.black38,
-              title: Text(
-                "Alerts",
-              ),
-              activeIcon: Icon(
-                Icons.notifications,
-              ),
-              icon: Icon(
-                Icons.notifications_none,
-                // color: Colors.white54,
-              ),
-            ),
-          ],
+        activeIcon: Icon(
+          Icons.developer_board,
+        ),
+        icon: Icon(
+          Icons.dashboard,
         ),
       ),
+      BottomNavigationBarItem(
+        backgroundColor: DynamicTheme.of(context).data.primaryColor != turq
+            ? colorSec
+            : Colors.black38,
+        title: Text(
+          "Directory",
+        ),
+        activeIcon: Icon(
+          Icons.contact_phone,
+        ),
+        icon: Icon(
+          Icons.contacts,
+        ),
+      ),
+      BottomNavigationBarItem(
+        backgroundColor: DynamicTheme.of(context).data.primaryColor != turq
+            ? colorSec
+            : Colors.black38,
+        title: Text(
+          "SLCM",
+        ),
+        activeIcon: Icon(
+          Icons.local_library,
+        ),
+        icon: Icon(
+          Icons.local_library,
+        ),
+      ),
+      BottomNavigationBarItem(
+        backgroundColor: DynamicTheme.of(context).data.primaryColor != turq
+            ? colorSec
+            : Colors.black38,
+        title: Text(
+          "Social",
+        ),
+        activeIcon: Icon(
+          Icons.gps_fixed,
+        ),
+        icon: Icon(
+          Icons.gps_not_fixed,
+        ),
+      ),
+      BottomNavigationBarItem(
+        backgroundColor: DynamicTheme.of(context).data.primaryColor != turq
+            ? colorSec
+            : Colors.black38,
+        title: Text(
+          "Alerts",
+        ),
+        activeIcon: Icon(
+          Icons.notifications,
+        ),
+        icon: Icon(
+          Icons.notifications_none,
+          // color: Colors.white54,
+        ),
+      ),
+    ];
+
+    routes = <Widget>[
+      new Feed(),
+      new DirectoryHomePage(),
+      new Login(),
+      new SocialBody(),
+      new AlertsHomePage(),
+    ];
+
+    return SafeArea(
+      child: StreamBuilder(
+          stream: slcmRef.onValue,
+          builder: (context, snap) {
+            if (snap.hasData) {
+              print(snap.data.snapshot.value);
+              isHidden = snap.data.snapshot.value;
+            }
+
+            return Scaffold(
+              appBar: titleOfBar != 'SLCM'
+                  ? AppBar(
+                      backgroundColor:
+                          DynamicTheme.of(context).data.primaryColor == turq
+                              ? turq
+                              : colorSec,
+                      elevation: 8.0,
+                      centerTitle: false,
+                      title: Text(
+                        titleOfBar,
+                        style: TextStyle(
+                            color: DynamicTheme.of(context)
+                                        .data
+                                        .secondaryHeaderColor ==
+                                    Colors.white
+                                ? Colors.white
+                                : Colors.black),
+                      ),
+                      actions: <Widget>[
+                        IconButton(
+                          icon: Icon(
+                              DynamicTheme.of(context).data.primaryColor == turq
+                                  ? Icons.brightness_3
+                                  : Icons.brightness_7,
+                              size: 30.0,
+                              color:
+                                  DynamicTheme.of(context).data.primaryColor !=
+                                          turq
+                                      ? Colors.white
+                                      : Colors.black),
+                          onPressed: changeBrightness,
+                        )
+                      ],
+                    )
+                  : null,
+              body: PageView(
+                physics: NeverScrollableScrollPhysics(),
+                controller: _pageController,
+                onPageChanged: onPageChanged,
+                scrollDirection: Axis.horizontal,
+                children: (isHidden != null && isHidden)
+                    ? [...routes.sublist(0, 2), ...routes.sublist(3)]
+                    : routes,
+              ),
+              bottomNavigationBar: BottomNavigationBar(
+                backgroundColor: DynamicTheme.of(context).data.primaryColor,
+                selectedItemColor:
+                    DynamicTheme.of(context).data.primaryColor == colorSec
+                        ? Colors.white
+                        : turq,
+                unselectedItemColor: Colors.white54,
+                currentIndex: _page,
+                type: BottomNavigationBarType.shifting,
+                onTap: (index) {
+                  navigationTapped(index);
+                  titleOfBar = (isHidden != null && isHidden)
+                      ? [
+                          ...titleItem.sublist(0, 2),
+                          ...titleItem.sublist(3)
+                        ][index]
+                      : titleItem[index];
+                },
+                items: (isHidden != null && isHidden)
+                    ? [...navBarItem.sublist(0, 2), ...navBarItem.sublist(3)]
+                    : navBarItem,
+              ),
+            );
+          }),
     );
   }
 

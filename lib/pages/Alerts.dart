@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:async';
-import 'colors/color.dart';
+// import 'dart:async';
+// import 'colors/color.dart';
 
 class Alerts {
   String heading;
@@ -24,7 +24,7 @@ class _AlertsHomePageState extends State<AlertsHomePage>
 
   bool get wantKeepAlive => true;
 
-  final FirebaseMessaging _messaging = new FirebaseMessaging();
+  // final FirebaseMessaging _messaging = new FirebaseMessaging();
 
   List<Alerts> alertList = List();
 

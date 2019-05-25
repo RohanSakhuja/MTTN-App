@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'colors/color.dart';
+// import 'colors/color.dart';
 
 class Info {
   String name;

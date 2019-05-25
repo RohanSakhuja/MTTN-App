@@ -32,12 +32,12 @@ Future<int> _fetch() async {
 
   for (var item in json) {
     try {
-      item != null
-          ? temp.add(new Offer(
+      if(item != null) {
+        temp.add(new Offer(
               imageUri: item['Image Url'],
               name: item['Name'],
-              text: item['Text']))
-          : null;
+              text: item['Text']));
+      }
     } catch (e) {}
   }
   _offers.clear();
