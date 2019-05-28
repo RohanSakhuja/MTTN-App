@@ -15,15 +15,12 @@ class Login extends StatefulWidget {
 
 DatabaseReference databaseReference = new FirebaseDatabase().reference();
 
-bool isHidden;
-
 class LoginState extends State<Login> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
-    // _fetchState();
     super.initState();
   }
 
@@ -55,23 +52,6 @@ class LoginState extends State<Login> with AutomaticKeepAliveClientMixin {
     );
   }
 
-//   Future<String> _fetchState() async {
-//   var snapshot = await databaseReference.once();
-//   Map<dynamic, dynamic> stateJson = snapshot.value['SLCM'];
-
-//   for (var item in stateJson.keys) {
-//     try {
-//       isHidden = stateJson["isHidden"];
-//       setState(() {
-//         isVerifying = false;
-//       });
-//       print("Eefef");
-//     } catch (e) {
-//       print(e);
-//     }
-//   }
-// }
-
   Future<http.Response> _getResponse(String reg, String pass) async {
     try {
       final String _slcmApi = 'http://139.59.65.42:8080/';
@@ -86,19 +66,23 @@ class LoginState extends State<Login> with AutomaticKeepAliveClientMixin {
       );
       return response;
     } on SocketException catch (e) {
+      if(e.osError.errorCode == 111){
+        _showDialog("Server Down",
+            "It seems SLCM is down, please try again in some time.");
+        return null; // if connection refused
+      }
       _showDialog("No Internet",
           "Please check your internet connection and try again!");
       setState(() {
         isVerifying = false;
       });
-      print(e);
       return null;
     }
   }
 
   void _checkCredentials(String reg, String pass) {
     _getResponse(reg, pass).then((response) {
-      if (response.statusCode == 200) {
+      if (response != null && response.statusCode == 200) {
         var res = json.decode(response.body);
         if (res['login'] == 'successful') {
           setState(() {
@@ -123,8 +107,6 @@ class LoginState extends State<Login> with AutomaticKeepAliveClientMixin {
         setState(() {
           isVerifying = false;
         });
-        _showDialog("Server Down",
-            "It seems SLCM is down, please try again in some time.");
       }
     });
   }
@@ -132,9 +114,6 @@ class LoginState extends State<Login> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-
-    // _fetchState();
-
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
 
@@ -268,11 +247,8 @@ class LoginState extends State<Login> with AutomaticKeepAliveClientMixin {
                       isVerifying = true;
                       regNo = controllerReg.text;
                       password = controllerPass.text;
-                      print(controllerReg.text + controllerPass.text);
-                      isHidden
-                          ? _showDialog("Oops!",
-                              "It seems like SLCM is down for the time being.")
-                          : _checkCredentials(regNo, password);
+                      // print(controllerReg.text + controllerPass.text);
+                      _checkCredentials(regNo, password);
                     },
                   ),
                 ),

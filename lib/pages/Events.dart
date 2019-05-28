@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'dart:async';
-// import 'colors/color.dart';
-// import 'package:firebase_database/firebase_database.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class Event {
@@ -59,10 +57,7 @@ class _UpcomingEventsState extends State<UpcomingEvents>
     return FutureBuilder<int>(
       future: sixtynine,
       builder: (context, snapshot) {
-        print(snapshot.data);
         if (snapshot.hasData == true && snapshot.data == 69) {
-          print("Bran the Broken will be King");
-          print(_upcoming.length);
           return Column(
             children: <Widget>[
               Container(
@@ -72,7 +67,7 @@ class _UpcomingEventsState extends State<UpcomingEvents>
                   "Upcoming Events",
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                    //  color: colorSec,
+                      //  color: colorSec,
                       fontSize: 17.0,
                       fontWeight: FontWeight.w600),
                 ),

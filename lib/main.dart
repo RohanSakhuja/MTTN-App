@@ -8,7 +8,6 @@ import 'pages/login.dart';
 import 'pages/Directory.dart';
 import 'pages/Social.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
-// import 'pages/NoirOffers.dart';
 
 Color turq = Color.fromRGBO(0, 206, 209, 1.0);
 
@@ -50,10 +49,9 @@ class HomePageState extends State<HomePage> {
   final FirebaseMessaging _messaging = FirebaseMessaging();
   DatabaseReference _databaseReference = new FirebaseDatabase().reference();
   DatabaseReference slcmRef;
-  // bool isHidden;
+  bool isHidden;
 
   update(String token) {
-    // DatabaseReference databaseReference = new FirebaseDatabase().reference();
     _databaseReference.child('fcm-token/$token').set({"token": token});
   }
 
@@ -74,7 +72,7 @@ class HomePageState extends State<HomePage> {
   @override
   void initState() {
     titleOfBar = "Feed";
-    // isHidden = true;
+    isHidden = true;
     super.initState();
     _pageController = new PageController();
     _messaging.getToken().then((token) {
@@ -189,85 +187,82 @@ class HomePageState extends State<HomePage> {
       new AlertsHomePage(),
     ];
 
-    return SafeArea(
-      child: StreamBuilder(
-          stream: slcmRef.onValue,
-          builder: (context, snap) {
-            if (snap.hasData) {
-              print(snap.data.snapshot.value);
-              isHidden = snap.data.snapshot.value;
-            }
+    return StreamBuilder(
+        stream: slcmRef.onValue,
+        builder: (context, snap) {
+          if (snap.hasData) {
+            isHidden = snap.data.snapshot.value;
+          }
 
-            return Scaffold(
-              appBar: titleOfBar != 'SLCM'
-                  ? AppBar(
-                      backgroundColor:
-                          DynamicTheme.of(context).data.primaryColor == turq
-                              ? turq
-                              : colorSec,
-                      elevation: 8.0,
-                      centerTitle: false,
-                      title: Text(
-                        titleOfBar,
-                        style: TextStyle(
-                            color: DynamicTheme.of(context)
-                                        .data
-                                        .secondaryHeaderColor ==
-                                    Colors.white
-                                ? Colors.white
-                                : Colors.black),
-                      ),
-                      actions: <Widget>[
-                        IconButton(
-                          icon: Icon(
-                              DynamicTheme.of(context).data.primaryColor == turq
-                                  ? Icons.brightness_3
-                                  : Icons.brightness_7,
-                              size: 30.0,
-                              color:
-                                  DynamicTheme.of(context).data.primaryColor !=
-                                          turq
-                                      ? Colors.white
-                                      : Colors.black),
-                          onPressed: changeBrightness,
-                        )
-                      ],
-                    )
-                  : null,
-              body: PageView(
-                physics: NeverScrollableScrollPhysics(),
-                controller: _pageController,
-                onPageChanged: onPageChanged,
-                scrollDirection: Axis.horizontal,
-                children: (isHidden != null && isHidden)
-                    ? [...routes.sublist(0, 2), ...routes.sublist(3)]
-                    : routes,
-              ),
-              bottomNavigationBar: BottomNavigationBar(
-                backgroundColor: DynamicTheme.of(context).data.primaryColor,
-                selectedItemColor:
-                    DynamicTheme.of(context).data.primaryColor == colorSec
-                        ? Colors.white
-                        : turq,
-                unselectedItemColor: Colors.white54,
-                currentIndex: _page,
-                type: BottomNavigationBarType.shifting,
-                onTap: (index) {
-                  navigationTapped(index);
-                  titleOfBar = (isHidden != null && isHidden)
-                      ? [
-                          ...titleItem.sublist(0, 2),
-                          ...titleItem.sublist(3)
-                        ][index]
-                      : titleItem[index];
-                },
-                items: (isHidden != null && isHidden)
-                    ? [...navBarItem.sublist(0, 2), ...navBarItem.sublist(3)]
-                    : navBarItem,
-              ),
-            );
-          }),
-    );
+          return Scaffold(
+            appBar: titleOfBar != 'SLCM'
+                ? AppBar(
+                    backgroundColor:
+                        DynamicTheme.of(context).data.primaryColor == turq
+                            ? turq
+                            : colorSec,
+                    elevation: 8.0,
+                    centerTitle: false,
+                    title: Text(
+                      titleOfBar,
+                      style: TextStyle(
+                          color: DynamicTheme.of(context)
+                                      .data
+                                      .secondaryHeaderColor ==
+                                  Colors.white
+                              ? Colors.white
+                              : Colors.black),
+                    ),
+                    actions: <Widget>[
+                      IconButton(
+                        icon: Icon(
+                            DynamicTheme.of(context).data.primaryColor == turq
+                                ? Icons.brightness_3
+                                : Icons.brightness_7,
+                            size: 30.0,
+                            color:
+                                DynamicTheme.of(context).data.primaryColor !=
+                                        turq
+                                    ? Colors.white
+                                    : Colors.black),
+                        onPressed: changeBrightness,
+                      )
+                    ],
+                  )
+                : null,
+            body: PageView(
+              physics: NeverScrollableScrollPhysics(),
+              controller: _pageController,
+              onPageChanged: onPageChanged,
+              scrollDirection: Axis.horizontal,
+              children: (isHidden != null && isHidden)
+                  ? [...routes.sublist(0, 2), ...routes.sublist(3)]
+                  : routes,
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              backgroundColor: DynamicTheme.of(context).data.primaryColor,
+              selectedItemColor:
+                  DynamicTheme.of(context).data.primaryColor == colorSec
+                      ? Colors.white
+                      : turq,
+              unselectedItemColor: Colors.white54,
+              currentIndex: _page,
+              type: BottomNavigationBarType.shifting,
+              onTap: (index) {
+                navigationTapped(index);
+                titleOfBar = (isHidden != null && isHidden)
+                    ? [
+                        ...titleItem.sublist(0, 2),
+                        ...titleItem.sublist(3)
+                      ][index]
+                    : titleItem[index];
+              },
+              items: (isHidden != null && isHidden)
+                  ? [...navBarItem.sublist(0, 2), ...navBarItem.sublist(3)]
+                  : navBarItem,
+            ),
+          );
+        });
   }
 
   void changeBrightness() {

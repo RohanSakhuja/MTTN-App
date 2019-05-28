@@ -30,7 +30,7 @@ class StudentInfoState extends State<StudentInfo>{
     var width = MediaQuery.of(context).size.width;
 
     List<Attendance> att = _parseAttendace();
-    print(att.length);
+    // print(att.length);
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,

@@ -19,7 +19,7 @@ class _BuildSocialState extends State<BuildSocial>  {
     new Banner(imageUri: 'assets/facebook.png', link: 'https://facebook.com/manipalthetalk/'),
     new Banner(imageUri: 'assets/instagram.png', link: 'https://www.instagram.com/manipalthetalk/'),
     new Banner(imageUri: 'assets/youtube.png', link: 'https://www.youtube.com/channel/UCwW9nPcEM2wGfsa06LTYlFg'),
-    new Banner(imageUri: 'assets/freshers.png', link: 'https://www.facebook.com/groups/374395242969364/'),
+    new Banner(imageUri: 'assets/freshers.png', link: 'https://www.facebook.com/groups/MITFreshers2019/'),
   ];
 
   _launchURL(url) async {

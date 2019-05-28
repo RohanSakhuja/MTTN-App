@@ -24,7 +24,6 @@ DatabaseReference databaseReference = new FirebaseDatabase().reference();
 List<Offer> _offers = new List();
 
 Future<int> _fetch() async {
-  print("BRAN THE WHEELY WHEELY LEGS NO FEELY WILL BE KING");
   var snapshot = await databaseReference.once();
 
   List<dynamic> json = snapshot.value['Offers'];
@@ -65,9 +64,8 @@ class _NoirOffersState extends State<NoirOffers>
     return FutureBuilder<int>(
       future: sixtyninenine,
       builder: (context, snapshot) {
-        print(snapshot.data);
+        // print(snapshot.data);
         if (snapshot.hasData == true && snapshot.data == 699) {
-          print("Jon is Azor Ahain");
           return new Column(
             children: <Widget>[
               Container(

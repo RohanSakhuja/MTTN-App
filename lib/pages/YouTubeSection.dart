@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:html/parser.dart' show parse;
 // import 'colors/color.dart';
 
 class YouTubeItem {
@@ -30,6 +31,13 @@ class YouTubeFeed extends StatefulWidget {
 
  List<YouTubeItem> items = new List();
 
+ String parseTitle(String title) {
+    String raw = parse(title).outerHtml;
+    int start = raw.indexOf("<body>") + 6;
+    int last = raw.indexOf("</body>");
+    return raw.substring(start, last);
+  }
+
  Future<String> _fetchItems() async {
     String uri =
         'https://www.googleapis.com/youtube/v3/search?key=AIzaSyDMzJvdj7xH40CMVnoW6kZPgVpXhn93aA8&channelId=UCwW9nPcEM2wGfsa06LTYlFg&part=snippet,id&order=date&maxResults=50';
@@ -43,10 +51,9 @@ class YouTubeFeed extends StatefulWidget {
       String link = (temp == 'video')
           ? 'https://www.youtube.com/watch?v=$id'
           : 'https://www.youtube.com/watch?v=I5y-v_QDmwg&list=$id';
-      print("object");
       items.add(new YouTubeItem(
           type: temp,
-          title: item['snippet']['title'],
+          title: parseTitle(item['snippet']['title']),
           itemId: id,
           description: item['snippet']['description'],
           thumbnail: item['snippet']['thumbnails']['medium']['url'],

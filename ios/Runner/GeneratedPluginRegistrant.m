@@ -6,6 +6,7 @@
 #import <firebase_core/FirebaseCorePlugin.h>
 #import <firebase_database/FirebaseDatabasePlugin.h>
 #import <firebase_messaging/FirebaseMessagingPlugin.h>
+#import <firebase_storage/FirebaseStoragePlugin.h>
 #import <path_provider/PathProviderPlugin.h>
 #import <share/SharePlugin.h>
 #import <shared_preferences/SharedPreferencesPlugin.h>
@@ -18,6 +19,7 @@
   [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
   [FLTFirebaseDatabasePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseDatabasePlugin"]];
   [FLTFirebaseMessagingPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseMessagingPlugin"]];
+  [FLTFirebaseStoragePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseStoragePlugin"]];
   [FLTPathProviderPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPathProviderPlugin"]];
   [FLTSharePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharePlugin"]];
   [FLTSharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharedPreferencesPlugin"]];
