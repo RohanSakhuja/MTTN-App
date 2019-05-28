@@ -12,6 +12,7 @@
 #import <shared_preferences/SharedPreferencesPlugin.h>
 #import <sqflite/SqflitePlugin.h>
 #import <url_launcher/UrlLauncherPlugin.h>
+#import <wallpaper/WallpaperPlugin.h>
 
 @implementation GeneratedPluginRegistrant
 
@@ -25,6 +26,7 @@
   [FLTSharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTSharedPreferencesPlugin"]];
   [SqflitePlugin registerWithRegistrar:[registry registrarForPlugin:@"SqflitePlugin"]];
   [FLTUrlLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTUrlLauncherPlugin"]];
+  [WallpaperPlugin registerWithRegistrar:[registry registrarForPlugin:@"WallpaperPlugin"]];
 }
 
 @end

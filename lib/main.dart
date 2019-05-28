@@ -8,6 +8,7 @@ import 'pages/login.dart';
 import 'pages/Directory.dart';
 import 'pages/Social.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
+import 'pages/wallpaper_packs.dart';
 
 Color turq = Color.fromRGBO(0, 206, 209, 1.0);
 
@@ -215,16 +216,24 @@ class HomePageState extends State<HomePage> {
                     ),
                     actions: <Widget>[
                       IconButton(
+                        icon: Icon(Icons.image),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => new WallpaperPacks()));
+                        },
+                      ),
+                      IconButton(
                         icon: Icon(
                             DynamicTheme.of(context).data.primaryColor == turq
                                 ? Icons.brightness_3
                                 : Icons.brightness_7,
                             size: 30.0,
-                            color:
-                                DynamicTheme.of(context).data.primaryColor !=
-                                        turq
-                                    ? Colors.white
-                                    : Colors.black),
+                            color: DynamicTheme.of(context).data.primaryColor !=
+                                    turq
+                                ? Colors.white
+                                : Colors.black),
                         onPressed: changeBrightness,
                       )
                     ],

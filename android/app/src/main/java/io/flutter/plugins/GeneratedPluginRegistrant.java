@@ -10,6 +10,7 @@ import io.flutter.plugins.share.SharePlugin;
 import io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin;
 import com.tekartik.sqflite.SqflitePlugin;
 import io.flutter.plugins.urllauncher.UrlLauncherPlugin;
+import com.prateektimer.wallpaper.WallpaperPlugin;
 
 /**
  * Generated file. Do not edit.
@@ -28,6 +29,7 @@ public final class GeneratedPluginRegistrant {
     SharedPreferencesPlugin.registerWith(registry.registrarFor("io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin"));
     SqflitePlugin.registerWith(registry.registrarFor("com.tekartik.sqflite.SqflitePlugin"));
     UrlLauncherPlugin.registerWith(registry.registrarFor("io.flutter.plugins.urllauncher.UrlLauncherPlugin"));
+    WallpaperPlugin.registerWith(registry.registrarFor("com.prateektimer.wallpaper.WallpaperPlugin"));
   }
 
   private static boolean alreadyRegisteredWith(PluginRegistry registry) {

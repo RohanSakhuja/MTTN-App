@@ -331,6 +331,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.8"
+  wallpaper:
+    dependency: "direct main"
+    description:
+      name: wallpaper
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.4"
 sdks:
   dart: ">=2.2.0 <3.0.0"
   flutter: ">=1.2.1 <2.0.0"
