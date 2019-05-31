@@ -9,6 +9,7 @@ import 'pages/Directory.dart';
 import 'pages/Social.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'pages/wallpaper_packs.dart';
+import 'package:flutter/services.dart';
 
 Color turq = Color.fromRGBO(0, 206, 209, 1.0);
 
@@ -20,6 +21,11 @@ void main() => runApp(new MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp
+    ]);
+
     return DynamicTheme(
       defaultBrightness: Brightness.light,
       data: (brightness) => new ThemeData(

@@ -135,7 +135,7 @@ class _YouTubeFeedState extends State<YouTubeFeed>
                                       items[index].type == 'playlist'
                                           ? 'Playlist: ' + items[index].title
                                           : items[index].title,
-                                      style: TextStyle(fontSize: 20.0),
+                                      style: TextStyle(fontSize: height * 0.03),
                                       overflow: TextOverflow.clip,
                                     ),
                                   ))

@@ -72,7 +72,7 @@ packages:
     source: hosted
     version: "1.0.1"
   firebase_core:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: firebase_core
       url: "https://pub.dartlang.org"
@@ -112,7 +112,7 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_cache_manager:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_cache_manager
       url: "https://pub.dartlang.org"
@@ -214,6 +214,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.0"
+  progress_button:
+    dependency: "direct main"
+    description:
+      name: progress_button
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.1"
   quiver:
     dependency: transitive
     description:

@@ -29,14 +29,10 @@ class SocialBodyState extends State<SocialBody>
     return Scaffold(
         key: _scaffoldkey,
         body: ListView(children: <Widget>[
-          new BuildSocial().createState().build(context),
-          Card(
-              child: new NoirOffers(_scaffoldkey).createState().build(context)),
+          BuildSocial().createState().build(context),
+          Card(child: new NoirOffers(_scaffoldkey).createState().build(context)),
           Padding(padding: EdgeInsets.only(top: 10.0)),
-          Card(
-              child: new UpcomingEvents(_scaffoldkey)
-                  .createState()
-                  .build(context)),
+          Card(child: new UpcomingEvents(_scaffoldkey).createState().build(context)),
           Padding(padding: EdgeInsets.only(top: 10.0)),
           Card(child: YouTubeFeed().createState().build(context)),
         ]));

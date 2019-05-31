@@ -57,7 +57,7 @@ class _AlertsHomePageState extends State<AlertsHomePage>
                           Text(
                             alertList[index].heading,
                             style: TextStyle(
-                              fontSize: 25,
+                              fontSize: 24,
                               fontWeight: FontWeight.w500,
                             ),
                           ),

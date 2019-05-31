@@ -6,7 +6,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flare_flutter/flare_actor.dart';
-import 'colors/color.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -258,7 +257,7 @@ class LoginState extends State<Login> with AutomaticKeepAliveClientMixin {
               padding: EdgeInsets.only(top: height * 0.7),
               child: isVerifying
                   ? CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(colorMain),
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.greenAccent),
                     )
                   : null,
             )

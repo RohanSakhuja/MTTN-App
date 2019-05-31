@@ -67,14 +67,10 @@ class _UpcomingEventsState extends State<UpcomingEvents>
                   "Upcoming Events",
                   textAlign: TextAlign.left,
                   style: TextStyle(
-                      //  color: colorSec,
                       fontSize: 17.0,
                       fontWeight: FontWeight.w600),
                 ),
               ),
-              // Padding(
-              //   padding: EdgeInsets.symmetric(vertical: 10.0),
-              // ),
               Center(
                 child: SizedBox.fromSize(
                   size: Size.fromHeight(height * 0.25),
@@ -86,18 +82,9 @@ class _UpcomingEventsState extends State<UpcomingEvents>
                       return GestureDetector(
                         child: Container(
                           padding: EdgeInsets.all(5.0),
-                          //margin: EdgeInsets.only(right: 10.0),
-                          // decoration: BoxDecoration(
-                          //     borderRadius:
-                          //         BorderRadius.all(Radius.circular(5.0)),
-                          //     image: DecorationImage(
-                          //         image:
-                          //             CachedNetworkImage(_upcoming[index].imageUri),
-                          //         fit: BoxFit.fill)),
                           child: CachedNetworkImage(
                             imageUrl: _upcoming[index].imageUri,
                             fit: BoxFit.cover,
-                            // color: Colors.red,
                           ),
                           width: width * 0.35,
                           height: height * 0.2,
@@ -133,7 +120,6 @@ class _UpcomingEventsState extends State<UpcomingEvents>
           child: CachedNetworkImage(
             imageUrl: current.imageUri,
             fit: BoxFit.scaleDown,
-            // color: Colors.red,
           ),
         ),
       );

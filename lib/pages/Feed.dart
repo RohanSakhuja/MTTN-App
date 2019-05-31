@@ -266,7 +266,7 @@ class CreateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new GestureDetector(
+return new GestureDetector(
       onTap: () {
         print(link);
         Navigator.push(
@@ -340,7 +340,7 @@ class CreateCard extends StatelessWidget {
               child: Text(
                 title.length > 60 ? title.substring(0, 60) + '...' : title,
                 style: TextStyle(
-                    fontSize: 19.0,
+                    fontSize: MediaQuery.of(context).size.height * 0.027,
                     fontStyle: FontStyle.italic,
                     fontWeight: FontWeight.w400,
                     //fontStyle: FontStyle.italic,

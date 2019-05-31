@@ -31,11 +31,11 @@ Future<int> _fetch() async {
 
   for (var item in json) {
     try {
-      if(item != null) {
+      if (item != null) {
         temp.add(new Offer(
-              imageUri: item['Image Url'],
-              name: item['Name'],
-              text: item['Text']));
+            imageUri: item['Image Url'],
+            name: item['Name'],
+            text: item['Text']));
       }
     } catch (e) {}
   }
@@ -69,13 +69,12 @@ class _NoirOffersState extends State<NoirOffers>
           return new Column(
             children: <Widget>[
               Container(
-                alignment: Alignment.centerLeft,
+                  alignment: Alignment.centerLeft,
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                   width: width * 0.915,
                   child: Text("Select Card Offers",
                       style: TextStyle(
-                         fontSize: 17.0,
-                      fontWeight: FontWeight.w600))),
+                          fontSize: 17.0, fontWeight: FontWeight.w600))),
               Center(
                 child: SizedBox.fromSize(
                   size: Size.fromHeight(height * 0.22),
@@ -107,7 +106,9 @@ class _NoirOffersState extends State<NoirOffers>
             ],
           );
         }
-        return Container();
+        return Container(
+          alignment: Alignment.center,
+          child: CircularProgressIndicator());
       },
     );
   }
@@ -129,7 +130,7 @@ class _NoirOffersState extends State<NoirOffers>
                 placeholder: (context, url) => CircularProgressIndicator(),
               ),
             ),
-            Divider(height: 20.0),
+            Divider(height: MediaQuery.of(context).size.height * 0.02),
             Container(
               height: MediaQuery.of(context).size.height * 0.25,
               child: Card(
@@ -138,7 +139,7 @@ class _NoirOffersState extends State<NoirOffers>
                   //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.fromLTRB(30.0,30.0,30.0,10.0),
+                      padding: EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 10.0),
                       child: Text(
                         offer.name,
                         style: TextStyle(
@@ -146,7 +147,7 @@ class _NoirOffersState extends State<NoirOffers>
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.fromLTRB(30.0,10.0,30.0,30.0),
+                      padding: EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 30.0),
                       child: Text(
                         offer.text,
                         style: TextStyle(
