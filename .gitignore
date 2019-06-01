@@ -1,9 +1,17 @@
 # Build Folder
 build/
 
+# Keystore
+key.jks
+**/android/key.properties
+
+# Random
+*.log
+*.lock
+
+
 # Miscellaneous
 *.class
-*.lock
 *.log
 *.pyc
 *.swp
@@ -29,7 +37,7 @@ build/
 .packages
 .pub-cache/
 .pub/
-build/
+/build/
 
 # Android related
 **/android/**/gradle-wrapper.jar
