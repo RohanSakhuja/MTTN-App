@@ -107,8 +107,7 @@ class _NoirOffersState extends State<NoirOffers>
           );
         }
         return Container(
-          alignment: Alignment.center,
-          child: CircularProgressIndicator());
+            alignment: Alignment.center, child: CircularProgressIndicator());
       },
     );
   }
@@ -119,7 +118,7 @@ class _NoirOffersState extends State<NoirOffers>
         height: 1000.0,
         width: 1000.0,
         alignment: Alignment.center,
-        child: Column(
+        child: ListView(
           children: <Widget>[
             Container(
               padding: EdgeInsets.all(10.0),
@@ -131,31 +130,26 @@ class _NoirOffersState extends State<NoirOffers>
               ),
             ),
             Divider(height: MediaQuery.of(context).size.height * 0.02),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.25,
-              child: Card(
-                child: ListView(
-                  //crossAxisAlignment: CrossAxisAlignment.center,
-                  //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 10.0),
-                      child: Text(
-                        offer.name,
-                        style: TextStyle(
-                            fontSize: 22.0, fontWeight: FontWeight.w600),
-                      ),
+            Card(
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.fromLTRB(30.0, 30.0, 30.0, 10.0),
+                    child: Text(
+                      offer.name,
+                      style: TextStyle(
+                          fontSize: 22.0, fontWeight: FontWeight.w600),
                     ),
-                    Container(
-                      padding: EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 30.0),
-                      child: Text(
-                        offer.text,
-                        style: TextStyle(
-                            fontSize: 16.0, fontWeight: FontWeight.w300),
-                      ),
-                    )
-                  ],
-                ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(30.0, 10.0, 30.0, 30.0),
+                    child: Text(
+                      offer.text,
+                      style: TextStyle(
+                          fontSize: 16.0, fontWeight: FontWeight.w300),
+                    ),
+                  )
+                ],
               ),
             )
           ],

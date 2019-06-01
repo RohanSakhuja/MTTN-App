@@ -29,48 +29,47 @@ class YouTubeFeed extends StatefulWidget {
   _YouTubeFeedState createState() => _YouTubeFeedState();
 }
 
- List<YouTubeItem> items = new List();
+List<YouTubeItem> items = new List();
 
- String parseTitle(String title) {
-    String raw = parse(title).outerHtml;
-    int start = raw.indexOf("<body>") + 6;
-    int last = raw.indexOf("</body>");
-    return raw.substring(start, last);
+String parseTitle(String title) {
+  String raw = parse(title).outerHtml;
+  int start = raw.indexOf("<body>") + 6;
+  int last = raw.indexOf("</body>");
+  return raw.substring(start, last);
+}
+
+Future<String> _fetchItems() async {
+  String uri =
+      'https://www.googleapis.com/youtube/v3/search?key=AIzaSyDMzJvdj7xH40CMVnoW6kZPgVpXhn93aA8&channelId=UCwW9nPcEM2wGfsa06LTYlFg&part=snippet,id&order=date&maxResults=50';
+  var response = await http.get(uri);
+  var body = jsonDecode(response.body);
+
+  for (var item in body['items']) {
+    String temp = item['id']['kind'].substring(8);
+    String id =
+        (temp == 'video') ? item['id']['videoId'] : item['id']['playlistId'];
+    String link = (temp == 'video')
+        ? 'https://www.youtube.com/watch?v=$id'
+        : 'https://www.youtube.com/watch?v=I5y-v_QDmwg&list=$id';
+    items.add(new YouTubeItem(
+        type: temp,
+        title: parseTitle(item['snippet']['title']),
+        itemId: id,
+        description: item['snippet']['description'],
+        thumbnail: item['snippet']['thumbnails']['medium']['url'],
+        link: link));
   }
-
- Future<String> _fetchItems() async {
-    String uri =
-        'https://www.googleapis.com/youtube/v3/search?key=AIzaSyDMzJvdj7xH40CMVnoW6kZPgVpXhn93aA8&channelId=UCwW9nPcEM2wGfsa06LTYlFg&part=snippet,id&order=date&maxResults=50';
-    var response = await http.get(uri);
-    var body = jsonDecode(response.body);
-
-    for (var item in body['items']) {
-      String temp = item['id']['kind'].substring(8);
-      String id =
-          (temp == 'video') ? item['id']['videoId'] : item['id']['playlistId'];
-      String link = (temp == 'video')
-          ? 'https://www.youtube.com/watch?v=$id'
-          : 'https://www.youtube.com/watch?v=I5y-v_QDmwg&list=$id';
-      items.add(new YouTubeItem(
-          type: temp,
-          title: parseTitle(item['snippet']['title']),
-          itemId: id,
-          description: item['snippet']['description'],
-          thumbnail: item['snippet']['thumbnails']['medium']['url'],
-          link: link));
-    }
-    return "success";
-  }
+  return "success";
+}
 
 class _YouTubeFeedState extends State<YouTubeFeed>
     with AutomaticKeepAliveClientMixin {
-
   final Future<String> statee = _fetchItems();
 
   bool get wantKeepAlive => true;
 
   _launchUrl(url) async =>
-      (await canLaunch(url)) ? await launch(url) : throw 'Could not lauch $url'; 
+      (await canLaunch(url)) ? await launch(url) : throw 'Could not lauch $url';
 
   Widget build(BuildContext context) {
     super.build(context);
@@ -89,14 +88,12 @@ class _YouTubeFeedState extends State<YouTubeFeed>
                 child: Text(
                   "YouTube",
                   textAlign: TextAlign.left,
-                  style: TextStyle(
-                   fontSize: 17.0,
-                      fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.w600),
                 ),
               ),
               Center(
                 child: SizedBox.fromSize(
-                  size: Size.fromHeight(height * 0.35),
+                  size: Size.fromHeight(height * 0.38),
                   child: ListView.builder(
                     padding: EdgeInsets.only(left: 15.0),
                     scrollDirection: Axis.horizontal,
@@ -118,27 +115,26 @@ class _YouTubeFeedState extends State<YouTubeFeed>
                                             _launchUrl(items[index].link),
                                         child: CachedNetworkImage(
                                             imageUrl: items[index].thumbnail,
-                                            fit: BoxFit.fill)
-                                        // child: Image.network(
-                                        //   items[index].thumbnail,
-                                        //   fit: BoxFit.fill,
-                                        // ),
-                                        )),
+                                            fit: BoxFit.fill))),
                               ),
                               Padding(
                                 padding: EdgeInsets.symmetric(vertical: 5.0),
                               ),
-                              Container(
-                                  padding: EdgeInsets.only(right: 20.0),
-                                  child: Center(
-                                    child: Text(
-                                      items[index].type == 'playlist'
-                                          ? 'Playlist: ' + items[index].title
-                                          : items[index].title,
-                                      style: TextStyle(fontSize: height * 0.03),
-                                      overflow: TextOverflow.clip,
-                                    ),
-                                  ))
+                              Flexible(
+                                child: Container(
+                                    padding: EdgeInsets.only(right: 20.0),
+                                    child: Center(
+                                      child: Text(
+                                        items[index].type == 'playlist'
+                                            ? 'Playlist: ' + items[index].title
+                                            : items[index].title,
+                                        style:
+                                            TextStyle(fontSize: height * 0.03),
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    )),
+                              )
                             ],
                           ),
                         ),

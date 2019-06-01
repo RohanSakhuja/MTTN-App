@@ -8,7 +8,6 @@ import 'pages/login.dart';
 import 'pages/Directory.dart';
 import 'pages/Social.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
-import 'pages/wallpaper_packs.dart';
 import 'package:flutter/services.dart';
 
 Color turq = Color.fromRGBO(0, 206, 209, 1.0);
@@ -21,10 +20,7 @@ void main() => runApp(new MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp
-    ]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
     return DynamicTheme(
       defaultBrightness: Brightness.light,
@@ -221,15 +217,6 @@ class HomePageState extends State<HomePage> {
                               : Colors.black),
                     ),
                     actions: <Widget>[
-                      IconButton(
-                        icon: Icon(Icons.image),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => new WallpaperPacks()));
-                        },
-                      ),
                       IconButton(
                         icon: Icon(
                             DynamicTheme.of(context).data.primaryColor == turq
