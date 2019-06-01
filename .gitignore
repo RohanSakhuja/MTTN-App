@@ -5,6 +5,11 @@ build/
 key.jks
 **/android/key.properties
 
+# Random
+*.log
+*.lock
+
+
 # Miscellaneous
 *.class
 *.log
