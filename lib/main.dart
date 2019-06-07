@@ -63,10 +63,10 @@ class HomePageState extends State<HomePage> {
 
   String titleOfBar;
   List<String> titleItem = [
-    "MTTN : Feed",
+    "MTTN : Social",
+    "Feed",
     "Directory",
     "SLCM",
-    "Social",
     "Alerts"
   ];
   List<BottomNavigationBarItem> navBarItem;
@@ -74,7 +74,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    titleOfBar = "Feed";
+    titleOfBar = "Social";
     isHidden = true;
     super.initState();
     _pageController = new PageController();
@@ -109,6 +109,20 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     navBarItem = [
+      BottomNavigationBarItem(
+        backgroundColor: DynamicTheme.of(context).data.primaryColor != turq
+            ? colorSec
+            : Colors.black38,
+        title: Text(
+          "Social",
+        ),
+        activeIcon: Icon(
+          Icons.gps_fixed,
+        ),
+        icon: Icon(
+          Icons.gps_not_fixed,
+        ),
+      ),
       BottomNavigationBarItem(
         backgroundColor: DynamicTheme.of(context).data.primaryColor != turq
             ? colorSec
@@ -156,20 +170,6 @@ class HomePageState extends State<HomePage> {
             ? colorSec
             : Colors.black38,
         title: Text(
-          "Social",
-        ),
-        activeIcon: Icon(
-          Icons.gps_fixed,
-        ),
-        icon: Icon(
-          Icons.gps_not_fixed,
-        ),
-      ),
-      BottomNavigationBarItem(
-        backgroundColor: DynamicTheme.of(context).data.primaryColor != turq
-            ? colorSec
-            : Colors.black38,
-        title: Text(
           "Alerts",
         ),
         activeIcon: Icon(
@@ -183,10 +183,10 @@ class HomePageState extends State<HomePage> {
     ];
 
     routes = <Widget>[
+      new SocialBody(),
       new Feed(),
       new DirectoryHomePage(),
       new Login(),
-      new SocialBody(),
       new AlertsHomePage(),
     ];
 
@@ -254,13 +254,13 @@ class HomePageState extends State<HomePage> {
                 navigationTapped(index);
                 titleOfBar = (isHidden != null && isHidden)
                     ? [
-                        ...titleItem.sublist(0, 2),
-                        ...titleItem.sublist(3)
+                        ...titleItem.sublist(0, 3),
+                        ...titleItem.sublist(4)
                       ][index]
                     : titleItem[index];
               },
               items: (isHidden != null && isHidden)
-                  ? [...navBarItem.sublist(0, 2), ...navBarItem.sublist(3)]
+                  ? [...navBarItem.sublist(0, 3), ...navBarItem.sublist(4)]
                   : navBarItem,
             ),
           );

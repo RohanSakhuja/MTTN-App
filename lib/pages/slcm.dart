@@ -34,7 +34,6 @@ class StudentInfoState extends State<StudentInfo>{
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        leading: IconButton(icon: Icon(Icons.arrow_back, color: Colors.white,), onPressed: (){Navigator.pop(context);}),
         title: Text("SLCM ",style: TextStyle(color: Colors.white),),
         backgroundColor: Colors.black,
         actions: <Widget>[

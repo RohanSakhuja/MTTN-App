@@ -30,6 +30,8 @@ class LoginState extends State<Login> with AutomaticKeepAliveClientMixin {
   String password;
   bool obsecureText = true;
   bool isVerifying = false;
+  bool loggedIn = false;
+  var attendance;
 
   void _showDialog(String title, String content) {
     showDialog(
@@ -53,7 +55,7 @@ class LoginState extends State<Login> with AutomaticKeepAliveClientMixin {
 
   Future<http.Response> _getResponse(String reg, String pass) async {
     try {
-      final String _slcmApi = 'http://139.59.65.42:8080/';
+      final String _slcmApi = 'https://slcm.herokuapp.com/attendance';
       var match = {'username': reg, 'password': pass};
       setState(() {
         isVerifying = true;
@@ -65,7 +67,7 @@ class LoginState extends State<Login> with AutomaticKeepAliveClientMixin {
       );
       return response;
     } on SocketException catch (e) {
-      if(e.osError.errorCode == 111){
+      if (e.osError.errorCode == 111) {
         _showDialog("Server Down",
             "It seems SLCM is down, please try again in some time.");
         return null; // if connection refused
@@ -83,17 +85,14 @@ class LoginState extends State<Login> with AutomaticKeepAliveClientMixin {
     _getResponse(reg, pass).then((response) {
       if (response != null && response.statusCode == 200) {
         var res = json.decode(response.body);
+        print(res['login']);
         if (res['login'] == 'successful') {
           setState(() {
             isVerifying = false;
+            loggedIn = true;
+            attendance = res;
           });
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => StudentInfo(
-                        json: res,
-                      )));
-        } else {
+        } else if (res['login'] == 'unsuccessful') {
           _showDialog("Invalid Credentials",
               "Please enter a valid registration number and/or password.");
           controllerReg.clear();
@@ -116,6 +115,13 @@ class LoginState extends State<Login> with AutomaticKeepAliveClientMixin {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
 
+    return loggedIn?
+     StudentInfo(json: attendance,):
+     loginPage(height, width);
+    
+  }
+
+  Widget loginPage(height, width) {
     return Scaffold(
       resizeToAvoidBottomPadding: true,
       resizeToAvoidBottomInset: true,
@@ -257,7 +263,8 @@ class LoginState extends State<Login> with AutomaticKeepAliveClientMixin {
               padding: EdgeInsets.only(top: height * 0.7),
               child: isVerifying
                   ? CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.greenAccent),
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.greenAccent),
                     )
                   : null,
             )
