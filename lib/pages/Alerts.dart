@@ -26,11 +26,11 @@ class _AlertsHomePageState extends State<AlertsHomePage>
 
   _parseAlerts(var data) {
     alertList.clear();
-    for (var item in data) {
-      if (item != null) {
-        alertList.add(
-            new Alerts(item['Head'], item['Body'], item['Url'], item['Date']));
-      }
+    var keys = data.keys;
+    for (var key in keys) {
+      var item = data['$key'];
+      alertList.add(
+          new Alerts(item['Head'], item['Body'], item['Url'], item['Date']));
     }
   }
 

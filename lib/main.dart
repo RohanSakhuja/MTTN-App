@@ -4,7 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/rendering.dart';
 import 'pages/Feed.dart';
 import 'pages/Alerts.dart';
-import 'pages/login.dart';
+import 'pages/slcm.dart';
 import 'pages/Directory.dart';
 import 'pages/Social.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
@@ -54,9 +54,9 @@ class HomePageState extends State<HomePage> {
   DatabaseReference slcmRef;
   bool isHidden;
 
-  update(String token) {
-    _databaseReference.child('fcm-token/$token').set({"token": token});
-  }
+  // update(String token) {
+  //   _databaseReference.child('fcm-token/$token').set({"token": token});
+  // }
 
   PageController _pageController;
   int _page = 0;
@@ -80,7 +80,7 @@ class HomePageState extends State<HomePage> {
     _pageController = new PageController();
     _messaging.getToken().then((token) {
       print(token);
-      update(token);
+      // update(token);
     });
     slcmRef = _databaseReference.child('SLCM').child("isHidden");
   }
@@ -186,7 +186,7 @@ class HomePageState extends State<HomePage> {
       new SocialBody(),
       new Feed(),
       new DirectoryHomePage(),
-      new Login(),
+      new SLCM(),
       new AlertsHomePage(),
     ];
 
