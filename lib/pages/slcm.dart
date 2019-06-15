@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flare_flutter/flare_actor.dart';
+import 'package:mttn_app/main.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'CachedImages.dart';
 import 'package:flutter_parallax/flutter_parallax.dart';
@@ -167,7 +168,6 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
               children: <Widget>[
                 Material(
                   borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                  //  color: Colors.white,
                   child: Container(
                     height: height * 0.185,
                     child: Column(
@@ -186,11 +186,10 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                             },
                             decoration: const InputDecoration(
                                 border: InputBorder.none,
-                                labelText: 'Registraion Number',
+                                labelText: 'Registration Number',
                                 prefixIcon: Icon(Icons.person)),
                           ),
                         ),
-                        // Padding(padding: EdgeInsets.all(2.0),),
                         SizedBox(
                           height: height * 0.07,
                           width: width * 0.9,
@@ -224,13 +223,9 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                                       icon: obsecureText
                                           ? Icon(
                                               Icons.visibility_off,
-                                              // color: Colors.black
-                                              //     .withOpacity(0.5),
                                             )
                                           : Icon(
                                               Icons.visibility,
-                                              // color: Colors.black
-                                              //     .withOpacity(0.5),
                                             ),
                                       onPressed: () => setState(() {
                                             obsecureText = !obsecureText;
@@ -254,7 +249,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
           ),
           Container(
             height: height * 0.06,
-            margin: EdgeInsets.only(top: height * 0.5),
+            margin: EdgeInsets.only(top: height * 0.44),
             decoration: BoxDecoration(
               color: Colors.red,
               borderRadius: BorderRadius.all(Radius.circular(20.0)),
@@ -280,11 +275,11 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                     ),
                   ),
                   onTap: () {
-                    // controllerPass.
+                    _passFocus.unfocus();
+                    _regFocus.unfocus();
                     isVerifying = true;
                     regNo = controllerReg.text;
                     password = controllerPass.text;
-                    // print(controllerReg.text + controllerPass.text);
                     _checkCredentials(regNo, password);
                   },
                 ),
@@ -309,34 +304,35 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     List<Attendance> att = _parseAttendace();
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: darkTheme ? turq : colorSec,
         elevation: 0.0,
         title: Text(
           "SLCM ",
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.black,
+          style: TextStyle(color: darkTheme ? Colors.black : Colors.white),
+          ),
         actions: <Widget>[
-          IconButton(
-            iconSize: 80.0,
-            icon: Text('Logout', style: TextStyle(fontSize: 18.0),),
-            onPressed: () {
+          InkWell(
+            child: Container(
+              padding: EdgeInsets.only(right: 10.0),
+              alignment: Alignment.center,
+              child: Text("Logout",style: TextStyle(color: darkTheme ? Colors.black : Colors.white),)),
+            onTap: () {
               setState(() {
                 loggedIn = false;
               });
             },
-          ),
+          )
         ],
       ),
       resizeToAvoidBottomPadding: false,
       body: Container(
-        decoration: BoxDecoration(color: Colors.black),
         padding: EdgeInsets.symmetric(
             horizontal: width * .03, vertical: height * 0.02),
         child: ListView.builder(
           itemCount: att.length,
           itemBuilder: (context, index) {
             return Container(
-              height: height * 0.32,
+              height: height * 0.42,
               margin: EdgeInsets.only(bottom: 10.0),
               child: Card(
                 color: Colors.white.withOpacity(0.9),
@@ -391,7 +387,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
       child: Stack(
         children: <Widget>[
           Container(
-              height: height * 0.31,
+              height: height * 0.41,
               width: width * 0.95,
               child: Parallax.inside(
                 mainAxisExtent: 200.0,
@@ -402,9 +398,10 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
+                  alignment: Alignment.center,
                   margin: EdgeInsets.fromLTRB(
                       height * 0.03, height * 0.04, height * 0.02, 0.0),
-                  height: height * 0.1,
+                  height: height * 0.2,
                   width: width * 0.8,
                   child: Text(
                     capFirst(subName.toLowerCase()),
@@ -413,7 +410,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                       fontSize: 30.0,
                       fontWeight: FontWeight.w300,
                     ),
-                    overflow: TextOverflow.clip,
+                    //overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Row(
@@ -442,7 +439,6 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                         progressColor: Colors.white,
                         circularStrokeCap: CircularStrokeCap.round,
                         backgroundColor: Colors.grey,
-                        //animateFromLastPercent: true,
                       )),
                     ),
                     Container(

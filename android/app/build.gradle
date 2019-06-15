@@ -31,8 +31,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdkVersion 27
-
+    compileSdkVersion 27        
     lintOptions {
         disable 'InvalidPackage'
     }
@@ -58,6 +57,9 @@ android {
     }
     buildTypes {
         release {
+            profile{
+                matchingFallbacks = ['debug','release']
+            }
             signingConfig signingConfigs.release
             
             // minifyEnabled true
@@ -65,6 +67,10 @@ android {
 
             // proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    lintOptions{
+        disable 'InvalidPackage'
+        checkReleaseBuilds false
     }
 }
 

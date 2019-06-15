@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'pages/Feed.dart';
 import 'pages/Alerts.dart';
 import 'pages/slcm.dart';
@@ -43,6 +45,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
+bool darkTheme;
+
 class HomePage extends StatefulWidget {
   @override
   HomePageState createState() => new HomePageState();
@@ -53,10 +57,6 @@ class HomePageState extends State<HomePage> {
   DatabaseReference _databaseReference = new FirebaseDatabase().reference();
   DatabaseReference slcmRef;
   bool isHidden;
-
-  // update(String token) {
-  //   _databaseReference.child('fcm-token/$token').set({"token": token});
-  // }
 
   PageController _pageController;
   int _page = 0;
@@ -106,80 +106,144 @@ class HomePageState extends State<HomePage> {
     return _pageController.position;
   }
 
+  _buildDrawerTile(icon, title, url) {
+    return InkWell(
+      child: ListTile(
+        title: Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.w400),
+        ),
+        leading: icon,
+        onTap: () {
+          _launchURL(url);
+        },
+      ),
+    );
+  }
+
+  _buildDrawer() {
+    return Drawer(
+        child: ListView(
+      children: <Widget>[
+        UserAccountsDrawerHeader(
+            decoration: BoxDecoration(color: darkTheme ? turq : colorSec),
+            accountName: Text("MTTN",
+                style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20.0,
+                    color: darkTheme ? Colors.black : Colors.white)),
+            accountEmail: InkWell(
+              onTap: () {
+                _launchURL(
+                    "mailto:editors@manipalthetalk.org?subject=Is this manipal blog?&body=is it?");
+              },
+              child: Text(
+                "editors@manipalthetalk.org",
+                style: TextStyle(
+                    fontWeight: FontWeight.w400,
+                    color: darkTheme ? Colors.black : Colors.white),
+              ),
+            ),
+            currentAccountPicture: CircleAvatar(
+                backgroundImage: darkTheme
+                    ? AssetImage(
+                        "assets/ic_launcher.png",
+                      )
+                    : AssetImage(
+                        "assets/ic_launcher_white.png",
+                      ))),
+        ListTile(
+          leading: Icon(Icons.people),
+          title: Text("Connect with Us",
+              style: TextStyle(fontWeight: FontWeight.w700)),
+        ),
+        _buildDrawerTile(Icon(Icons.arrow_right), "Instagram",
+            "https://www.instagram.com/manipalthetalk/"),
+        _buildDrawerTile(Icon(Icons.arrow_right), "Facebook",
+            "https://facebook.com/manipalthetalk/"),
+        _buildDrawerTile(Icon(Icons.arrow_right), "Twitter",
+            "https://twitter.com/manipalthetalk?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"),
+        _buildDrawerTile(Icon(Icons.arrow_right), "Website",
+            "https://www.manipalthetalk.org"),
+        Divider(),
+        ListTile(
+          leading: Icon(Icons.settings),
+          title: Text("App Settings",
+              style: TextStyle(fontWeight: FontWeight.w700)),
+        ),
+        ListTile(
+          leading: Icon(Icons.settings_brightness),
+          title:
+              Text("Dark Theme", style: TextStyle(fontWeight: FontWeight.w400)),
+          trailing: Switch(
+            value: darkTheme,
+            onChanged: (bool val) {
+              setState(() {
+                darkTheme = val;
+              });
+              changeBrightness();
+            },
+          ),
+        ),
+        ListTile(
+          leading: allowNotification
+              ? Icon(Icons.notifications)
+              : Icon(Icons.notifications_off),
+          title: Text("Notification",
+              style: TextStyle(fontWeight: FontWeight.w400)),
+          trailing: Switch(
+            value: allowNotification,
+            onChanged: (bool val) {
+              // Implement notification toggle here
+
+              setState(() {
+                allowNotification = val;
+              });
+            },
+          ),
+        ),
+        Divider(),
+        ListTile(
+          leading: Icon(Icons.hdr_weak),
+          title: Text("Others", style: TextStyle(fontWeight: FontWeight.w700)),
+        ),
+        _buildDrawerTile(Icon(Icons.assignment), "Privacy Policy",
+            "https://www.termsfeed.com/privacy-policy/ec69fc0be140c10cf91cf70816a8ba79"),
+      ],
+    ));
+  }
+
+  _launchURL(url) async =>
+      await canLaunch(url) ? await launch(url) : throw 'Could not launch $url';
+
+  bool allowNotification = true;
+
+  _buildBottomNavBarItem(String title, Icon activeIcon, Icon icon) {
+    return BottomNavigationBarItem(
+      backgroundColor: darkTheme ? Colors.black38 : colorSec,
+      title: Text(title),
+      activeIcon: activeIcon,
+      icon: icon,
+    );
+  }
+
+  final _scaffoldkey = new GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
+    darkTheme = Theme.of(context).brightness == Brightness.dark;
+
     navBarItem = [
-      BottomNavigationBarItem(
-        backgroundColor: DynamicTheme.of(context).data.primaryColor != turq
-            ? colorSec
-            : Colors.black38,
-        title: Text(
-          "Social",
-        ),
-        activeIcon: Icon(
-          Icons.gps_fixed,
-        ),
-        icon: Icon(
-          Icons.gps_not_fixed,
-        ),
-      ),
-      BottomNavigationBarItem(
-        backgroundColor: DynamicTheme.of(context).data.primaryColor != turq
-            ? colorSec
-            : Colors.black38,
-        title: Text(
-          "Feed",
-        ),
-        activeIcon: Icon(
-          Icons.developer_board,
-        ),
-        icon: Icon(
-          Icons.dashboard,
-        ),
-      ),
-      BottomNavigationBarItem(
-        backgroundColor: DynamicTheme.of(context).data.primaryColor != turq
-            ? colorSec
-            : Colors.black38,
-        title: Text(
-          "Directory",
-        ),
-        activeIcon: Icon(
-          Icons.contact_phone,
-        ),
-        icon: Icon(
-          Icons.contacts,
-        ),
-      ),
-      BottomNavigationBarItem(
-        backgroundColor: DynamicTheme.of(context).data.primaryColor != turq
-            ? colorSec
-            : Colors.black38,
-        title: Text(
-          "SLCM",
-        ),
-        activeIcon: Icon(
-          Icons.local_library,
-        ),
-        icon: Icon(
-          Icons.local_library,
-        ),
-      ),
-      BottomNavigationBarItem(
-        backgroundColor: DynamicTheme.of(context).data.primaryColor != turq
-            ? colorSec
-            : Colors.black38,
-        title: Text(
-          "Alerts",
-        ),
-        activeIcon: Icon(
-          Icons.notifications,
-        ),
-        icon: Icon(
-          Icons.notifications_none,
-          // color: Colors.white54,
-        ),
-      ),
+      _buildBottomNavBarItem(
+          "Social", Icon(Icons.gps_fixed), Icon(Icons.gps_not_fixed)),
+      _buildBottomNavBarItem(
+          "Feed", Icon(Icons.developer_board), Icon(Icons.dashboard)),
+      _buildBottomNavBarItem(
+          "Directory", Icon(Icons.contact_phone), Icon(Icons.contacts)),
+      _buildBottomNavBarItem(
+          "SLCM", Icon(Icons.local_library), Icon(Icons.local_library)),
+      _buildBottomNavBarItem(
+          "Alerts", Icon(Icons.notifications), Icon(Icons.notifications_none)),
     ];
 
     routes = <Widget>[
@@ -198,40 +262,26 @@ class HomePageState extends State<HomePage> {
           }
 
           return Scaffold(
+            key: _scaffoldkey,
             appBar: titleOfBar != 'SLCM'
                 ? AppBar(
-                    backgroundColor:
-                        DynamicTheme.of(context).data.primaryColor == turq
-                            ? turq
-                            : colorSec,
-                    elevation: 8.0,
+                    leading: IconButton(
+                      icon: Icon(Icons.menu,
+                          color: darkTheme ? Colors.black : Colors.white),
+                      onPressed: () {
+                        _scaffoldkey.currentState.openDrawer();
+                      },
+                    ),
+                    backgroundColor: darkTheme ? turq : colorSec,
                     centerTitle: false,
                     title: Text(
                       titleOfBar,
                       style: TextStyle(
-                          color: DynamicTheme.of(context)
-                                      .data
-                                      .secondaryHeaderColor ==
-                                  Colors.white
-                              ? Colors.white
-                              : Colors.black),
+                          color: darkTheme ? Colors.black : Colors.white),
                     ),
-                    actions: <Widget>[
-                      IconButton(
-                        icon: Icon(
-                            DynamicTheme.of(context).data.primaryColor == turq
-                                ? Icons.brightness_3
-                                : Icons.brightness_7,
-                            size: 30.0,
-                            color: DynamicTheme.of(context).data.primaryColor !=
-                                    turq
-                                ? Colors.white
-                                : Colors.black),
-                        onPressed: changeBrightness,
-                      )
-                    ],
                   )
                 : null,
+            drawer: _buildDrawer(),
             body: PageView(
               physics: NeverScrollableScrollPhysics(),
               controller: _pageController,
@@ -242,11 +292,8 @@ class HomePageState extends State<HomePage> {
                   : routes,
             ),
             bottomNavigationBar: BottomNavigationBar(
-              backgroundColor: DynamicTheme.of(context).data.primaryColor,
-              selectedItemColor:
-                  DynamicTheme.of(context).data.primaryColor == colorSec
-                      ? Colors.white
-                      : turq,
+              backgroundColor: darkTheme ? turq : colorSec,
+              selectedItemColor: darkTheme ? turq : Colors.white,
               unselectedItemColor: Colors.white54,
               currentIndex: _page,
               type: BottomNavigationBarType.shifting,
@@ -268,25 +315,25 @@ class HomePageState extends State<HomePage> {
   }
 
   void changeBrightness() {
-    DynamicTheme.of(context).setThemeData(
-      ThemeData(
-        secondaryHeaderColor:
-            Theme.of(context).secondaryHeaderColor == Colors.white
-                ? Colors.black
-                : Colors.white,
-        primaryColor:
-            Theme.of(context).primaryColor == colorSec ? turq : colorSec,
-        brightness: Theme.of(context).brightness == Brightness.dark
+    DynamicTheme.of(context).setBrightness(
+        Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
-            : Brightness.dark,
-        floatingActionButtonTheme: FloatingActionButtonThemeData(
-          backgroundColor:
-              Theme.of(context).floatingActionButtonTheme.backgroundColor ==
-                      turq
-                  ? colorMain
-                  : turq,
-        ),
-      ),
-    );
+            : Brightness.dark);
+    // DynamicTheme.of(context).setThemeData(
+    //   ThemeData(
+    //     primaryColor:
+    //         Theme.of(context).primaryColor == colorSec ? turq : colorSec,
+    //     brightness: Theme.of(context).brightness == Brightness.dark
+    //         ? Brightness.light
+    //         : Brightness.dark,
+    //     floatingActionButtonTheme: FloatingActionButtonThemeData(
+    //       backgroundColor:
+    //           Theme.of(context).floatingActionButtonTheme.backgroundColor ==
+    //                   turq
+    //               ? colorMain
+    //               : turq,
+    //     ),
+    //   ),
+    // );
   }
 }

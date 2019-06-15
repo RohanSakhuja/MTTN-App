@@ -36,7 +36,6 @@ class _BuildSocialState extends State<BuildSocial>  {
     PageController controller = PageController(viewportFraction: 1.1);
 
     return Container(
-    //  padding: EdgeInsets.only(top: 15.0),
       child: Center(
         child: SizedBox.fromSize(
             size: Size.fromHeight(225.0),

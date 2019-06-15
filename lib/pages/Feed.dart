@@ -67,6 +67,7 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
         setState(() => isPerformingRequest = true);
         List<Post> newData =
             await _getPosts((articles.length / 10).round() + 1);
+            imageCache.clear();
         setState(() {
           articles.addAll(newData);
           isPerformingRequest = false;
@@ -112,11 +113,9 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
     return new Scaffold(
-      //    backgroundColor: Colors.white,
       floatingActionButton: isFabActive
           ? FloatingActionButton(
               child: Icon(Icons.arrow_upward),
-              // backgroundColor: okay != Colors.greenAccent ? Colors.greenAccent : colorSec,
              foregroundColor: Colors.white,
               backgroundColor: Color.fromRGBO(0, 206, 209, 1.0),
               onPressed: () {
@@ -139,7 +138,7 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
               : new RefreshIndicator(
                   child: ListView.builder(
                     controller: _scrollController,
-                    cacheExtent: 500.0,
+                    cacheExtent: 0.1,
                     padding: EdgeInsets.all(0.0),
                     addAutomaticKeepAlives: true,
                     itemCount: articles.length,
@@ -288,9 +287,10 @@ return new GestureDetector(
                 color: Colors.transparent,
                 image: DecorationImage(
                     fit: BoxFit.fitWidth,
-                    image: CachedNetworkImageProvider(
+                    image: NetworkImage(
                       img,
-                    ))),
+                    )
+                )),
           ),
           Container(
             height: MediaQuery.of(context).size.height * 0.25,
@@ -441,4 +441,14 @@ class Article extends StatefulWidget {
   final String link;
   Article({this.title, this.content, this.link});
   ArticleState createState() => ArticleState();
+}
+
+class Person{
+  final String gender;
+  final String name;
+  final int age;
+  final bool isEarning;
+  final double salary;
+
+  Person({this.gender,this.name,this.age,this.isEarning,this.salary});
 }
