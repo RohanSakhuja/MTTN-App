@@ -9,6 +9,7 @@ key.jks
 # Random
 *.log
 *.lock
+log.txt
 
 # Miscellaneous
 *.class
