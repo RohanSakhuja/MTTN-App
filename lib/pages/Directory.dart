@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Info {
   String name;
   String contact;
-  Info({this.name, this.contact});
+  String url;
+  Info({this.name, this.contact, this.url});
 }
 
 class Category {
@@ -25,13 +28,19 @@ class Category {
   Category({this.catName, this.entry}) {
     this.tiles = List<Widget>.generate(this.entry.length, (int index) {
       String str = this.entry[index].contact;
+      String url = this.entry[index].url;
+      bool location = url != "null";
       return Card(
         elevation: 0.0,
         child: new ListTile(
-          leading: Icon(Icons.phone),
+          leading: Icon(Icons.phone, color: Colors.blue,),
           title: Text(this.entry[index].name),
           subtitle: Text(this.entry[index].contact),
           onTap: () => _launchURL("tel:" + str),
+          trailing: location?IconButton(
+            icon: Icon(Icons.map, color: Colors.blue,),
+            onPressed: () => _launchURL(url),
+          ):null,
         ),
       );
     });
@@ -45,6 +54,7 @@ class DirectoryHomePage extends StatefulWidget {
 class _DirectoryHomePageState extends State<DirectoryHomePage>
     with AutomaticKeepAliveClientMixin {
   List<Category> data = new List();
+  SharedPreferences _preferences;
 
   @override
   bool get wantKeepAlive => true;
@@ -53,14 +63,26 @@ class _DirectoryHomePageState extends State<DirectoryHomePage>
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  Future<String> loadAsset() async {
-    FirebaseDatabase database;
+  _fetchDirectory() async {
+    _preferences = await SharedPreferences.getInstance();
+    String data = _preferences.getString('directory')??'null';
+    Map<dynamic, dynamic> json;
+    if(data != 'null'){
+      json = jsonDecode(data);
+    } else {
+      FirebaseDatabase database;
     database = FirebaseDatabase.instance;
     database.setPersistenceEnabled(true);
     database.setPersistenceCacheSizeBytes(10000000);
 
     var snapshot = await databaseReference.once();
-    Map<dynamic, dynamic> json = snapshot.value['Directory'];
+    json = snapshot.value['Dir'];
+    }
+    return json;
+  }
+
+  Future<String> loadAsset() async {
+    var json = await _fetchDirectory();
     List<Info> ent = new List();
     data.clear();
     for (var cat in json.keys) {
@@ -68,9 +90,10 @@ class _DirectoryHomePageState extends State<DirectoryHomePage>
       if (cat != null) {
         for (var i in json['$cat'].keys) {
           if (i != null) {
-            String val = json['$cat']['$i'].toString();
-            if (val != null) {
-              ent.add(new Info(contact: val, name: i));
+            String contact = json['$cat']['$i']['contact'].toString();
+            String location = json['$cat']['$i']['location'].toString();
+            if (contact != null) {
+              ent.add(new Info(contact: contact, name: i, url: location));
             }
           }
         }

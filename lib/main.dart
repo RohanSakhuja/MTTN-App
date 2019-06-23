@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -11,13 +13,31 @@ import 'pages/Directory.dart';
 import 'pages/Social.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:device_info/device_info.dart';
 
 Color turq = Color.fromRGBO(0, 206, 209, 1.0);
 
 Color colorSec = Color.fromRGBO(0, 44, 62, 1);
 Color colorMain = Color.fromRGBO(120, 188, 196, 1);
 
-void main() => runApp(new MyApp());
+void main() async {
+  sharedPreferencesStartup();
+  runApp(new MyApp());
+}
+
+sharedPreferencesStartup() {
+  const MethodChannel('plugins.flutter.io/shared_preferences')
+      .setMockMethodCallHandler((MethodCall methodCall) async {
+    if (methodCall.method == 'getAll') {
+      return <String, dynamic>{
+        "flutter.appVersion": "1.0.0",
+        "flutter.Notfications": true
+      };
+    }
+    return null;
+  });
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -53,36 +73,154 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  final FirebaseMessaging _messaging = FirebaseMessaging();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   DatabaseReference _databaseReference = new FirebaseDatabase().reference();
   DatabaseReference slcmRef;
   bool isHidden;
+  SharedPreferences _preferences;
 
   PageController _pageController;
   int _page = 0;
 
   String titleOfBar;
-  List<String> titleItem = [
-    "MTTN : Social",
-    "Feed",
-    "Directory",
-    "SLCM",
-    "Alerts"
-  ];
+  List<String> titleItem = ["Social", "Feed", "Directory", "SLCM", "Alerts"];
   List<BottomNavigationBarItem> navBarItem;
   List<Widget> routes;
+
+  bool allowNotification = true;
+  final _scaffoldkey = new GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     titleOfBar = "Social";
-    isHidden = true;
+    isHidden = false;
     super.initState();
+    firebaseCloudMessagingListeners();
     _pageController = new PageController();
-    _messaging.getToken().then((token) {
-      print(token);
-      // update(token);
-    });
     slcmRef = _databaseReference.child('SLCM').child("isHidden");
+    _startupCache();
+  }
+
+  void firebaseCloudMessagingListeners() {
+    if (Platform.isIOS) iOSPermission();
+
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print('on message $message');
+        String url = message["data"]["URL"] ?? "null";
+        String tab = message["data"]["TAB"] ?? "null";
+
+        if (url != "null" || tab != null) {
+          fcmShowDialog(
+              message["notification"]["title"], message["notification"]["body"],
+              url: url, tab: tab);
+        }
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print('on resume $message');
+        String url = message["data"]["URL"] ?? "null";
+        String tab = message["data"]["TAB"] ?? "null";
+        if (url != "null") {
+          _launchURL(url);
+        }
+        if (tab != "null") {
+          print(tab);
+          fcmChangeTab(tab);
+        }
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print('on launch $message');
+        String url = message["data"]["URL"] ?? "null";
+        String tab = message["data"]["TAB"] ?? "null";
+        if (url != "null") {
+          _launchURL(url);
+        }
+        if (tab != "null") {
+          fcmChangeTab(tab);
+        }
+      },
+    );
+  }
+
+  void fcmChangeTab(String tab) {
+    if (!(isHidden == true && tab == "SLCM")) {
+      if (titleItem.contains(tab)) {
+        int val = titleItem.indexOf(tab);
+        if (tab == "Alerts" && isHidden == true) {
+          val = val - 1;
+        }
+        changePageView(val);
+      }
+    }
+  }
+
+  void fcmShowDialog(String title, String content, {String url, String tab}) {
+    showDialog(
+        context: _scaffoldkey.currentContext,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(content),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Explore"),
+                onPressed: () {
+                  if (tab != "null") {
+                    fcmChangeTab(tab);
+                  }
+                  if (url != "null") {
+                    _launchURL(url);
+                  }
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text("Close"),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        });
+  }
+
+  void iOSPermission() {
+    _firebaseMessaging.requestNotificationPermissions(
+        IosNotificationSettings(sound: true, badge: true, alert: true));
+    _firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings) {
+      print("Settings registered: $settings");
+    });
+  }
+
+  void _startupCache() async {
+    _preferences = await SharedPreferences.getInstance();
+    _cacheDirectory();
+    _cacheUrls();
+    var temp = _preferences.getBool("Notfications");
+    if (temp == null) {
+      _preferences.setBool("Notifications", true);
+    } else {
+      allowNotification = temp;
+    }
+    _firebaseMessaging.getToken().then((token) {
+      print(token);
+      _preferences.setString("fcm-token", token);
+    });
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    _preferences.setString("device", "${androidInfo.device}");
+  }
+
+  void _cacheUrls() async {
+    _databaseReference.child('URL').once().then((data) {
+      _preferences.setString('url', jsonEncode(data.value));
+    });
+  }
+
+  void _cacheDirectory() async {
+    _databaseReference.child('Dir').once().then((data) {
+      _preferences.setString('directory', jsonEncode(data.value));
+    });
   }
 
   @override
@@ -195,7 +333,8 @@ class HomePageState extends State<HomePage> {
             value: allowNotification,
             onChanged: (bool val) {
               // Implement notification toggle here
-
+              print(val);
+              _preferences.setBool('Notifications', val);
               setState(() {
                 allowNotification = val;
               });
@@ -216,8 +355,6 @@ class HomePageState extends State<HomePage> {
   _launchURL(url) async =>
       await canLaunch(url) ? await launch(url) : throw 'Could not launch $url';
 
-  bool allowNotification = true;
-
   _buildBottomNavBarItem(String title, Icon activeIcon, Icon icon) {
     return BottomNavigationBarItem(
       backgroundColor: darkTheme ? Colors.black38 : colorSec,
@@ -226,8 +363,6 @@ class HomePageState extends State<HomePage> {
       icon: icon,
     );
   }
-
-  final _scaffoldkey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -288,7 +423,7 @@ class HomePageState extends State<HomePage> {
               onPageChanged: onPageChanged,
               scrollDirection: Axis.horizontal,
               children: (isHidden != null && isHidden)
-                  ? [...routes.sublist(0, 2), ...routes.sublist(3)]
+                  ? [...routes.sublist(0, 3), ...routes.sublist(4)]
                   : routes,
             ),
             bottomNavigationBar: BottomNavigationBar(
@@ -297,15 +432,7 @@ class HomePageState extends State<HomePage> {
               unselectedItemColor: Colors.white54,
               currentIndex: _page,
               type: BottomNavigationBarType.shifting,
-              onTap: (index) {
-                navigationTapped(index);
-                titleOfBar = (isHidden != null && isHidden)
-                    ? [
-                        ...titleItem.sublist(0, 3),
-                        ...titleItem.sublist(4)
-                      ][index]
-                    : titleItem[index];
-              },
+              onTap: (index) => changePageView(index),
               items: (isHidden != null && isHidden)
                   ? [...navBarItem.sublist(0, 3), ...navBarItem.sublist(4)]
                   : navBarItem,
@@ -314,26 +441,19 @@ class HomePageState extends State<HomePage> {
         });
   }
 
+  changePageView(index) {
+    {
+      navigationTapped(index);
+      titleOfBar = (isHidden != null && isHidden)
+          ? [...titleItem.sublist(0, 3), ...titleItem.sublist(4)][index]
+          : titleItem[index];
+    }
+  }
+
   void changeBrightness() {
     DynamicTheme.of(context).setBrightness(
         Theme.of(context).brightness == Brightness.dark
             ? Brightness.light
             : Brightness.dark);
-    // DynamicTheme.of(context).setThemeData(
-    //   ThemeData(
-    //     primaryColor:
-    //         Theme.of(context).primaryColor == colorSec ? turq : colorSec,
-    //     brightness: Theme.of(context).brightness == Brightness.dark
-    //         ? Brightness.light
-    //         : Brightness.dark,
-    //     floatingActionButtonTheme: FloatingActionButtonThemeData(
-    //       backgroundColor:
-    //           Theme.of(context).floatingActionButtonTheme.backgroundColor ==
-    //                   turq
-    //               ? colorMain
-    //               : turq,
-    //     ),
-    //   ),
-    // );
   }
 }

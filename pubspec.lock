@@ -64,6 +64,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.14.6"
+  device_info:
+    dependency: "direct main"
+    description:
+      name: device_info
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.0+2"
   dynamic_theme:
     dependency: "direct main"
     description:
@@ -77,35 +84,42 @@ packages:
       name: firebase_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.5+1"
+    version: "0.4.0+5"
   firebase_database:
     dependency: "direct main"
     description:
       name: firebase_database
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.5"
+    version: "3.0.2"
   firebase_messaging:
     dependency: "direct main"
     description:
       name: firebase_messaging
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.0"
+    version: "5.0.3"
   firebase_storage:
     dependency: "direct main"
     description:
       name: firebase_storage
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0+1"
+    version: "3.0.1"
+  flare_dart:
+    dependency: transitive
+    description:
+      name: flare_dart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.4.1"
   flare_flutter:
     dependency: "direct main"
     description:
       name: flare_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.2"
+    version: "1.5.1"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -124,7 +138,7 @@ packages:
       name: flutter_html
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.8.2"
+    version: "0.10.1+hotfix.1"
   flutter_parallax:
     dependency: "direct main"
     description:
@@ -143,14 +157,14 @@ packages:
       name: html
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.13.4+1"
+    version: "0.14.0+2"
   http:
     dependency: "direct main"
     description:
       name: http
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.11.3+17"
+    version: "0.12.0+2"
   http_parser:
     dependency: transitive
     description:
@@ -234,7 +248,7 @@ packages:
       name: share
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.3"
+    version: "0.6.1+1"
   shared_preferences:
     dependency: transitive
     description:
@@ -316,14 +330,7 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.1"
-  utf:
-    dependency: transitive
-    description:
-      name: utf
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.9.0+5"
+    version: "5.0.3"
   uuid:
     dependency: transitive
     description:
@@ -340,4 +347,4 @@ packages:
     version: "2.0.8"
 sdks:
   dart: ">=2.2.0 <3.0.0"
-  flutter: ">=1.2.1 <2.0.0"
+  flutter: ">=1.5.0 <2.0.0"

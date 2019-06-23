@@ -1,7 +1,7 @@
 name: mttn_app
 description: A new Flutter project.
 
-version: 1.0.0+1
+version: 1.0.0
 
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
@@ -9,21 +9,26 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.11.3
-  flutter_html: 0.8.2
-  share: 0.5.3
-  firebase_core: 0.2.5+1
-  firebase_messaging: 2.1.0
-  firebase_database: 1.0.5
-  cached_network_image: ^0.6.2
-  url_launcher:
+  
+  # AndroidX supported plugins
+  firebase_core: 0.4.0+5
+  firebase_messaging: 5.0.3
+  firebase_database: 3.0.2
+  firebase_storage: 3.0.1
+  share: 0.6.1+1
+  url_launcher: 5.0.3
+  flutter_cache_manager: ^0.3.2
+  device_info: 0.4.0+2
+
+  # Non-AndroidX supported plugins
+  flutter_html: 0.10.1+hotfix.1
+  http: 0.12.0+2
+  cached_network_image: 
   percent_indicator: ^1.0.13
   progress_button: ^0.0.1
   flutter_parallax: ^0.1.2
-  flare_flutter: 1.0.2
-  flutter_cache_manager: ^0.3.2
+  flare_flutter: 1.5.1
   dynamic_theme: ^1.0.1
-  firebase_storage:
 
 
 dev_dependencies:
@@ -40,17 +45,6 @@ flutter:
     - freshers.png
     - ic_launcher.png
     - ic_launcher_white.png
-    # - 1122.jpg
-    # - adv.jpg
-    # - Bojack.jpg
-    # - Color.jpg
-    # - Firefox_wallpaper.png
-    # - john.jpg
-    # - Lion.jpg
-    # - nat.jpg
-    # - Ultra.png
-    # - yose.jpg
-    # - sunset_minimal.jpg
 
   fonts:
     - family: Open Sans

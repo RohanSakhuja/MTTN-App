@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:mttn_app/main.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'CachedImages.dart';
 import 'package:flutter_parallax/flutter_parallax.dart';
 
@@ -32,12 +33,33 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
   Color secColor = new Color.fromRGBO(234, 116, 76, 1.0);
   Color primColor = Color.fromRGBO(190, 232, 223, 0.75);
 
+  SharedPreferences _preferences;
+  String _slcmApi;
+
   @override
   bool get wantKeepAlive => true;
 
   @override
   void initState() {
+    getUrl();
+    _cachedLogin();
     super.initState();
+  }
+
+  getUrl() async {
+    _preferences = await SharedPreferences.getInstance();
+    var urls = jsonDecode(_preferences.getString('url'));
+    setState(() {
+      _slcmApi = urls['SLCM Data'];
+    });
+  }
+
+  void _cachedLogin() async {
+    _preferences = await SharedPreferences.getInstance();
+    List<String> cred = _preferences.getStringList('credentials') ?? [];
+    if (cred.length != 0) {
+      _checkCredentials(cred[0], cred[1]);
+    }
   }
 
   TextEditingController controllerReg = new TextEditingController();
@@ -49,6 +71,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
   bool isVerifying = false;
   bool loggedIn = false;
   var attendance;
+  String username;
 
   void _showDialog(String title, String content) {
     showDialog(
@@ -72,7 +95,6 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
 
   Future<http.Response> _getResponse(String reg, String pass) async {
     try {
-      final String _slcmApi = 'https://slcm.herokuapp.com/attendance';
       var match = {'username': reg, 'password': pass};
       setState(() {
         isVerifying = true;
@@ -98,16 +120,22 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     }
   }
 
-  void _checkCredentials(String reg, String pass) {
+  void _checkCredentials(String reg, String pass) async {
+    _preferences = await SharedPreferences.getInstance();
     _getResponse(reg, pass).then((response) {
       if (response != null && response.statusCode == 200) {
         var res = json.decode(response.body);
         print(res['login']);
         if (res['login'] == 'successful') {
+          _preferences.setStringList('credentials', [reg, pass]);
+          _preferences.setString('attendance', response.body);
+          _preferences.setString('username', res["user"]);
+          storeUserInfo(reg);
           setState(() {
             isVerifying = false;
             loggedIn = true;
             attendance = res;
+            username = res["user"];
           });
         } else if (res['login'] == 'unsuccessful') {
           _showDialog("Invalid Credentials",
@@ -123,6 +151,28 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
           isVerifying = false;
         });
       }
+    });
+  }
+
+  storeUserInfo(String reg) {
+    String username = _preferences.getString("username");
+    String token = _preferences.getString("fcm-token");
+    String version = _preferences.getString("appVersion");
+    String device = _preferences.getString("device");
+    databaseReference.child("users").set({
+      "$reg": {
+        "appVersion": version,
+        "device": device,
+        "fcmToken": token,
+        "name": username,
+      }
+    });
+  }
+
+  logout() {
+    _preferences.remove('credentials');
+    setState(() {
+      loggedIn = false;
     });
   }
 
@@ -307,19 +357,22 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
         backgroundColor: darkTheme ? turq : colorSec,
         elevation: 0.0,
         title: Text(
-          "SLCM ",
+          username,
           style: TextStyle(color: darkTheme ? Colors.black : Colors.white),
-          ),
+        ),
         actions: <Widget>[
           InkWell(
             child: Container(
-              padding: EdgeInsets.only(right: 10.0),
-              alignment: Alignment.center,
-              child: Text("Logout",style: TextStyle(color: darkTheme ? Colors.black : Colors.white),)),
+                padding: EdgeInsets.only(right: 10.0),
+                alignment: Alignment.center,
+                child: Text(
+                  "Logout",
+                  style: TextStyle(
+                      color: darkTheme ? Colors.black : Colors.white,
+                      fontSize: 18.0),
+                )),
             onTap: () {
-              setState(() {
-                loggedIn = false;
-              });
+              logout();
             },
           )
         ],

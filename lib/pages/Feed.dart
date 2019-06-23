@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:share/share.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+// import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Post {
   final String id;
@@ -34,6 +36,9 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
 
   handleTimeout() {}
 
+  String _wpApi;
+  SharedPreferences _preferences;
+
   List<Post> articles = [];
 
   ScrollController _scrollController = new ScrollController();
@@ -42,7 +47,8 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-     _scrollController.addListener(() {
+    getUrl();
+    _scrollController.addListener(() {
       if (_scrollController.position.pixels > 100) {
         setState(() => isFabActive = true);
       } else {
@@ -61,13 +67,22 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
     super.dispose();
   }
 
+  getUrl() async {
+    _preferences = await SharedPreferences.getInstance();
+    var urls = jsonDecode(_preferences.getString('url'));
+    String temp = urls['Wordpress'];
+    setState(() {
+      _wpApi = temp.replaceAll('\\(page)', "");
+    });
+  }
+
   _getData() async {
     try {
       if (!isPerformingRequest) {
         setState(() => isPerformingRequest = true);
         List<Post> newData =
             await _getPosts((articles.length / 10).round() + 1);
-            imageCache.clear();
+        imageCache.clear();
         setState(() {
           articles.addAll(newData);
           isPerformingRequest = false;
@@ -116,7 +131,7 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
       floatingActionButton: isFabActive
           ? FloatingActionButton(
               child: Icon(Icons.arrow_upward),
-             foregroundColor: Colors.white,
+              foregroundColor: Colors.white,
               backgroundColor: Color.fromRGBO(0, 206, 209, 1.0),
               onPressed: () {
                 _scrollController.animateTo(0,
@@ -126,40 +141,42 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
           : null,
       body: new Container(
           padding: EdgeInsets.fromLTRB(11.0, 10.0, 11.0, 0.0),
-          child: articles.length == 0
-              ? FutureBuilder(
-                  future: _getData(),
-                  builder: (context, snapshot) {
-                    if (articles.length == 0) {
-                      return _buildProgressIndicator();
-                    }
-                  },
-                )
-              : new RefreshIndicator(
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    cacheExtent: 0.1,
-                    padding: EdgeInsets.all(0.0),
-                    addAutomaticKeepAlives: true,
-                    itemCount: articles.length,
-                    itemBuilder: (context, index) {
-                      if (articles.length == index) {
-                        return _buildProgressIndicator();
-                      } else {
-                        return CreateCard(
-                          id: articles[index].id,
-                          title: articles[index].title,
-                          img: articles[index].imageUrl,
-                          excerpt: articles[index].excerpt,
-                          link: articles[index].link,
-                          content: articles[index].content,
-                          date: articles[index].date,
-                        );
-                      }
-                    },
-                  ),
-                  onRefresh: _refresh,
-                )),
+          child: _wpApi != null
+              ? (articles.length == 0
+                  ? FutureBuilder(
+                      future: _getData(),
+                      builder: (context, snapshot) {
+                        if (articles.length == 0) {
+                          return _buildProgressIndicator();
+                        }
+                      },
+                    )
+                  : new RefreshIndicator(
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        cacheExtent: 30,
+                        padding: EdgeInsets.all(0.0),
+                        addAutomaticKeepAlives: true,
+                        itemCount: articles.length,
+                        itemBuilder: (context, index) {
+                          if (articles.length == index) {
+                            return _buildProgressIndicator();
+                          } else {
+                            return CreateCard(
+                              id: articles[index].id,
+                              title: articles[index].title,
+                              img: articles[index].imageUrl,
+                              excerpt: articles[index].excerpt,
+                              link: articles[index].link,
+                              content: articles[index].content,
+                              date: articles[index].date,
+                            );
+                          }
+                        },
+                      ),
+                      onRefresh: _refresh,
+                    ))
+              : _buildProgressIndicator()),
     );
   }
 
@@ -188,8 +205,7 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
     List<Post> posts = [];
 
     try {
-      final String postApi =
-          'http://manipalthetalk.org/wp-json/wp/v2/posts?page=$index';
+      final String postApi = _wpApi + '$index';
       final response = await http.get(Uri.encodeFull(postApi));
       if (response.statusCode == 200) {
         var jsonData = json.decode(response.body);
@@ -265,7 +281,7 @@ class CreateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-return new GestureDetector(
+    return new GestureDetector(
       onTap: () {
         print(link);
         Navigator.push(
@@ -286,10 +302,8 @@ return new GestureDetector(
                 borderRadius: BorderRadius.circular(8.0),
                 color: Colors.transparent,
                 image: DecorationImage(
-                    fit: BoxFit.fitWidth,
-                    image: NetworkImage(
-                      img,
-                    )
+                  fit: BoxFit.fitWidth,
+                  image: NetworkImage(img),
                 )),
           ),
           Container(
@@ -443,12 +457,12 @@ class Article extends StatefulWidget {
   ArticleState createState() => ArticleState();
 }
 
-class Person{
+class Person {
   final String gender;
   final String name;
   final int age;
   final bool isEarning;
   final double salary;
 
-  Person({this.gender,this.name,this.age,this.isEarning,this.salary});
+  Person({this.gender, this.name, this.age, this.isEarning, this.salary});
 }

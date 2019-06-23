@@ -4,11 +4,11 @@ build/
 # Keystore
 key.jks
 **/android/key.properties
+**/android/local.properties
 
 # Random
 *.log
 *.lock
-
 
 # Miscellaneous
 *.class
@@ -47,6 +47,10 @@ key.jks
 **/android/gradlew.bat
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
+
+**/android/app/.classpath
+**/android/app/.settings/
+**/android/app/.project
 
 # iOS/XCode related
 **/ios/**/*.mode1v3

@@ -59,8 +59,8 @@ class _BuildSocialState extends State<BuildSocial>  {
                     },
                   ),
                 );
-                if (index == banners.length-1)
-                    Timer(Duration(milliseconds: 3000), () => controller.animateTo(0,curve: Curves.ease ,duration: Duration(milliseconds: 1500)));
+                // if (index == banners.length-1)
+                //     Timer(Duration(milliseconds: 3000), () => controller.animateTo(0,curve: Curves.ease ,duration: Duration(milliseconds: 1500)));
                 return padding;
               }
           ),
