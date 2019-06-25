@@ -15,30 +15,28 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:device_info/device_info.dart';
+import 'package:flare_flutter/flare_actor.dart';
 
 Color turq = Color.fromRGBO(0, 206, 209, 1.0);
 
 Color colorSec = Color.fromRGBO(0, 44, 62, 1);
 Color colorMain = Color.fromRGBO(120, 188, 196, 1);
 
-void main() async {
-  sharedPreferencesStartup();
-  runApp(new MyApp());
-}
+void main() => runApp(new MyApp());
+  // sharedPreferencesStartup();
 
-sharedPreferencesStartup() {
-  const MethodChannel('plugins.flutter.io/shared_preferences')
-      .setMockMethodCallHandler((MethodCall methodCall) async {
-    if (methodCall.method == 'getAll') {
-      return <String, dynamic>{
-        "flutter.appVersion": "1.0.0",
-        "flutter.Notfications": true
-      };
-    }
-    return null;
-  });
-}
-
+// sharedPreferencesStartup() {
+//   const MethodChannel('plugins.flutter.io/shared_preferences')
+//       .setMockMethodCallHandler((MethodCall methodCall) async {
+//     if (methodCall.method == 'getAll') {
+//       return <String, dynamic>{
+//         "flutter.appVersion": "1.0.0",
+//         "flutter.Notfications": true
+//       };
+//     }
+//     return null;
+//   });
+// }
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -196,7 +194,8 @@ class HomePageState extends State<HomePage> {
     _preferences = await SharedPreferences.getInstance();
     _cacheDirectory();
     _cacheUrls();
-    var temp = _preferences.getBool("Notfications");
+    var temp = _preferences.getBool("Notifications")??null;
+    print(temp);
     if (temp == null) {
       _preferences.setBool("Notifications", true);
     } else {
@@ -209,6 +208,7 @@ class HomePageState extends State<HomePage> {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     _preferences.setString("device", "${androidInfo.device}");
+    _preferences.setString("appVersion", "1.0.0");
   }
 
   void _cacheUrls() async {

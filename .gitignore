@@ -10,6 +10,7 @@ key.jks
 *.log
 *.lock
 log.txt
+pubspec.lock
 
 # Miscellaneous
 *.class

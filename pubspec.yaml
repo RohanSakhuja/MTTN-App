@@ -27,7 +27,7 @@ dependencies:
   percent_indicator: ^1.0.13
   progress_button: ^0.0.1
   flutter_parallax: ^0.1.2
-  flare_flutter: 1.5.1
+  flare_flutter: 1.0.2
   dynamic_theme: ^1.0.1
 
 
