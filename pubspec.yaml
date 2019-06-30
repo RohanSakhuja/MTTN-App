@@ -52,3 +52,8 @@ flutter:
         - asset: assets/fonts/Open_Sans/OpenSans-Regular.ttf
         - asset: assets/fonts/Open_Sans/OpenSans-Italic.ttf
           style: italic
+    - family: Product-Sans
+      fonts: 
+        - asset: fonts/Product-Sans-Regular.ttf
+        - asset: fonts/Product-Sans-Italic.ttf
+        - asset: fonts/Product-Sans-Bold.ttf

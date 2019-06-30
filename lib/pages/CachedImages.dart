@@ -9,7 +9,7 @@ class CachedImg {
       placeholder: (context, url) => new CircularProgressIndicator(),
       errorWidget: (context, url, error) => new Icon(Icons.error),
       fit: BoxFit.fitWidth,
-      color: Colors.black.withOpacity(0.55),
+      color: Colors.black.withOpacity(0.7),
       colorBlendMode: BlendMode.darken,
     ),
     CachedNetworkImage(
@@ -18,7 +18,7 @@ class CachedImg {
       placeholder: (context, url) => new CircularProgressIndicator(),
       errorWidget: (context, url, error) => new Icon(Icons.error),
       fit: BoxFit.fitWidth,
-      color: Colors.black.withOpacity(0.55),
+      color: Colors.black.withOpacity(0.7),
       colorBlendMode: BlendMode.darken,
     ),
     CachedNetworkImage(
@@ -27,7 +27,7 @@ class CachedImg {
       placeholder: (context, url) => new CircularProgressIndicator(),
       errorWidget: (context, url, error) => new Icon(Icons.error),
       fit: BoxFit.fitWidth,
-      color: Colors.black.withOpacity(0.55),
+      color: Colors.black.withOpacity(0.7),
       colorBlendMode: BlendMode.darken,
     ),
     CachedNetworkImage(
@@ -36,7 +36,7 @@ class CachedImg {
       placeholder: (context, url) => new CircularProgressIndicator(),
       errorWidget: (context, url, error) => new Icon(Icons.error),
       fit: BoxFit.fitWidth,
-      color: Colors.black.withOpacity(0.55),
+      color: Colors.black.withOpacity(0.7),
       colorBlendMode: BlendMode.darken,
     ),
     CachedNetworkImage(
@@ -45,7 +45,7 @@ class CachedImg {
       placeholder: (context, url) => new CircularProgressIndicator(),
       errorWidget: (context, url, error) => new Icon(Icons.error),
       fit: BoxFit.fitWidth,
-      color: Colors.black.withOpacity(0.55),
+      color: Colors.black.withOpacity(0.7),
       colorBlendMode: BlendMode.darken,
     ),
     CachedNetworkImage(
@@ -54,7 +54,7 @@ class CachedImg {
       placeholder: (context, url) => new CircularProgressIndicator(),
       errorWidget: (context, url, error) => new Icon(Icons.error),
       fit: BoxFit.fitWidth,
-      color: Colors.black.withOpacity(0.55),
+      color: Colors.black.withOpacity(0.7),
       colorBlendMode: BlendMode.darken,
     ),
     CachedNetworkImage(
@@ -63,7 +63,7 @@ class CachedImg {
       placeholder: (context, url) => new CircularProgressIndicator(),
       errorWidget: (context, url, error) => new Icon(Icons.error),
       fit: BoxFit.fitWidth,
-      color: Colors.black.withOpacity(0.55),
+      color: Colors.black.withOpacity(0.7),
       colorBlendMode: BlendMode.darken,
     ),
     CachedNetworkImage(
@@ -72,7 +72,7 @@ class CachedImg {
       placeholder: (context, url) => new CircularProgressIndicator(),
       errorWidget: (context, url, error) => new Icon(Icons.error),
       fit: BoxFit.fitWidth,
-      color: Colors.black.withOpacity(0.55),
+      color: Colors.black.withOpacity(0.7),
       colorBlendMode: BlendMode.darken,
     ),
     CachedNetworkImage(
@@ -81,7 +81,7 @@ class CachedImg {
       placeholder: (context, url) => new CircularProgressIndicator(),
       errorWidget: (context, url, error) => new Icon(Icons.error),
       fit: BoxFit.fitWidth,
-      color: Colors.black.withOpacity(0.55),
+      color: Colors.black.withOpacity(0.7),
       colorBlendMode: BlendMode.darken,
     ),
     CachedNetworkImage(
@@ -90,7 +90,7 @@ class CachedImg {
       placeholder: (context, url) => new CircularProgressIndicator(),
       errorWidget: (context, url, error) => new Icon(Icons.error),
       fit: BoxFit.fitWidth,
-      color: Colors.black.withOpacity(0.55),
+      color: Colors.black.withOpacity(0.7),
       colorBlendMode: BlendMode.darken,
     ),
     CachedNetworkImage(
@@ -99,7 +99,7 @@ class CachedImg {
       placeholder: (context, url) => new CircularProgressIndicator(),
       errorWidget: (context, url, error) => new Icon(Icons.error),
       fit: BoxFit.fitWidth,
-      color: Colors.black.withOpacity(0.55),
+      color: Colors.black.withOpacity(0.7),
       colorBlendMode: BlendMode.darken,
     ),
     CachedNetworkImage(
@@ -108,7 +108,7 @@ class CachedImg {
       placeholder: (context, url) => new CircularProgressIndicator(),
       errorWidget: (context, url, error) => new Icon(Icons.error),
       fit: BoxFit.fitWidth,
-      color: Colors.black.withOpacity(0.55),
+      color: Colors.black.withOpacity(0.7),
       colorBlendMode: BlendMode.darken,
     ),
     CachedNetworkImage(
@@ -117,7 +117,7 @@ class CachedImg {
       placeholder: (context, url) => new CircularProgressIndicator(),
       errorWidget: (context, url, error) => new Icon(Icons.error),
       fit: BoxFit.fitWidth,
-      color: Colors.black.withOpacity(0.55),
+      color: Colors.black.withOpacity(0.7),
       colorBlendMode: BlendMode.darken,
     ),
     CachedNetworkImage(
@@ -126,7 +126,7 @@ class CachedImg {
       placeholder: (context, url) => new CircularProgressIndicator(),
       errorWidget: (context, url, error) => new Icon(Icons.error),
       fit: BoxFit.fitWidth,
-      color: Colors.black.withOpacity(0.55),
+      color: Colors.black.withOpacity(0.7),
       colorBlendMode: BlendMode.darken,
     ),
   ];

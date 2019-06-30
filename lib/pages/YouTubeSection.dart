@@ -101,15 +101,15 @@ class _YouTubeFeedState extends State<YouTubeFeed>
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                         child: SizedBox(
-                          width: width * 0.75,
+                          width: width * 0.66,
                           child: Column(
                             children: <Widget>[
                               Container(
-                                width: width * 0.75,
-                                height: width * 0.75 / 1.77,
+                                width: width * 0.66,
+                                height: width * 0.66 / 1.77,
                                 margin: EdgeInsets.only(right: 10.0),
                                 child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(5.0),
+                                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
                                     child: GestureDetector(
                                         onTap: () =>
                                             _launchUrl(items[index].link),
@@ -122,17 +122,16 @@ class _YouTubeFeedState extends State<YouTubeFeed>
                               ),
                               Flexible(
                                 child: Container(
+                                  alignment: Alignment.topCenter,
                                     padding: EdgeInsets.only(right: 20.0),
-                                    child: Center(
-                                      child: Text(
-                                        items[index].type == 'playlist'
-                                            ? 'Playlist: ' + items[index].title
-                                            : items[index].title,
-                                        style:
-                                            TextStyle(fontSize: height * 0.03),
-                                        maxLines: 3,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
+                                    child: Text(
+                                      items[index].type == 'playlist'
+                                          ? 'Playlist: ' + items[index].title
+                                          : items[index].title,
+                                      style:
+                                          TextStyle(fontSize: height * 0.03),
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
                                     )),
                               )
                             ],

@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
     return DynamicTheme(
       defaultBrightness: Brightness.light,
       data: (brightness) => new ThemeData(
+            fontFamily: 'Product-Sans',
             floatingActionButtonTheme:
                 FloatingActionButtonThemeData(backgroundColor: turq),
             primaryColor: colorSec,
@@ -180,7 +181,7 @@ class HomePageState extends State<HomePage> {
     _preferences = await SharedPreferences.getInstance();
     _cacheDirectory();
     _cacheUrls();
-    var temp = _preferences.getBool("Notifications")??null;
+    var temp = _preferences.getBool("Notifications") ?? null;
     print(temp);
     if (temp == null) {
       _preferences.setBool("Notifications", true);
@@ -398,6 +399,7 @@ class HomePageState extends State<HomePage> {
                     title: Text(
                       titleOfBar,
                       style: TextStyle(
+                        fontFamily: "OpenSans-Regular",
                           color: darkTheme ? Colors.black : Colors.white),
                     ),
                   )

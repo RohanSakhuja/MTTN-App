@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' show parse;
 import 'package:share/share.dart';
-// import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../main.dart';
 
 class Post {
   final String id;
@@ -296,7 +297,8 @@ class CreateCard extends StatelessWidget {
       child: Stack(
         children: <Widget>[
           Container(
-            height: MediaQuery.of(context).size.height * 0.25,
+            // height: MediaQuery.of(context).size.height * 0.25,
+            height: 200.0,
             margin: EdgeInsets.all(12.0),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.0),
@@ -307,7 +309,8 @@ class CreateCard extends StatelessWidget {
                 )),
           ),
           Container(
-            height: MediaQuery.of(context).size.height * 0.25,
+            //height: MediaQuery.of(context).size.height * 0.25,
+            height: 200.0,
             margin: EdgeInsets.all(12.0),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8.0),
@@ -327,7 +330,8 @@ class CreateCard extends StatelessWidget {
           Material(
             type: MaterialType.transparency,
             child: Container(
-              height: MediaQuery.of(context).size.height * 0.25,
+              // height: MediaQuery.of(context).size.height * 0.25,
+              height: 200.0,
               margin: EdgeInsets.all(12.0),
               child: InkWell(
                 onTap: () {
@@ -345,22 +349,17 @@ class CreateCard extends StatelessWidget {
             ),
           ),
           Container(
-            width: MediaQuery.of(context).size.width * 0.95,
-            height: MediaQuery.of(context).size.height * 0.06,
-            //color: Colors.red.withOpacity(0.3),
-            margin: EdgeInsets.fromLTRB(
-                20.0, MediaQuery.of(context).size.height * 0.205, 20.0, 0.0),
-            child: Center(
-              child: Text(
-                title.length > 60 ? title.substring(0, 60) + '...' : title,
-                style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height * 0.027,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w400,
-                    //fontStyle: FontStyle.italic,
-                    color: Colors.white),
-                textAlign: TextAlign.center,
-              ),
+            height: 200.0,
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            alignment: Alignment.bottomCenter,
+            child: Text(
+              title.length > 60 ? title.substring(0, 60) + '...' : title,
+              style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.height * 0.025,
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white),
+              textAlign: TextAlign.center,
             ),
           )
         ],
@@ -375,9 +374,11 @@ class ArticleState extends State<Article> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: darkTheme ? turq : colorSec,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
+            color: darkTheme ? Colors.black : Colors.white
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -388,6 +389,7 @@ class ArticleState extends State<Article> {
             offset: Offset(20.0, 50.0),
             icon: Icon(
               Icons.format_size,
+              color: darkTheme ? Colors.black : Colors.white
             ),
             itemBuilder: (context) => <PopupMenuEntry>[
                   PopupMenuItem(

@@ -61,7 +61,7 @@ android {
             profile{
                 matchingFallbacks = ['debug','release']
             }
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.debug
             
             // minifyEnabled true
             // useProguard true

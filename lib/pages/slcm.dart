@@ -199,6 +199,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
       resizeToAvoidBottomPadding: true,
       resizeToAvoidBottomInset: true,
       body: Stack(
+        // fit: StackFit.expand,
         overflow: Overflow.visible,
         alignment: Alignment.center,
         children: <Widget>[
@@ -211,140 +212,215 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
             ),
           ),
           Container(
-            padding: EdgeInsets.fromLTRB(2.0, height * 0.33, 2.0, 0.0),
-            height: height * 0.66,
+            margin: EdgeInsets.only(top: 270.0),
+            //  color: Colors.teal,
             width: width * 0.9,
+            //height: height * 0.5,
+            alignment: Alignment.center,
             child: ListView(
               children: <Widget>[
-                Material(
-                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                  child: Container(
-                    height: height * 0.185,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        SizedBox(
-                          height: height * 0.08,
-                          width: width * 0.9,
-                          child: TextFormField(
-                            controller: controllerReg,
-                            focusNode: _regFocus,
-                            keyboardType: TextInputType.numberWithOptions(),
-                            textInputAction: TextInputAction.next,
-                            onFieldSubmitted: (term) {
-                              _fieldFocusChange(context, _regFocus, _passFocus);
-                            },
-                            decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                labelText: 'Registration Number',
-                                prefixIcon: Icon(Icons.person)),
+                Container(
+                  padding: EdgeInsets.only(top: 70.0),
+                  width: width * 0.9,
+                  child: Material(
+                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                    child: Container(
+                      //height: height * 0.18,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          SizedBox(
+                            child: TextFormField(
+                              controller: controllerReg,
+                              focusNode: _regFocus,
+                              keyboardType: TextInputType.numberWithOptions(),
+                              textInputAction: TextInputAction.next,
+                              style: TextStyle(fontSize: height * 0.023),
+                              onFieldSubmitted: (term) {
+                                _fieldFocusChange(
+                                    context, _regFocus, _passFocus);
+                              },
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  labelText: 'Registration Number',
+                                  prefixIcon: Icon(Icons.person)),
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          height: height * 0.07,
-                          width: width * 0.9,
-                          child: Container(
-                            child: SizedBox.fromSize(
-                              size: Size.fromHeight(height * 0.08),
-                              child: Row(
-                                children: <Widget>[
-                                  Container(
-                                    height: height * 0.08,
-                                    width: width * 0.75,
-                                    child: TextFormField(
-                                      obscureText: obsecureText,
-                                      controller: controllerPass,
-                                      focusNode: _passFocus,
-                                      textInputAction: TextInputAction.done,
-                                      onFieldSubmitted: (value) {
-                                        _passFocus.unfocus();
-                                      },
-                                      decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          labelText: 'Password',
-                                          prefixIcon: Icon(obsecureText
-                                              ? Icons.lock
-                                              : Icons.lock_open)),
+                          SizedBox(
+                            //    height: height * 0.07,
+                            width: width * 0.9,
+                            child: Container(
+                              child: SizedBox.fromSize(
+                                // size: Size.fromHeight(height * 0.08),
+                                child: Row(
+                                  children: <Widget>[
+                                    Container(
+                                      // height: height * 0.08,
+                                      width: width * 0.75,
+                                      child: TextFormField(
+                                        obscureText: obsecureText,
+                                        controller: controllerPass,
+                                        focusNode: _passFocus,
+                                        textInputAction: TextInputAction.done,
+                                        style:
+                                            TextStyle(fontSize: height * 0.023),
+                                        onFieldSubmitted: (value) {
+                                          _passFocus.unfocus();
+                                        },
+                                        decoration: InputDecoration(
+                                            border: InputBorder.none,
+                                            labelText: 'Password',
+                                            prefixIcon: Icon(obsecureText
+                                                ? Icons.lock
+                                                : Icons.lock_open)),
+                                      ),
                                     ),
-                                  ),
-                                  Container(
-                                    height: height * 0.08,
-                                    child: IconButton(
-                                      icon: obsecureText
-                                          ? Icon(
-                                              Icons.visibility_off,
-                                            )
-                                          : Icon(
-                                              Icons.visibility,
-                                            ),
-                                      onPressed: () => setState(() {
-                                            obsecureText = !obsecureText;
-                                          }),
-                                    ),
-                                  )
-                                ],
+                                    Container(
+                                      // height: height * 0.08,
+                                      child: IconButton(
+                                        icon: obsecureText
+                                            ? Icon(
+                                                Icons.visibility_off,
+                                              )
+                                            : Icon(
+                                                Icons.visibility,
+                                              ),
+                                        onPressed: () => setState(() {
+                                              obsecureText = !obsecureText;
+                                            }),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(10.0),
-                        )
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
+                Container(
+                  height: 30.0,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 100.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                    ),
+                    width: width * 0.6,
+                    height: height * 0.055,
+                    child: Material(
+                      color: Color.fromRGBO(64, 224, 208, 1.0),
+                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                      child: InkWell(
+                        child: Center(
+                          child: Text(
+                            "Login",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black,
+                                fontSize: height * 0.023),
+                          ),
+                        ),
+                        onTap: () {
+                          _passFocus.unfocus();
+                          _regFocus.unfocus();
+                          isVerifying = true;
+                          regNo = controllerReg.text;
+                          password = controllerPass.text;
+                          _checkCredentials(regNo, password);
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 25.0,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: width * 0.4),
+                  child: isVerifying
+                      ? CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.greenAccent),
+                        )
+                      : null,
+                )
               ],
             ),
-          ),
-          Container(
-            height: height * 0.06,
-            margin: EdgeInsets.only(top: height * 0.44),
-            decoration: BoxDecoration(
-              color: Colors.red,
-              borderRadius: BorderRadius.all(Radius.circular(20.0)),
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(20.0)),
-              ),
-              width: width * 0.6,
-              height: height * 0.055,
-              child: Material(
-                color: Color.fromRGBO(64, 224, 208, 1.0),
-                borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                child: InkWell(
-                  splashColor: Colors.white,
-                  child: Center(
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black,
-                          fontSize: 18.0),
-                    ),
-                  ),
-                  onTap: () {
-                    _passFocus.unfocus();
-                    _regFocus.unfocus();
-                    isVerifying = true;
-                    regNo = controllerReg.text;
-                    password = controllerPass.text;
-                    _checkCredentials(regNo, password);
-                  },
-                ),
-              ),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: height * 0.7),
-            child: isVerifying
-                ? CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(Colors.greenAccent),
-                  )
-                : null,
           )
+          //   Container(
+          //     margin: EdgeInsets.only(top: 270.0),
+          //     width: width * 0.9,
+          //     height: height * 0.5,
+          //     child: ListView(
+          //       //mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //       children: <Widget>[
+          //         Container(
+          //          // color: Colors.redAccent,
+          //           height: height * 0.24,
+          //           width: width * 0.9,
+          //           child: ListView(
+          //             children: <Widget>[
+          //             ],
+          //           ),
+          //         ),
+          //         Container(
+          //           padding: EdgeInsets.symmetric(horizontal: 80.0),
+          //           height: height * 0.06,
+          //           //margin: EdgeInsets.only(top: height * 0.44),
+          //           decoration: BoxDecoration(
+          //            // color: Colors.red,
+          //             borderRadius: BorderRadius.all(Radius.circular(20.0)),
+          //           ),
+          //           child: Container(
+          //             decoration: BoxDecoration(
+          //               borderRadius: BorderRadius.all(Radius.circular(20.0)),
+          //             ),
+          //             width: width * 0.45,
+          //           //  height: height * 0.055,
+          //             child: Material(
+          //               color: Color.fromRGBO(64, 224, 208, 1.0),
+          //               borderRadius: BorderRadius.all(Radius.circular(20.0)),
+          //               child: InkWell(
+          //                 splashColor: Colors.white,
+          //                 child: Center(
+          //                   child: Text(
+          //                     "Login",
+          //                     style: TextStyle(
+          //                         fontWeight: FontWeight.w400,
+          //                         color: Colors.black,
+          //                         fontSize: height * 0.025),
+          //                   ),
+          //                 ),
+          //                 onTap: () {
+          //                   _passFocus.unfocus();
+          //                   _regFocus.unfocus();
+          //                   isVerifying = true;
+          //                   regNo = controllerReg.text;
+          //                   password = controllerPass.text;
+          //                   _checkCredentials(regNo, password);
+          //                 },
+          //               ),
+          //             ),
+          //           ),
+          //         ),
+          //         Container(
+          //           margin: EdgeInsets.only(top: 30.0),
+          //           padding: EdgeInsets.symmetric(horizontal: 165.0),
+          //          // padding: EdgeInsets.only(top: height * 0.7),
+          //           child: isVerifying
+          //               ? CircularProgressIndicator(
+          //                   valueColor:
+          //                       AlwaysStoppedAnimation<Color>(Colors.greenAccent),
+          //                 )
+          //               : null,
+          //         )
+          //       ],
+          //     ),
+          //   ),
         ],
       ),
     );
@@ -357,7 +433,8 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
         backgroundColor: darkTheme ? turq : colorSec,
         elevation: 0.0,
         title: Text(
-          username,
+          capFirst(username.toLowerCase().split(" ")),
+          //capFirst(username.toLowerCase()),
           style: TextStyle(color: darkTheme ? Colors.black : Colors.white),
         ),
         actions: <Widget>[
@@ -379,26 +456,21 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
       ),
       resizeToAvoidBottomPadding: false,
       body: Container(
-        padding: EdgeInsets.symmetric(
-            horizontal: width * .03, vertical: height * 0.02),
         child: ListView.builder(
           itemCount: att.length,
           itemBuilder: (context, index) {
             return Container(
-              height: height * 0.42,
-              margin: EdgeInsets.only(bottom: 10.0),
-              child: Card(
-                color: Colors.white.withOpacity(0.9),
-                elevation: 3.0,
-                child: _buildSubjectCard(
-                    att[index].name,
-                    att[index].total,
-                    att[index].attended,
-                    att[index].missed,
-                    att[index].percentage,
-                    context,
-                    index),
-              ),
+              padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 1.0),
+              height: 350.0,
+              color: Colors.transparent,
+              child: _buildSubjectCard(
+                  att[index].name,
+                  att[index].total,
+                  att[index].attended,
+                  att[index].missed,
+                  att[index].percentage,
+                  context,
+                  index),
             );
           },
         ),
@@ -422,9 +494,8 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     return data;
   }
 
-  capFirst(str) {
-    return '${str[0].toUpperCase()}${str.substring(1)}';
-  }
+  capFirst(List<String> name) =>
+      '${name[0][0].toUpperCase()}${name[0].substring(1)} ${name[1][0].toUpperCase()}${name[1].substring(1)}';
 
   _buildSubjectCard(subName, subClasses, subPresent, subAbsent, subPercentage,
       context, index) {
@@ -433,142 +504,227 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
 
     CachedImg camm = new CachedImg();
 
-    return GestureDetector(
-      onTap: () {
-        // showSubjectMarks(); // functionality for marks
-      },
-      child: Stack(
-        children: <Widget>[
-          Container(
-              height: height * 0.41,
-              width: width * 0.95,
-              child: Parallax.inside(
-                mainAxisExtent: 200.0,
-                child: camm.images[index],
-              )),
-          Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.fromLTRB(
-                      height * 0.03, height * 0.04, height * 0.02, 0.0),
-                  height: height * 0.2,
-                  width: width * 0.8,
-                  child: Text(
-                    capFirst(subName.toLowerCase()),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30.0,
-                      fontWeight: FontWeight.w300,
-                    ),
-                    //overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Row(
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.only(
-                          top: height * 0.035, bottom: height * 0.01),
-                      width: width * 0.4,
-                      height: height * 0.12,
-                      child: Center(
-                          child: CircularPercentIndicator(
-                        radius: height * 0.11,
-                        animation: true,
-                        animationDuration: 400,
-                        lineWidth: 7.0,
-                        percent: double.parse(subPercentage.substring(
-                                0, subPercentage.length - 1)) /
-                            100,
-                        center: Text(
-                            subPercentage.substring(
-                                0, subPercentage.length - 3),
-                            style: TextStyle(
-                                fontSize: height * 0.05,
-                                fontWeight: FontWeight.w300,
-                                color: Colors.white)),
-                        progressColor: Colors.white,
-                        circularStrokeCap: CircularStrokeCap.round,
-                        backgroundColor: Colors.grey,
-                      )),
-                    ),
-                    Container(
-                      height: height * 0.12,
-                      width: width * 0.5,
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.only(
-                                top: height * 0.027, left: width * 0.4),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                "Total",
-                                style: TextStyle(
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white),
-                              ),
-                              Padding(
-                                  padding: EdgeInsets.only(left: width * 0.02)),
-                              Text(
-                                "Attended",
-                                style: TextStyle(
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white),
-                              ),
-                              Padding(
-                                  padding: EdgeInsets.only(left: width * 0.02)),
-                              Text(
-                                "Missed",
-                                style: TextStyle(
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white),
-                              )
-                            ],
-                          ),
-                          Padding(
-                              padding: EdgeInsets.only(top: height * 0.015)),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                subClasses,
-                                style: TextStyle(
-                                    fontSize: 15.0, color: Colors.white),
-                              ),
-                              Padding(
-                                  padding: EdgeInsets.only(left: width * 0.11)),
-                              Text(
-                                subPresent,
-                                style: TextStyle(
-                                    fontSize: 15.0, color: Colors.white),
-                              ),
-                              Padding(
-                                  padding: EdgeInsets.only(left: width * 0.15)),
-                              Text(
-                                subAbsent,
-                                style: TextStyle(
-                                    fontSize: 15.0, color: Colors.white),
-                              )
-                            ],
-                          )
-                        ],
+    return ClipRRect(
+      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+      child: GestureDetector(
+        onTap: () {
+          // showSubjectMarks(); // functionality for marks
+        },
+        child: Stack(
+          children: <Widget>[
+            Container(
+                height: 350.0,
+                child: Parallax.inside(
+                  mainAxisExtent: 200.0,
+                  child: camm.images[index],
+                )),
+            Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Container(
+                    height: 110.0,
+                    //color: Colors.red,
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.fromLTRB(3.0, 10.0, 3.0, 0.0),
+                    child: Text(
+                      subName,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.clip,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 27.0,
+                        fontWeight: FontWeight.w300,
                       ),
-                    )
-                  ],
-                ),
-              ],
+                    ),
+                  ),
+                  Container(
+                    child: Center(
+                        child: CircularPercentIndicator(
+                      //radius: height * 0.11,
+                      radius: 110.0,
+                      animation: true,
+                      animationDuration: 100,
+                      lineWidth: 7.0,
+                      percent: double.parse(subPercentage.substring(
+                              0, subPercentage.length - 1)) /
+                          100,
+                      center: Text(
+                          subPercentage.substring(0, subPercentage.length - 3),
+                          style: TextStyle(
+                              fontSize: 45.0,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white)),
+                      progressColor: Colors.white,
+                      circularStrokeCap: CircularStrokeCap.round,
+                      backgroundColor: Colors.white10,
+                    )),
+                  ),
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text(
+                              "Total",
+                              style: TextStyle(
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(4.0),
+                            ),
+                            Text(
+                              subClasses,
+                              style: TextStyle(
+                                  fontSize: 15.0, color: Colors.white),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text(
+                              "Attended",
+                              textAlign: TextAlign.end,
+                              style: TextStyle(
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(4.0),
+                            ),
+                            Text(
+                              subPresent,
+                              style: TextStyle(
+                                  fontSize: 15.0, color: Colors.white),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text(
+                              "Missed",
+                              style: TextStyle(
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(4.0),
+                            ),
+                            Text(
+                              subAbsent,
+                              style: TextStyle(
+                                  fontSize: 15.0, color: Colors.white),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
+
+//  onTap: () {
+//                           _passFocus.unfocus();
+//                           _regFocus.unfocus();
+//                           isVerifying = true;
+//                           regNo = controllerReg.text;
+//                           password = controllerPass.text;
+//                           _checkCredentials(regNo, password);
+//                         },
+
+// Material(
+//                         borderRadius: BorderRadius.all(Radius.circular(20.0)),
+//                         child: Container(
+//                           height: height * 0.17,
+//                           child: Column(
+//                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                             children: <Widget>[
+//                               SizedBox(
+//                                 child: TextFormField(
+//                                   controller: controllerReg,
+//                                   focusNode: _regFocus,
+//                                   keyboardType:
+//                                       TextInputType.numberWithOptions(),
+//                                   textInputAction: TextInputAction.next,
+//                                   style: TextStyle(fontSize: height * 0.023),
+//                                   onFieldSubmitted: (term) {
+//                                     _fieldFocusChange(
+//                                         context, _regFocus, _passFocus);
+//                                   },
+//                                   decoration: const InputDecoration(
+//                                       border: InputBorder.none,
+//                                       labelText: 'Registration Number',
+//                                       prefixIcon: Icon(Icons.person)),
+//                                 ),
+//                               ),
+//                               SizedBox(
+//                                 height: height * 0.07,
+//                                 width: width * 0.9,
+//                                 child: Container(
+//                                   child: SizedBox.fromSize(
+//                                    // size: Size.fromHeight(height * 0.08),
+//                                     child: Row(
+//                                       children: <Widget>[
+//                                         Container(
+//                                           height: height * 0.08,
+//                                           width: width * 0.75,
+//                                           child: TextFormField(
+//                                             obscureText: obsecureText,
+//                                             controller: controllerPass,
+//                                             focusNode: _passFocus,
+//                                             textInputAction:
+//                                                 TextInputAction.done,
+//                                             style: TextStyle(
+//                                                 fontSize: height * 0.023),
+//                                             onFieldSubmitted: (value) {
+//                                               _passFocus.unfocus();
+//                                             },
+//                                             decoration: InputDecoration(
+//                                                 border: InputBorder.none,
+//                                                 labelText: 'Password',
+//                                                 prefixIcon: Icon(obsecureText
+//                                                     ? Icons.lock
+//                                                     : Icons.lock_open)),
+//                                           ),
+//                                         ),
+//                                         Container(
+//                                           height: height * 0.08,
+//                                           child: IconButton(
+//                                             icon: obsecureText
+//                                                 ? Icon(
+//                                                     Icons.visibility_off,
+//                                                   )
+//                                                 : Icon(
+//                                                     Icons.visibility,
+//                                                   ),
+//                                             onPressed: () => setState(() {
+//                                                   obsecureText = !obsecureText;
+//                                                 }),
+//                                           ),
+//                                         )
+//                                       ],
+//                                     ),
+//                                   ),
+//                                 ),
+//                               ),
+
+//                             ],
+//                           ),
+//                         ),
+//                       ),
