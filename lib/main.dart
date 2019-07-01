@@ -19,7 +19,7 @@ import 'package:device_info/device_info.dart';
 Color turq = Color.fromRGBO(0, 206, 209, 1.0);
 
 Color colorSec = Color.fromRGBO(0, 44, 62, 1);
-Color colorMain = Color.fromRGBO(120, 186, 196, 1);
+Color colorMain = Color.fromRGBO(120, 176, 196, 1);
 
 void main() => runApp(new MyApp());
 
