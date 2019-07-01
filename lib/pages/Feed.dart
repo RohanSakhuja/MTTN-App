@@ -216,17 +216,12 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
           try {
             img = (jsonEncode(json['better_featured_image']['media_details']
                             ['sizes'])
-                        .indexOf('medium_large') !=
+                        .indexOf('medium') !=
                     -1)
                 ? json['better_featured_image']['media_details']['sizes']
-                    ['medium_large']['source_url']
-                : ((jsonEncode(json['better_featured_image']['media_details']
-                                ['sizes'])
-                            .indexOf('medium') !=
-                        -1)
-                    ? json['better_featured_image']['media_details']['sizes']
-                        ['medium']['source_url']
-                    : json['better_featured_image']['source_url']);
+                    ['medium']['source_url']
+                : json['better_featured_image']['media_details']['sizes']
+                    ['wp_review_large']['source_url'];
           } // when no image in available
           catch (e) {
             img =

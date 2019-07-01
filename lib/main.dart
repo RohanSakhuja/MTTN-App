@@ -19,7 +19,7 @@ import 'package:device_info/device_info.dart';
 Color turq = Color.fromRGBO(0, 206, 209, 1.0);
 
 Color colorSec = Color.fromRGBO(0, 44, 62, 1);
-Color colorMain = Color.fromRGBO(120, 188, 196, 1);
+Color colorMain = Color.fromRGBO(120, 186, 196, 1);
 
 void main() => runApp(new MyApp());
 
@@ -68,7 +68,7 @@ class HomePageState extends State<HomePage> {
   int _page = 0;
 
   String titleOfBar;
-  List<String> titleItem = ["Social", "Feed", "Directory", "SLCM", "Alerts"];
+  List<String> titleItem = ["Feed", "SLCM", "Social", "Directory", "Alerts"];
   List<BottomNavigationBarItem> navBarItem;
   List<Widget> routes;
 
@@ -357,22 +357,24 @@ class HomePageState extends State<HomePage> {
 
     navBarItem = [
       _buildBottomNavBarItem(
-          "Social", Icon(Icons.gps_fixed), Icon(Icons.gps_not_fixed)),
-      _buildBottomNavBarItem(
           "Feed", Icon(Icons.developer_board), Icon(Icons.dashboard)),
       _buildBottomNavBarItem(
-          "Directory", Icon(Icons.contact_phone), Icon(Icons.contacts)),
-      _buildBottomNavBarItem(
           "SLCM", Icon(Icons.local_library), Icon(Icons.local_library)),
+      _buildBottomNavBarItem(
+          "Social", Icon(Icons.gps_fixed), Icon(Icons.gps_not_fixed)),
+      _buildBottomNavBarItem(
+          "Directory", Icon(Icons.contact_phone), Icon(Icons.contacts)),
       _buildBottomNavBarItem(
           "Alerts", Icon(Icons.notifications), Icon(Icons.notifications_none)),
     ];
 
+    //feed slcm social direc alerts
+
     routes = <Widget>[
-      new SocialBody(),
       new Feed(),
-      new DirectoryHomePage(),
       new SLCM(),
+      new SocialBody(),
+      new DirectoryHomePage(),
       new AlertsHomePage(),
     ];
 
@@ -399,7 +401,7 @@ class HomePageState extends State<HomePage> {
                     title: Text(
                       titleOfBar,
                       style: TextStyle(
-                        fontFamily: "OpenSans-Regular",
+                          fontFamily: "OpenSans-Regular",
                           color: darkTheme ? Colors.black : Colors.white),
                     ),
                   )
@@ -411,7 +413,7 @@ class HomePageState extends State<HomePage> {
               onPageChanged: onPageChanged,
               scrollDirection: Axis.horizontal,
               children: (isHidden != null && isHidden)
-                  ? [...routes.sublist(0, 3), ...routes.sublist(4)]
+                  ? [...routes.sublist(0, 1), ...routes.sublist(2)]
                   : routes,
             ),
             bottomNavigationBar: BottomNavigationBar(
@@ -422,7 +424,7 @@ class HomePageState extends State<HomePage> {
               type: BottomNavigationBarType.shifting,
               onTap: (index) => changePageView(index),
               items: (isHidden != null && isHidden)
-                  ? [...navBarItem.sublist(0, 3), ...navBarItem.sublist(4)]
+                  ? [...navBarItem.sublist(0, 1), ...navBarItem.sublist(2)]
                   : navBarItem,
             ),
           );
@@ -433,7 +435,7 @@ class HomePageState extends State<HomePage> {
     {
       navigationTapped(index);
       titleOfBar = (isHidden != null && isHidden)
-          ? [...titleItem.sublist(0, 3), ...titleItem.sublist(4)][index]
+          ? [...titleItem.sublist(0, 1), ...titleItem.sublist(2)][index]
           : titleItem[index];
     }
   }
