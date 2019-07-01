@@ -93,7 +93,7 @@ class _YouTubeFeedState extends State<YouTubeFeed>
               ),
               Center(
                 child: SizedBox.fromSize(
-                  size: Size.fromHeight(height * 0.38),
+                  size: Size.fromHeight(height * 0.3),
                   child: ListView.builder(
                     padding: EdgeInsets.only(left: 15.0),
                     scrollDirection: Axis.horizontal,
@@ -101,12 +101,10 @@ class _YouTubeFeedState extends State<YouTubeFeed>
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                         child: SizedBox(
-                          width: width * 0.66,
+                        width: width * 0.75,
                           child: Column(
                             children: <Widget>[
                               Container(
-                                width: width * 0.66,
-                                height: width * 0.66 / 1.77,
                                 margin: EdgeInsets.only(right: 10.0),
                                 child: ClipRRect(
                                     borderRadius: BorderRadius.all(Radius.circular(12.0)),
@@ -129,7 +127,7 @@ class _YouTubeFeedState extends State<YouTubeFeed>
                                           ? 'Playlist: ' + items[index].title
                                           : items[index].title,
                                       style:
-                                          TextStyle(fontSize: height * 0.03),
+                                          Theme.of(context).textTheme.subhead,
                                       maxLines: 3,
                                       overflow: TextOverflow.ellipsis,
                                     )),

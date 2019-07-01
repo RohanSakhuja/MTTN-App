@@ -57,3 +57,9 @@ flutter:
         - asset: fonts/Product-Sans-Regular.ttf
         - asset: fonts/Product-Sans-Italic.ttf
         - asset: fonts/Product-Sans-Bold.ttf
+    - family: Cabin
+      fonts: 
+        - asset: fonts/Cabin-Regular.ttf
+        - asset: fonts/Cabin-Italic.ttf
+        - asset: fonts/Cabin-Bold.ttf    
+    

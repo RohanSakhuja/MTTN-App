@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
     return DynamicTheme(
       defaultBrightness: Brightness.light,
       data: (brightness) => new ThemeData(
-            fontFamily: 'Product-Sans',
+            fontFamily: 'Cabin',
             floatingActionButtonTheme:
                 FloatingActionButtonThemeData(backgroundColor: turq),
             primaryColor: colorSec,
@@ -77,7 +77,7 @@ class HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    titleOfBar = "Social";
+    titleOfBar = "Feed";
     isHidden = false;
     super.initState();
     firebaseCloudMessagingListeners();
@@ -401,7 +401,8 @@ class HomePageState extends State<HomePage> {
                     title: Text(
                       titleOfBar,
                       style: TextStyle(
-                          fontFamily: "OpenSans-Regular",
+                        fontWeight: FontWeight.w500,
+                          //fontFamily: "OpenSans-Regular",
                           color: darkTheme ? Colors.black : Colors.white),
                     ),
                   )

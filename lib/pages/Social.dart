@@ -29,9 +29,9 @@ class SocialBodyState extends State<SocialBody>
           BuildSocial().createState().build(context),
           Card(child: new NoirOffers(_scaffoldkey).createState().build(context)),
           Padding(padding: EdgeInsets.only(top: 10.0)),
-          Card(child: new UpcomingEvents(_scaffoldkey).createState().build(context)),
-          Padding(padding: EdgeInsets.only(top: 10.0)),
           Card(child: YouTubeFeed().createState().build(context)),
+          Padding(padding: EdgeInsets.only(top: 10.0)),
+          Card(child: new UpcomingEvents(_scaffoldkey).createState().build(context)),
         ]));
   }
 }

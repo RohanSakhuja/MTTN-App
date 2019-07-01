@@ -371,10 +371,8 @@ class ArticleState extends State<Article> {
       appBar: AppBar(
         backgroundColor: darkTheme ? turq : colorSec,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: darkTheme ? Colors.black : Colors.white
-          ),
+          icon: Icon(Icons.arrow_back,
+              color: darkTheme ? Colors.black : Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -382,10 +380,8 @@ class ArticleState extends State<Article> {
         actions: <Widget>[
           PopupMenuButton(
             offset: Offset(20.0, 50.0),
-            icon: Icon(
-              Icons.format_size,
-              color: darkTheme ? Colors.black : Colors.white
-            ),
+            icon: Icon(Icons.format_size,
+                color: darkTheme ? Colors.black : Colors.white),
             itemBuilder: (context) => <PopupMenuEntry>[
                   PopupMenuItem(
                     child: IconButton(

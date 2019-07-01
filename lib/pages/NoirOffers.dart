@@ -85,15 +85,19 @@ class _NoirOffersState extends State<NoirOffers>
                     itemBuilder: (BuildContext context, int index) {
                       return InkWell(
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 5.0),
-                          child: CachedNetworkImage(
-                            imageUrl: _offers[index].imageUri,
-                            fit: BoxFit.contain,
-                            placeholder: (context, url) =>
-                                CircularProgressIndicator(),
+                          padding: EdgeInsets.fromLTRB(5.0,2.0,10,10),
+                          child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(7.0)),
+                            child: CachedNetworkImage(
+                              imageUrl: _offers[index].imageUri,
+                              fit: BoxFit.fitWidth,
+                              placeholder: (context, url) =>
+                                  CircularProgressIndicator(),
+                            ),
                           ),
-                          width: width * 0.4,
-                          height: 0.18,
+                          // width: width * 0.4,
+                          // height: 0.18,
                         ),
                         onTap: () {
                           _persistentBottomSheet(_offers[index]);
