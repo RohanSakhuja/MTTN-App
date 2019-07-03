@@ -85,13 +85,15 @@ class _DirectoryHomePageState extends State<DirectoryHomePage>
     var json = await _fetchDirectory();
     List<Info> ent = new List();
     data.clear();
-    for (var cat in json.keys) {
+    var categoryKeys = json.keys.toList()..sort();
+    for (var cat in categoryKeys) {
       ent.clear();
       if (cat != null) {
-        for (var i in json['$cat'].keys) {
+        var entryKeys = json['$cat'].keys.toList()..sort();
+        for (var i in entryKeys) {
           if (i != null) {
             String contact = json['$cat']['$i']['contact'].toString();
-            String location = json['$cat']['$i']['location'].toString();
+            String location = json['$cat']['$i']['location'].toString()??"null";
             if (contact != null) {
               ent.add(new Info(contact: contact, name: i, url: location));
             }

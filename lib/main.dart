@@ -131,7 +131,7 @@ class HomePageState extends State<HomePage> {
     if (!(isHidden == true && tab == "SLCM")) {
       if (titleItem.contains(tab)) {
         int val = titleItem.indexOf(tab);
-        if (tab == "Alerts" && isHidden == true) {
+        if (tab != "Feed" && isHidden == true) {
           val = val - 1;
         }
         changePageView(val);

@@ -1,3 +1,4 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -34,6 +35,8 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
   final timeout = const Duration(minutes: 10);
+  GlobalKey _scaffoldKey = new GlobalKey<ScaffoldState>();
+  DatabaseReference _databaseReference = new FirebaseDatabase().reference();
 
   handleTimeout() {}
 
@@ -45,6 +48,8 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
   ScrollController _scrollController = new ScrollController();
   bool isPerformingRequest = false;
   bool isFabActive = false;
+  bool isOffline = false;
+
   @override
   void initState() {
     super.initState();
@@ -70,7 +75,16 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
 
   getUrl() async {
     _preferences = await SharedPreferences.getInstance();
-    var urls = jsonDecode(_preferences.getString('url'));
+    var val = _preferences.getString('url') ?? "null";
+    var urls;
+    print('val'+val);
+    if (val == "null") {
+      var snapshot = await _databaseReference.child('URL').once();
+      urls = snapshot.value;
+    } else {
+      urls = jsonDecode(val);
+    }
+    print(urls);
     String temp = urls['Wordpress'];
     setState(() {
       _wpApi = temp.replaceAll('\\(page)', "");
@@ -83,6 +97,13 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
         setState(() => isPerformingRequest = true);
         List<Post> newData =
             await _getPosts((articles.length / 10).round() + 1);
+        if (newData.isEmpty) {
+          setState(() {
+            isOffline = true;
+            isPerformingRequest = false;
+          });
+          return;
+        }
         imageCache.clear();
         setState(() {
           articles.addAll(newData);
@@ -113,8 +134,14 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
     Completer<Null> completer = new Completer<Null>();
     (_getPosts(1)).then((List<Post> newData) {
       completer.complete();
-      if (newData[0].id != articles[0].id) {
-        _needRefresh = true;
+      if (newData.isNotEmpty) {
+        isOffline = false;
+        print("data loaded");
+        if (newData[0].id != articles[0].id) {
+          _needRefresh = true;
+        } else {
+          _needRefresh = false;
+        }
       } else {
         _needRefresh = false;
       }
@@ -129,6 +156,7 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
     return new Scaffold(
+      key: _scaffoldKey,
       floatingActionButton: isFabActive
           ? FloatingActionButton(
               child: Icon(Icons.arrow_upward),
@@ -140,50 +168,69 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
               },
             )
           : null,
-      body: new Container(
-          padding: EdgeInsets.fromLTRB(11.0, 10.0, 11.0, 0.0),
-          child: _wpApi != null
-              ? (articles.length == 0
-                  ? FutureBuilder(
-                      future: _getData(),
-                      builder: (context, snapshot) {
-                        if (articles.length == 0) {
-                          return _buildProgressIndicator();
-                        }
+      body: isOffline && articles.isEmpty
+          ? new Container(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text("No Internet."),
+                    IconButton(
+                      icon: Icon(Icons.refresh),
+                      onPressed: () {
+                        setState(() {
+                          isOffline = false;
+                        });
                       },
-                    )
-                  : new RefreshIndicator(
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        cacheExtent: 30,
-                        padding: EdgeInsets.all(0.0),
-                        addAutomaticKeepAlives: true,
-                        itemCount: articles.length,
-                        itemBuilder: (context, index) {
-                          if (articles.length == index) {
-                            return _buildProgressIndicator();
-                          } else {
-                            return CreateCard(
-                              id: articles[index].id,
-                              title: articles[index].title,
-                              img: articles[index].imageUrl,
-                              excerpt: articles[index].excerpt,
-                              link: articles[index].link,
-                              content: articles[index].content,
-                              date: articles[index].date,
-                            );
-                          }
-                        },
-                      ),
-                      onRefresh: _refresh,
-                    ))
-              : _buildProgressIndicator()),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : new Container(
+              padding: EdgeInsets.fromLTRB(11.0, 10.0, 11.0, 0.0),
+              child: _wpApi != null
+                  ? (articles.length == 0
+                      ? FutureBuilder(
+                          future: _getData(),
+                          builder: (context, snapshot) {
+                            if (articles.length == 0) {
+                              return _buildProgressIndicator();
+                            }
+                          },
+                        )
+                      : new RefreshIndicator(
+                          child: ListView.builder(
+                            controller: _scrollController,
+                            cacheExtent: 30,
+                            padding: EdgeInsets.all(0.0),
+                            addAutomaticKeepAlives: true,
+                            itemCount: articles.length,
+                            itemBuilder: (context, index) {
+                              if (articles.length == index) {
+                                return _buildProgressIndicator();
+                              } else {
+                                return CreateCard(
+                                  id: articles[index].id,
+                                  title: articles[index].title,
+                                  img: articles[index].imageUrl,
+                                  excerpt: articles[index].excerpt,
+                                  link: articles[index].link,
+                                  content: articles[index].content,
+                                  date: articles[index].date,
+                                );
+                              }
+                            },
+                          ),
+                          onRefresh: _refresh,
+                        ))
+                  : _buildProgressIndicator()),
     );
   }
 
   void _showDialog(String title, String content) {
     showDialog(
-      context: context,
+      context: _scaffoldKey.currentContext,
       builder: (BuildContext context) {
         return AlertDialog(
           title: new Text(title),
