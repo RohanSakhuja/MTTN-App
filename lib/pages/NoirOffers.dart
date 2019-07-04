@@ -64,7 +64,6 @@ class _NoirOffersState extends State<NoirOffers>
     return FutureBuilder<int>(
       future: sixtyninenine,
       builder: (context, snapshot) {
-        // print(snapshot.data);
         if (snapshot.hasData == true && snapshot.data == 699) {
           return new Column(
             children: <Widget>[

@@ -182,7 +182,6 @@ class HomePageState extends State<HomePage> {
     _cacheDirectory();
     _cacheUrls();
     var temp = _preferences.getBool("Notifications") ?? null;
-    print(temp);
     if (temp == null) {
       _preferences.setBool("Notifications", true);
     } else {
@@ -319,8 +318,6 @@ class HomePageState extends State<HomePage> {
           trailing: Switch(
             value: allowNotification,
             onChanged: (bool val) {
-              // Implement notification toggle here
-              print(val);
               _preferences.setBool('Notifications', val);
               setState(() {
                 allowNotification = val;

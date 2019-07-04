@@ -77,14 +77,12 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
     _preferences = await SharedPreferences.getInstance();
     var val = _preferences.getString('url') ?? "null";
     var urls;
-    print('val'+val);
     if (val == "null") {
       var snapshot = await _databaseReference.child('URL').once();
       urls = snapshot.value;
     } else {
       urls = jsonDecode(val);
     }
-    print(urls);
     String temp = urls['Wordpress'];
     setState(() {
       _wpApi = temp.replaceAll('\\(page)', "");
@@ -136,7 +134,6 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
       completer.complete();
       if (newData.isNotEmpty) {
         isOffline = false;
-        print("data loaded");
         if (newData[0].id != articles[0].id) {
           _needRefresh = true;
         } else {

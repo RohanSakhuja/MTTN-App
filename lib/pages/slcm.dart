@@ -125,7 +125,6 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     _getResponse(reg, pass).then((response) {
       if (response != null && response.statusCode == 200) {
         var res = json.decode(response.body);
-        print(res['login']);
         if (res['login'] == 'successful') {
           _preferences.setStringList('credentials', [reg, pass]);
           _preferences.setString('attendance', response.body);
@@ -159,7 +158,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     String token = _preferences.getString("fcm-token");
     String version = _preferences.getString("appVersion");
     String device = _preferences.getString("device");
-    databaseReference.child("users").set({
+    databaseReference.child("users").update({
       "$reg": {
         "appVersion": version,
         "device": device,

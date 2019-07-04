@@ -26,7 +26,6 @@ List<Event> _upcoming = new List();
 Future<int> _fetch() async {
   var snapshot = await databaseReference.once();
   Map<dynamic, dynamic> json = snapshot.value['Upcoming Events'];
-  print(json);
   List<Event> temp = new List();
   for (var item in json.keys) {
     if (item != null) {
