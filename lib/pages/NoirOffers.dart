@@ -84,15 +84,15 @@ class _NoirOffersState extends State<NoirOffers>
                     itemBuilder: (BuildContext context, int index) {
                       return InkWell(
                         child: Container(
-                          padding: EdgeInsets.fromLTRB(5.0,2.0,10,10),
+                          padding: EdgeInsets.fromLTRB(5.0, 2.0, 10, 10),
                           child: ClipRRect(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(7.0)),
                             child: CachedNetworkImage(
                               imageUrl: _offers[index].imageUri,
                               fit: BoxFit.fitWidth,
-                              placeholder: (context, url) =>
-                                  CircularProgressIndicator(),
+                              // placeholder: (context, url) =>
+                              //     CircularProgressIndicator(),
                             ),
                           ),
                           // width: width * 0.4,
@@ -110,7 +110,9 @@ class _NoirOffersState extends State<NoirOffers>
           );
         }
         return Container(
-            alignment: Alignment.center, child: CircularProgressIndicator());
+            height: height * 0.2,
+            alignment: Alignment.center,
+            child: CircularProgressIndicator());
       },
     );
   }

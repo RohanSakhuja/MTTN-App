@@ -25,13 +25,12 @@ List<Event> _upcoming = new List();
 
 Future<int> _fetch() async {
   var snapshot = await databaseReference.once();
-  Map<dynamic, dynamic> json = snapshot.value['Upcoming Events'];
+  List<dynamic> json = snapshot.value['Upcoming Events'];
   List<Event> temp = new List();
-  for (var item in json.keys) {
-    if (item != null) {
-      temp.add(new Event(
-          imageUri: json[item]['Image Url'], title: json[item]['Name']));
-    }
+  for (var item in json) {
+    item != null
+        ? temp.add(new Event(imageUri: item['Image Url'], title: item['Name']))
+        : null;
   }
   _upcoming.clear();
   _upcoming.addAll(temp);
@@ -66,9 +65,7 @@ class _UpcomingEventsState extends State<UpcomingEvents>
                 child: Text(
                   "Upcoming Events",
                   textAlign: TextAlign.left,
-                  style: TextStyle(
-                      fontSize: 17.0,
-                      fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.w600),
                 ),
               ),
               Center(
@@ -82,12 +79,16 @@ class _UpcomingEventsState extends State<UpcomingEvents>
                       return GestureDetector(
                         child: Container(
                           padding: EdgeInsets.all(5.0),
-                          child: CachedNetworkImage(
-                            imageUrl: _upcoming[index].imageUri,
-                            fit: BoxFit.cover,
+                          child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(7.0)),
+                            child: CachedNetworkImage(
+                              imageUrl: _upcoming[index].imageUri,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                          width: width * 0.35,
-                          height: height * 0.2,
+                          // width: width * 0.35,
+                          // height: height * 0.2,
                         ),
                         onTap: () {
                           _persistentBottomSheet(_upcoming[index]);
@@ -101,7 +102,7 @@ class _UpcomingEventsState extends State<UpcomingEvents>
           );
         } else {
           return Container(
-            height: MediaQuery.of(context).size.height * 0.3,
+            height: MediaQuery.of(context).size.height * 0.2,
             child: Center(
               child: CircularProgressIndicator(),
             ),

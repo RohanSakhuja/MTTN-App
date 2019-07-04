@@ -47,11 +47,20 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
   }
 
   getUrl() async {
-    _preferences = await SharedPreferences.getInstance();
-    var urls = jsonDecode(_preferences.getString('url'));
-    setState(() {
-      _slcmApi = urls['SLCM Data'];
-    });
+    var urls;
+    try {
+      _preferences = await SharedPreferences.getInstance();
+      urls = jsonDecode(_preferences.getString('url'));
+      setState(() {
+        _slcmApi = urls['SLCM Data'];
+      });
+    } catch (e) {
+      var snapshot = await databaseReference.child('URL').once();
+      urls = snapshot.value;
+      setState(() {
+        _slcmApi = urls['SLCM Data'];
+      });
+    }
   }
 
   void _cachedLogin() async {

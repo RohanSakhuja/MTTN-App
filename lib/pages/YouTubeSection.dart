@@ -100,7 +100,7 @@ class _YouTubeFeedState extends State<YouTubeFeed>
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                         child: SizedBox(
-                        width: width * 0.75,
+                        width: width * 0.68,
                           child: Column(
                             children: <Widget>[
                               Container(
@@ -143,7 +143,7 @@ class _YouTubeFeedState extends State<YouTubeFeed>
           );
         } else {
           return Container(
-            height: 100,
+            height: height * 0.2,
             child: Center(
               child: CircularProgressIndicator(
                 valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),

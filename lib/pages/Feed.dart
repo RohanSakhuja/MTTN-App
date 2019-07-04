@@ -47,6 +47,7 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
 
   ScrollController _scrollController = new ScrollController();
   bool isPerformingRequest = false;
+  bool isInitialRequest = false;
   bool isFabActive = false;
   bool isOffline = false;
 
@@ -165,63 +166,99 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
               },
             )
           : null,
-      body: isOffline && articles.isEmpty
-          ? new Container(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text("No Internet."),
-                    IconButton(
-                      icon: Icon(Icons.refresh),
-                      onPressed: () {
-                        setState(() {
-                          isOffline = false;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            )
-          : new Container(
-              padding: EdgeInsets.fromLTRB(11.0, 10.0, 11.0, 0.0),
-              child: _wpApi != null
-                  ? (articles.length == 0
-                      ? FutureBuilder(
-                          future: _getData(),
-                          builder: (context, snapshot) {
-                            if (articles.length == 0) {
-                              return _buildProgressIndicator();
-                            }
-                          },
-                        )
-                      : new RefreshIndicator(
-                          child: ListView.builder(
-                            controller: _scrollController,
-                            cacheExtent: 30,
-                            padding: EdgeInsets.all(0.0),
-                            addAutomaticKeepAlives: true,
-                            itemCount: articles.length,
-                            itemBuilder: (context, index) {
-                              if (articles.length == index) {
-                                return _buildProgressIndicator();
-                              } else {
-                                return CreateCard(
-                                  id: articles[index].id,
-                                  title: articles[index].title,
-                                  img: articles[index].imageUrl,
-                                  excerpt: articles[index].excerpt,
-                                  link: articles[index].link,
-                                  content: articles[index].content,
-                                  date: articles[index].date,
-                                );
-                              }
-                            },
-                          ),
-                          onRefresh: _refresh,
-                        ))
-                  : _buildProgressIndicator()),
+      body: Stack(
+        children: <Widget>[
+          isOffline && articles.isEmpty
+              ? new Container(
+                  alignment: Alignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "No Internet   :P",
+                        style: Theme.of(context).textTheme.title,
+                      ),
+                      Container(
+                        height: 10.0,
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.refresh,
+                          size: 40.0,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            isOffline = false;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                )
+              : new Container(
+                  padding: EdgeInsets.fromLTRB(11.0, 10.0, 11.0, 0.0),
+                  child: _wpApi != null
+                      ? (articles.length == 0
+                          ? FutureBuilder(
+                              future: _getData(),
+                              builder: (context, snapshot) {
+                                if (articles.length == 0) {
+                                  return _buildProgressIndicator();
+                                }
+                              },
+                            )
+                          : new RefreshIndicator(
+                              child: ListView.builder(
+                                controller: _scrollController,
+                                cacheExtent: 30,
+                                padding: EdgeInsets.all(0.0),
+                                addAutomaticKeepAlives: true,
+                                itemCount: articles.length,
+                                itemBuilder: (context, index) {
+                                  if (articles.length == index) {
+                                    return _buildProgressIndicator();
+                                  } else {
+                                    isInitialRequest = true;
+                                    return CreateCard(
+                                      id: articles[index].id,
+                                      title: articles[index].title,
+                                      img: articles[index].imageUrl,
+                                      excerpt: articles[index].excerpt,
+                                      link: articles[index].link,
+                                      content: articles[index].content,
+                                      date: articles[index].date,
+                                    );
+                                  }
+                                },
+                              ),
+                              onRefresh: _refresh,
+                            ))
+                      : _buildProgressIndicator()),
+          isPerformingRequest && isInitialRequest
+              ? Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: FractionalOffset.topCenter,
+                          end: FractionalOffset.bottomCenter,
+                          colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.9),
+                      ],
+                          stops: [
+                        0.0,
+                        1.0
+                      ])),
+                  alignment: Alignment.center,
+                  child: CircularProgressIndicator(
+                    valueColor: new AlwaysStoppedAnimation<Color>(Colors.teal),
+                  ),
+                )
+              : Container()
+        ],
+      ),
     );
   }
 
