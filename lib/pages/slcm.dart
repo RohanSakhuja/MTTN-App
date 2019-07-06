@@ -320,7 +320,8 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                     width: width * 0.6,
                     height: height * 0.055,
                     child: Material(
-                      color: Color.fromRGBO(64, 224, 208, 1.0),
+                      //color: Color.fromRGBO(64, 224, 208, 1.0),
+                      color: Colors.greenAccent,
                       borderRadius: BorderRadius.all(Radius.circular(20.0)),
                       child: InkWell(
                         child: Center(
@@ -438,11 +439,10 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     List<Attendance> att = _parseAttendace();
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: darkTheme ? turq : colorSec,
+        backgroundColor: darkTheme ? primaryDark : primaryLight,
         elevation: 0.0,
         title: Text(
           capFirst(username.toLowerCase().split(" ")),
-          //capFirst(username.toLowerCase()),
           style: TextStyle(color: darkTheme ? Colors.black : Colors.white),
         ),
         actions: <Widget>[

@@ -159,7 +159,7 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
           ? FloatingActionButton(
               child: Icon(Icons.arrow_upward),
               foregroundColor: Colors.white,
-              backgroundColor: Color.fromRGBO(0, 206, 209, 1.0),
+              backgroundColor: darkTheme ? Colors.red : Colors.redAccent,
               onPressed: () {
                 _scrollController.animateTo(0,
                     duration: new Duration(seconds: 1), curve: Curves.ease);
@@ -450,10 +450,11 @@ class ArticleState extends State<Article> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: darkTheme ? turq : colorSec,
+        backgroundColor: darkTheme ? primaryDark : primaryLight,
         leading: IconButton(
           icon: Icon(Icons.arrow_back,
-              color: darkTheme ? Colors.black : Colors.white),
+              color: Colors.white
+              ),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -462,7 +463,8 @@ class ArticleState extends State<Article> {
           PopupMenuButton(
             offset: Offset(20.0, 50.0),
             icon: Icon(Icons.format_size,
-                color: darkTheme ? Colors.black : Colors.white),
+                color: Colors.white
+                ),
             itemBuilder: (context) => <PopupMenuEntry>[
                   PopupMenuItem(
                     child: IconButton(
@@ -510,11 +512,12 @@ class ArticleState extends State<Article> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: darkTheme ? Colors.red : Colors.redAccent,
+        foregroundColor: Colors.white,
         elevation: 5.0,
         child: Icon(
           Icons.share,
         ),
-        // backgroundColor: colorMain,
         onPressed: () {
           Share.share("Check out this post by MTTN\n${widget.link}");
         },

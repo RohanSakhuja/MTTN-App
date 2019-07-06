@@ -16,10 +16,10 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:device_info/device_info.dart';
 
-Color turq = Color.fromRGBO(0, 206, 209, 1.0);
-
-Color colorSec = Color.fromRGBO(0, 44, 62, 1);
-Color colorMain = Color.fromRGBO(120, 176, 196, 1);
+Color primaryLight = Colors.indigoAccent;
+Color primaryDark = Colors.black12;
+Color secondaryLight = Color.fromRGBO(240, 240, 240, 1);
+Color secondaryDark = Color.fromRGBO(25, 25, 25, 1);
 
 void main() => runApp(new MyApp());
 
@@ -31,10 +31,11 @@ class MyApp extends StatelessWidget {
     return DynamicTheme(
       defaultBrightness: Brightness.light,
       data: (brightness) => new ThemeData(
+            primarySwatch: Colors.indigo,
             fontFamily: 'Cabin',
             floatingActionButtonTheme:
-                FloatingActionButtonThemeData(backgroundColor: turq),
-            primaryColor: colorSec,
+                FloatingActionButtonThemeData(backgroundColor: Colors.blueGrey),
+            primaryColor: primaryLight,
             brightness: brightness,
             secondaryHeaderColor: Colors.white,
           ),
@@ -250,12 +251,13 @@ class HomePageState extends State<HomePage> {
         child: ListView(
       children: <Widget>[
         UserAccountsDrawerHeader(
-            decoration: BoxDecoration(color: darkTheme ? turq : colorSec),
+            decoration:
+                BoxDecoration(color: darkTheme ? primaryDark : primaryLight),
             accountName: Text("MTTN",
                 style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 20.0,
-                    color: darkTheme ? Colors.black : Colors.white)),
+                    color: !darkTheme ? Colors.white : Colors.white)),
             accountEmail: InkWell(
               onTap: () {
                 _launchURL(
@@ -265,11 +267,11 @@ class HomePageState extends State<HomePage> {
                 "editors@manipalthetalk.org",
                 style: TextStyle(
                     fontWeight: FontWeight.w400,
-                    color: darkTheme ? Colors.black : Colors.white),
+                    color: !darkTheme ? Colors.white : Colors.white),
               ),
             ),
             currentAccountPicture: CircleAvatar(
-                backgroundImage: darkTheme
+                backgroundImage: !darkTheme
                     ? AssetImage(
                         "assets/ic_launcher.png",
                       )
@@ -341,7 +343,7 @@ class HomePageState extends State<HomePage> {
 
   _buildBottomNavBarItem(String title, Icon activeIcon, Icon icon) {
     return BottomNavigationBarItem(
-      backgroundColor: darkTheme ? Colors.black38 : colorSec,
+      backgroundColor: darkTheme ? secondaryDark : secondaryLight,
       title: Text(title),
       activeIcon: activeIcon,
       icon: icon,
@@ -388,19 +390,18 @@ class HomePageState extends State<HomePage> {
                 ? AppBar(
                     leading: IconButton(
                       icon: Icon(Icons.menu,
-                          color: darkTheme ? Colors.black : Colors.white),
+                          color: darkTheme ? Colors.white : Colors.white),
                       onPressed: () {
                         _scaffoldkey.currentState.openDrawer();
                       },
                     ),
-                    backgroundColor: darkTheme ? turq : colorSec,
+                    backgroundColor: darkTheme ? primaryDark : primaryLight,
                     centerTitle: false,
                     title: Text(
                       titleOfBar,
                       style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                          //fontFamily: "OpenSans-Regular",
-                          color: darkTheme ? Colors.black : Colors.white),
+                          fontWeight: FontWeight.w700,
+                          color: darkTheme ? Colors.white : Colors.white),
                     ),
                   )
                 : null,
@@ -415,9 +416,11 @@ class HomePageState extends State<HomePage> {
                   : routes,
             ),
             bottomNavigationBar: BottomNavigationBar(
-              backgroundColor: darkTheme ? turq : colorSec,
-              selectedItemColor: darkTheme ? turq : Colors.white,
-              unselectedItemColor: Colors.white54,
+              //backgroundColor: darkTheme ? turq : Colors.brown,
+              selectedItemColor:
+                  darkTheme ? Colors.indigo : Colors.indigoAccent,
+              unselectedItemColor:
+                  darkTheme ? Colors.white24 : Colors.black.withOpacity(0.65),
               currentIndex: _page,
               type: BottomNavigationBarType.shifting,
               onTap: (index) => changePageView(index),
