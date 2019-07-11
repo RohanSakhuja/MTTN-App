@@ -253,7 +253,7 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
                       ])),
                   alignment: Alignment.center,
                   child: CircularProgressIndicator(
-                    valueColor: new AlwaysStoppedAnimation<Color>(Colors.teal),
+                    valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),
                   ),
                 )
               : Container()

@@ -443,7 +443,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
         elevation: 0.0,
         title: Text(
           capFirst(username.toLowerCase().split(" ")),
-          style: TextStyle(color: darkTheme ? Colors.black : Colors.white),
+          style: TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
           InkWell(
@@ -453,7 +453,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                 child: Text(
                   "Logout",
                   style: TextStyle(
-                      color: darkTheme ? Colors.black : Colors.white,
+                      color: Colors.white,
                       fontSize: 18.0),
                 )),
             onTap: () {

@@ -25,13 +25,22 @@ List<Event> _upcoming = new List();
 
 Future<int> _fetch() async {
   var snapshot = await databaseReference.once();
+  // List<dynamic> json = snapshot.value['Upcoming Events'];
+  // List<Event> temp = new List();
+  // for (var item in json) {
+  //   if (item != null) {
+  //     temp.add(new Event(imageUri: item['Image Url'], title: item['Name']));
+  //   }
+  // }
   List<dynamic> json = snapshot.value['Upcoming Events'];
   List<Event> temp = new List();
-  for (var item in json) {
-    item != null
-        ? temp.add(new Event(imageUri: item['Image Url'], title: item['Name']))
-        : null;
-  }
+  try {
+    for (var item in json) {
+      if (item != null) {
+        temp.add(new Event(imageUri: item['Image Url'], title: item['Name']));
+      }
+    }
+  } catch (e) {}
   _upcoming.clear();
   _upcoming.addAll(temp);
   return 69;
@@ -72,20 +81,31 @@ class _UpcomingEventsState extends State<UpcomingEvents>
                 child: SizedBox.fromSize(
                   size: Size.fromHeight(height * 0.25),
                   child: ListView.builder(
-                    padding: EdgeInsets.only(left: 15.0),
+                    padding: EdgeInsets.only(left: 10.0),
                     scrollDirection: Axis.horizontal,
                     itemCount: _upcoming.length,
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                         child: Container(
+                          width: 130.0,
+                          height: 90.0,
                           padding: EdgeInsets.all(5.0),
                           child: ClipRRect(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(7.0)),
-                            child: CachedNetworkImage(
-                              imageUrl: _upcoming[index].imageUri,
-                              fit: BoxFit.cover,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                fit: BoxFit.fitHeight,
+                                image: NetworkImage(
+                                  _upcoming[index].imageUri,
+                                ),
+                              )),
                             ),
+                            // child: CachedNetworkImage(
+                            //   imageUrl: _upcoming[index].imageUri,
+                            //   fit: BoxFit.cover,
+                            // ),
                           ),
                           // width: width * 0.35,
                           // height: height * 0.2,
