@@ -42,7 +42,7 @@ Future<int> _fetch() async {
     }
   } catch (e) {}
   _upcoming.clear();
-  _upcoming.addAll(temp);
+  _upcoming.addAll(temp.reversed);
   return 69;
 }
 
