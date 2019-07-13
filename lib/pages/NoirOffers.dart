@@ -23,7 +23,7 @@ DatabaseReference databaseReference = new FirebaseDatabase().reference();
 
 List<Offer> _offers = new List();
 
-Future<int> _fetch() async {
+Future<bool> _fetch() async {
   var snapshot = await databaseReference.once();
 
   List<dynamic> json = snapshot.value['Offers'];
@@ -37,12 +37,15 @@ Future<int> _fetch() async {
             name: item['Name'],
             text: item['Text']));
       }
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
   _offers.clear();
   _offers.addAll(temp);
   _offers = _offers.reversed.toList();
-  return 699;
+  return true;
 }
 
 class _NoirOffersState extends State<NoirOffers>
@@ -50,7 +53,7 @@ class _NoirOffersState extends State<NoirOffers>
   GlobalKey<ScaffoldState> _scaffoldKey;
   _NoirOffersState(this._scaffoldKey);
 
-  final Future<int> sixtyninenine = _fetch();
+  final Future<bool> temp = _fetch();
 
   @override
   bool get wantKeepAlive => true;
@@ -61,10 +64,10 @@ class _NoirOffersState extends State<NoirOffers>
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    return FutureBuilder<int>(
-      future: sixtyninenine,
+    return FutureBuilder<bool>(
+      future: temp,
       builder: (context, snapshot) {
-        if (snapshot.hasData == true && snapshot.data == 699) {
+        if (snapshot.hasData == true && snapshot.data == true) {
           return new Column(
             children: <Widget>[
               Container(

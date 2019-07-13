@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class Event {
@@ -19,39 +18,42 @@ class UpcomingEvents extends StatefulWidget {
   _UpcomingEventsState createState() => _UpcomingEventsState(_scaffoldKey);
 }
 
-DatabaseReference databaseReference = new FirebaseDatabase().reference();
+DatabaseReference databaseReference =
+    new FirebaseDatabase().reference().child('Upcoming Events');
 
 List<Event> _upcoming = new List();
 
-Future<int> _fetch() async {
-  var snapshot = await databaseReference.once();
-  // List<dynamic> json = snapshot.value['Upcoming Events'];
-  // List<Event> temp = new List();
-  // for (var item in json) {
-  //   if (item != null) {
-  //     temp.add(new Event(imageUri: item['Image Url'], title: item['Name']));
-  //   }
-  // }
-  List<dynamic> json = snapshot.value['Upcoming Events'];
+_parseEvents(var data) async {
   List<Event> temp = new List();
   try {
-    for (var item in json) {
-      if (item != null) {
-        temp.add(new Event(imageUri: item['Image Url'], title: item['Name']));
+    if (data is List) {
+      for (var item in data) {
+        if(item != null) {
+          temp.add(new Event(imageUri: item["Image Url"], title: item["Name"]));
+        }
+      }
+    } else {
+      var keys = data.keys;
+      for (var key in keys) {
+        var item = data["$key"];
+        if (item != null) {
+          temp.add(new Event(imageUri: item["Image Url"], title: item["Name"]));
+        }
       }
     }
-  } catch (e) {}
+  } catch (e) {
+    print(e);
+    return false;
+  }
   _upcoming.clear();
   _upcoming.addAll(temp.reversed);
-  return 69;
+  return true;
 }
 
 class _UpcomingEventsState extends State<UpcomingEvents>
     with AutomaticKeepAliveClientMixin {
   GlobalKey<ScaffoldState> _scaffoldKey;
   _UpcomingEventsState(this._scaffoldKey);
-
-  final Future<int> sixtynine = _fetch();
 
   @override
   bool get wantKeepAlive => true;
@@ -62,73 +64,64 @@ class _UpcomingEventsState extends State<UpcomingEvents>
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    return FutureBuilder<int>(
-      future: sixtynine,
-      builder: (context, snapshot) {
-        if (snapshot.hasData == true && snapshot.data == 69) {
-          return Column(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 10.0),
-                width: width * 0.915,
-                child: Text(
-                  "Upcoming Events",
-                  textAlign: TextAlign.left,
-                  style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.w600),
-                ),
-              ),
-              Center(
-                child: SizedBox.fromSize(
-                  size: Size.fromHeight(height * 0.25),
-                  child: ListView.builder(
-                    padding: EdgeInsets.only(left: 10.0),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _upcoming.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return GestureDetector(
-                        child: Container(
-                          width: 130.0,
-                          height: 90.0,
-                          padding: EdgeInsets.all(5.0),
-                          child: ClipRRect(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(7.0)),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                fit: BoxFit.fitHeight,
-                                image: NetworkImage(
-                                  _upcoming[index].imageUri,
-                                ),
-                              )),
-                            ),
-                            // child: CachedNetworkImage(
-                            //   imageUrl: _upcoming[index].imageUri,
-                            //   fit: BoxFit.cover,
-                            // ),
-                          ),
-                          // width: width * 0.35,
-                          // height: height * 0.2,
-                        ),
-                        onTap: () {
-                          _persistentBottomSheet(_upcoming[index]);
-                        },
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ],
-          );
-        } else {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.2,
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
+    return StreamBuilder(
+      stream: databaseReference.onValue,
+      builder: (context, snap) {
+        if (snap.hasData) {
+          _parseEvents(snap.data.snapshot.value);
         }
+        return _buildEvents(width, height);
       },
+    );
+  }
+
+  _buildEvents(var width, var height) {
+    return Column(
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 10.0),
+          width: width * 0.915,
+          child: Text(
+            "Upcoming Events",
+            textAlign: TextAlign.left,
+            style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.w600),
+          ),
+        ),
+        Center(
+          child: SizedBox.fromSize(
+            size: Size.fromHeight(height * 0.25),
+            child: ListView.builder(
+              padding: EdgeInsets.only(left: 10.0),
+              scrollDirection: Axis.horizontal,
+              itemCount: _upcoming.length,
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                  child: Container(
+                    width: 130.0,
+                    height: 90.0,
+                    padding: EdgeInsets.all(5.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(7.0)),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            image: DecorationImage(
+                          fit: BoxFit.fitHeight,
+                          image: NetworkImage(
+                            _upcoming[index].imageUri,
+                          ),
+                        )),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    _persistentBottomSheet(_upcoming[index]);
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 

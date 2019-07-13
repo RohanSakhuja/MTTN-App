@@ -37,35 +37,33 @@ String parseTitle(String title) {
   return raw.substring(start, last);
 }
 
-Future<String> _fetchItems() async {
-  String uri =
-      'https://www.googleapis.com/youtube/v3/search?key=AIzaSyDMzJvdj7xH40CMVnoW6kZPgVpXhn93aA8&channelId=UCwW9nPcEM2wGfsa06LTYlFg&part=snippet,id&order=date&maxResults=50';
-  var response = await http.get(uri);
-  var body = jsonDecode(response.body);
-
-  for (var item in body['items']) {
-    String temp = item['id']['kind'].substring(8);
-    String id =
-        (temp == 'video') ? item['id']['videoId'] : item['id']['playlistId'];
-    String link = (temp == 'video')
-        ? 'https://www.youtube.com/watch?v=$id'
-        : 'https://www.youtube.com/watch?v=I5y-v_QDmwg&list=$id';
-    items.add(new YouTubeItem(
-        type: temp,
-        title: parseTitle(item['snippet']['title']),
-        itemId: id,
-        description: item['snippet']['description'],
-        thumbnail: item['snippet']['thumbnails']['medium']['url'],
-        link: link));
-  }
-  return "success";
-}
-
 class _YouTubeFeedState extends State<YouTubeFeed>
     with AutomaticKeepAliveClientMixin {
-  final Future<String> statee = _fetchItems();
-
   bool get wantKeepAlive => true;
+
+  Future<String> _fetchItems() async {
+    String uri =
+        "https://www.googleapis.com/youtube/v3/search?key=AIzaSyDMzJvdj7xH40CMVnoW6kZPgVpXhn93aA8&channelId=UCwW9nPcEM2wGfsa06LTYlFg&part=snippet,id&order=date&maxResults=50";
+    var response = await http.get(uri);
+    var body = jsonDecode(response.body);
+
+    for (var item in body['items']) {
+      String temp = item['id']['kind'].substring(8);
+      String id =
+          (temp == 'video') ? item['id']['videoId'] : item['id']['playlistId'];
+      String link = (temp == 'video')
+          ? 'https://www.youtube.com/watch?v=$id'
+          : 'https://www.youtube.com/watch?v=I5y-v_QDmwg&list=$id';
+      items.add(new YouTubeItem(
+          type: temp,
+          title: parseTitle(item['snippet']['title']),
+          itemId: id,
+          description: item['snippet']['description'],
+          thumbnail: item['snippet']['thumbnails']['medium']['url'],
+          link: link));
+    }
+    return "success";
+  }
 
   _launchUrl(url) async =>
       (await canLaunch(url)) ? await launch(url) : throw 'Could not lauch $url';
@@ -76,7 +74,7 @@ class _YouTubeFeedState extends State<YouTubeFeed>
     var width = MediaQuery.of(context).size.width;
 
     return FutureBuilder<String>(
-      future: statee,
+      future: _fetchItems(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Column(
@@ -100,13 +98,14 @@ class _YouTubeFeedState extends State<YouTubeFeed>
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                         child: SizedBox(
-                        width: width * 0.68,
+                          width: width * 0.68,
                           child: Column(
                             children: <Widget>[
                               Container(
                                 margin: EdgeInsets.only(right: 10.0),
                                 child: ClipRRect(
-                                    borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(12.0)),
                                     child: GestureDetector(
                                         onTap: () =>
                                             _launchUrl(items[index].link),
@@ -119,7 +118,7 @@ class _YouTubeFeedState extends State<YouTubeFeed>
                               ),
                               Flexible(
                                 child: Container(
-                                  alignment: Alignment.topCenter,
+                                    alignment: Alignment.topCenter,
                                     padding: EdgeInsets.only(right: 20.0),
                                     child: Text(
                                       items[index].type == 'playlist'

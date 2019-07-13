@@ -6,6 +6,9 @@ key.jks
 **/android/key.properties
 **/android/local.properties
 
+# Firebase Config
+**/android/app/google-services.json
+
 # Random
 *.log
 *.lock

@@ -14,7 +14,6 @@ import 'pages/Social.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:device_info/device_info.dart';
 
 Color primaryLight = Colors.indigoAccent;
 Color primaryDark = Colors.black12;
@@ -73,7 +72,7 @@ class HomePageState extends State<HomePage> {
   List<BottomNavigationBarItem> navBarItem;
   List<Widget> routes;
 
-  bool allowNotification = true;
+  // bool allowNotification = true;
   final _scaffoldkey = new GlobalKey<ScaffoldState>();
 
   @override
@@ -182,20 +181,12 @@ class HomePageState extends State<HomePage> {
     _preferences = await SharedPreferences.getInstance();
     _cacheDirectory();
     _cacheUrls();
-    var temp = _preferences.getBool("Notifications") ?? null;
-    if (temp == null) {
-      _preferences.setBool("Notifications", true);
-    } else {
-      allowNotification = temp;
-    }
-    _firebaseMessaging.getToken().then((token) {
-      print(token);
-      _preferences.setString("fcm-token", token);
-    });
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    _preferences.setString("device", "${androidInfo.device}");
-    _preferences.setString("appVersion", "1.0.0");
+    // var temp = _preferences.getBool("Notifications") ?? null;
+    // if (temp == null) {
+    //   _preferences.setBool("Notifications", true);
+    // } else {
+    //   allowNotification = temp;
+    // }
   }
 
   void _cacheUrls() async {
@@ -261,7 +252,7 @@ class HomePageState extends State<HomePage> {
             accountEmail: InkWell(
               onTap: () {
                 _launchURL(
-                    "mailto:editors@manipalthetalk.org?subject=Is this manipal blog?&body=is it?");
+                    "mailto:editors@manipalthetalk.org?subject=&body=");
               },
               child: Text(
                 "editors@manipalthetalk.org",
@@ -311,22 +302,22 @@ class HomePageState extends State<HomePage> {
             },
           ),
         ),
-        ListTile(
-          leading: allowNotification
-              ? Icon(Icons.notifications)
-              : Icon(Icons.notifications_off),
-          title: Text("Notification",
-              style: TextStyle(fontWeight: FontWeight.w400)),
-          trailing: Switch(
-            value: allowNotification,
-            onChanged: (bool val) {
-              _preferences.setBool('Notifications', val);
-              setState(() {
-                allowNotification = val;
-              });
-            },
-          ),
-        ),
+        // ListTile(
+        //   leading: allowNotification
+        //       ? Icon(Icons.notifications)
+        //       : Icon(Icons.notifications_off),
+        //   title: Text("Notification",
+        //       style: TextStyle(fontWeight: FontWeight.w400)),
+        //   trailing: Switch(
+        //     value: allowNotification,
+        //     onChanged: (bool val) {
+        //       _preferences.setBool('Notifications', val);
+        //       setState(() {
+        //         allowNotification = val;
+        //       });
+        //     },
+        //   ),
+        // ),
         Divider(),
         ListTile(
           leading: Icon(Icons.hdr_weak),

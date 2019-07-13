@@ -1,3 +1,5 @@
+import 'package:device_info/device_info.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_database/firebase_database.dart';
@@ -32,6 +34,8 @@ DatabaseReference databaseReference = new FirebaseDatabase().reference();
 class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
   Color secColor = new Color.fromRGBO(234, 116, 76, 1.0);
   Color primColor = Color.fromRGBO(190, 232, 223, 0.75);
+
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   SharedPreferences _preferences;
   String _slcmApi;
@@ -162,12 +166,23 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     });
   }
 
-  storeUserInfo(String reg) {
+  storeUserInfo(String reg) async {
     String username = _preferences.getString("username");
-    String token = _preferences.getString("fcm-token");
-    String version = _preferences.getString("appVersion");
-    String device = _preferences.getString("device");
-    databaseReference.child("users").update({
+    String token = _preferences.getString("fcm-token") ?? "null";
+    String version = _preferences.getString("appVersion") ?? "null";
+    String device = _preferences.getString("device") ?? "null";
+    if (token == "null" || device == "null" || version == "null") {
+      token = await _firebaseMessaging.getToken();
+      print(token);
+      _preferences.setString("fcm-token", token);
+      DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      device = "${androidInfo.model}-${androidInfo.device}";
+      version = "1.0.0";
+      _preferences.setString("device", "$device");
+      _preferences.setString("appVersion", "$version");
+    }
+    databaseReference.child("users-android").update({
       "$reg": {
         "appVersion": version,
         "device": device,
@@ -352,84 +367,14 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                   padding: EdgeInsets.symmetric(horizontal: width * 0.4),
                   child: isVerifying
                       ? CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.greenAccent),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.greenAccent),
                         )
                       : null,
                 )
               ],
             ),
           )
-          //   Container(
-          //     margin: EdgeInsets.only(top: 270.0),
-          //     width: width * 0.9,
-          //     height: height * 0.5,
-          //     child: ListView(
-          //       //mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //       children: <Widget>[
-          //         Container(
-          //          // color: Colors.redAccent,
-          //           height: height * 0.24,
-          //           width: width * 0.9,
-          //           child: ListView(
-          //             children: <Widget>[
-          //             ],
-          //           ),
-          //         ),
-          //         Container(
-          //           padding: EdgeInsets.symmetric(horizontal: 80.0),
-          //           height: height * 0.06,
-          //           //margin: EdgeInsets.only(top: height * 0.44),
-          //           decoration: BoxDecoration(
-          //            // color: Colors.red,
-          //             borderRadius: BorderRadius.all(Radius.circular(20.0)),
-          //           ),
-          //           child: Container(
-          //             decoration: BoxDecoration(
-          //               borderRadius: BorderRadius.all(Radius.circular(20.0)),
-          //             ),
-          //             width: width * 0.45,
-          //           //  height: height * 0.055,
-          //             child: Material(
-          //               color: Color.fromRGBO(64, 224, 208, 1.0),
-          //               borderRadius: BorderRadius.all(Radius.circular(20.0)),
-          //               child: InkWell(
-          //                 splashColor: Colors.white,
-          //                 child: Center(
-          //                   child: Text(
-          //                     "Login",
-          //                     style: TextStyle(
-          //                         fontWeight: FontWeight.w400,
-          //                         color: Colors.black,
-          //                         fontSize: height * 0.025),
-          //                   ),
-          //                 ),
-          //                 onTap: () {
-          //                   _passFocus.unfocus();
-          //                   _regFocus.unfocus();
-          //                   isVerifying = true;
-          //                   regNo = controllerReg.text;
-          //                   password = controllerPass.text;
-          //                   _checkCredentials(regNo, password);
-          //                 },
-          //               ),
-          //             ),
-          //           ),
-          //         ),
-          //         Container(
-          //           margin: EdgeInsets.only(top: 30.0),
-          //           padding: EdgeInsets.symmetric(horizontal: 165.0),
-          //          // padding: EdgeInsets.only(top: height * 0.7),
-          //           child: isVerifying
-          //               ? CircularProgressIndicator(
-          //                   valueColor:
-          //                       AlwaysStoppedAnimation<Color>(Colors.greenAccent),
-          //                 )
-          //               : null,
-          //         )
-          //       ],
-          //     ),
-          //   ),
         ],
       ),
     );
@@ -452,9 +397,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                 alignment: Alignment.center,
                 child: Text(
                   "Logout",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18.0),
+                  style: TextStyle(color: Colors.white, fontSize: 18.0),
                 )),
             onTap: () {
               logout();
@@ -507,9 +450,6 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
 
   _buildSubjectCard(subName, subClasses, subPresent, subAbsent, subPercentage,
       context, index) {
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
-
     CachedImg camm = new CachedImg();
 
     return ClipRRect(
@@ -646,93 +586,3 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     );
   }
 }
-
-//  onTap: () {
-//                           _passFocus.unfocus();
-//                           _regFocus.unfocus();
-//                           isVerifying = true;
-//                           regNo = controllerReg.text;
-//                           password = controllerPass.text;
-//                           _checkCredentials(regNo, password);
-//                         },
-
-// Material(
-//                         borderRadius: BorderRadius.all(Radius.circular(20.0)),
-//                         child: Container(
-//                           height: height * 0.17,
-//                           child: Column(
-//                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                             children: <Widget>[
-//                               SizedBox(
-//                                 child: TextFormField(
-//                                   controller: controllerReg,
-//                                   focusNode: _regFocus,
-//                                   keyboardType:
-//                                       TextInputType.numberWithOptions(),
-//                                   textInputAction: TextInputAction.next,
-//                                   style: TextStyle(fontSize: height * 0.023),
-//                                   onFieldSubmitted: (term) {
-//                                     _fieldFocusChange(
-//                                         context, _regFocus, _passFocus);
-//                                   },
-//                                   decoration: const InputDecoration(
-//                                       border: InputBorder.none,
-//                                       labelText: 'Registration Number',
-//                                       prefixIcon: Icon(Icons.person)),
-//                                 ),
-//                               ),
-//                               SizedBox(
-//                                 height: height * 0.07,
-//                                 width: width * 0.9,
-//                                 child: Container(
-//                                   child: SizedBox.fromSize(
-//                                    // size: Size.fromHeight(height * 0.08),
-//                                     child: Row(
-//                                       children: <Widget>[
-//                                         Container(
-//                                           height: height * 0.08,
-//                                           width: width * 0.75,
-//                                           child: TextFormField(
-//                                             obscureText: obsecureText,
-//                                             controller: controllerPass,
-//                                             focusNode: _passFocus,
-//                                             textInputAction:
-//                                                 TextInputAction.done,
-//                                             style: TextStyle(
-//                                                 fontSize: height * 0.023),
-//                                             onFieldSubmitted: (value) {
-//                                               _passFocus.unfocus();
-//                                             },
-//                                             decoration: InputDecoration(
-//                                                 border: InputBorder.none,
-//                                                 labelText: 'Password',
-//                                                 prefixIcon: Icon(obsecureText
-//                                                     ? Icons.lock
-//                                                     : Icons.lock_open)),
-//                                           ),
-//                                         ),
-//                                         Container(
-//                                           height: height * 0.08,
-//                                           child: IconButton(
-//                                             icon: obsecureText
-//                                                 ? Icon(
-//                                                     Icons.visibility_off,
-//                                                   )
-//                                                 : Icon(
-//                                                     Icons.visibility,
-//                                                   ),
-//                                             onPressed: () => setState(() {
-//                                                   obsecureText = !obsecureText;
-//                                                 }),
-//                                           ),
-//                                         )
-//                                       ],
-//                                     ),
-//                                   ),
-//                                 ),
-//                               ),
-
-//                             ],
-//                           ),
-//                         ),
-//                       ),
