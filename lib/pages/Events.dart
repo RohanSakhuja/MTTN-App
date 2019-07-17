@@ -1,6 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class Event {
   String imageUri;
@@ -22,13 +23,20 @@ DatabaseReference databaseReference =
     new FirebaseDatabase().reference().child('Upcoming Events');
 
 List<Event> _upcoming = new List();
+bool noEvents = false;
 
 _parseEvents(var data) async {
   List<Event> temp = new List();
+  if (data == null) {
+    noEvents = true;
+    return false;
+  } else {
+    noEvents = false;
+  }
   try {
     if (data is List) {
       for (var item in data) {
-        if(item != null) {
+        if (item != null) {
           temp.add(new Event(imageUri: item["Image Url"], title: item["Name"]));
         }
       }
@@ -87,40 +95,53 @@ class _UpcomingEventsState extends State<UpcomingEvents>
             style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.w600),
           ),
         ),
-        Center(
-          child: SizedBox.fromSize(
-            size: Size.fromHeight(height * 0.25),
-            child: ListView.builder(
-              padding: EdgeInsets.only(left: 10.0),
-              scrollDirection: Axis.horizontal,
-              itemCount: _upcoming.length,
-              itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
-                  child: Container(
-                    width: 130.0,
-                    height: 90.0,
-                    padding: EdgeInsets.all(5.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(7.0)),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                          fit: BoxFit.fitHeight,
-                          image: NetworkImage(
-                            _upcoming[index].imageUri,
-                          ),
-                        )),
-                      ),
-                    ),
+        noEvents
+            ? Container(
+                height: 100,
+                child: Center(
+                  child: Text(
+                    "No Upcoming Events",
+                    style:
+                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
                   ),
-                  onTap: () {
-                    _persistentBottomSheet(_upcoming[index]);
-                  },
-                );
-              },
-            ),
-          ),
-        ),
+                ),
+              )
+            : Center(
+                child: SizedBox.fromSize(
+                  size: Size.fromHeight(height * 0.25),
+                  child: ListView.builder(
+                    padding: EdgeInsets.only(left: 10.0),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _upcoming.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return GestureDetector(
+                        child: Container(
+                          width: 130.0,
+                          height: 90.0,
+                          padding: EdgeInsets.all(5.0),
+                          child: ClipRRect(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(7.0)),
+                            child: Container(
+                              child: CachedNetworkImage(
+                                imageUrl: _upcoming[index].imageUri,
+                                fit: BoxFit.fitHeight,
+                                errorWidget: (context, url, err) => Container(
+                                  width: 100,
+                                  child: Icon(Icons.broken_image),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          _persistentBottomSheet(_upcoming[index]);
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
       ],
     );
   }
@@ -131,8 +152,9 @@ class _UpcomingEventsState extends State<UpcomingEvents>
         height: 1000.0,
         width: 1000.0,
         child: Center(
-          child: CachedNetworkImage(
-            imageUrl: current.imageUri,
+          child: FadeInImage.memoryNetwork(
+            image: current.imageUri,
+            placeholder: kTransparentImage,
             fit: BoxFit.scaleDown,
           ),
         ),

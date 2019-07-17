@@ -1,25 +1,12 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" 
-package="com.example.mttnapp">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.mttnapp">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
-    <application
-        android:name="io.flutter.app.FlutterApplication"
-        android:label="MTTN"
-        android:icon="@mipmap/ic_launcher">
-        <activity
-            android:name=".MainActivity"
-            android:launchMode="singleTop"
-            android:theme="@style/LaunchTheme"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density"
-            android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize">
-            <meta-data
-                android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
-                android:value="true" />
-                <meta-data
-                    android:name="com.google.firebase.messaging.default_notification_icon"
-                    android:resource="@drawable/ic_launcher_round" />
+    <application android:name="io.flutter.app.FlutterApplication" android:label="MTTN" android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/ic_notification" />
+        <meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="@color/colorAccent" />
+        <activity android:name=".MainActivity" android:launchMode="singleTop" android:theme="@style/LaunchTheme" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density" android:hardwareAccelerated="true" android:windowSoftInputMode="adjustResize">
+            <meta-data android:name="io.flutter.app.android.SplashScreenUntilFirstFrame" android:value="true" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

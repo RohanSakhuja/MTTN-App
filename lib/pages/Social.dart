@@ -14,10 +14,6 @@ class SocialBodyState extends State<SocialBody>
   @override
   bool get wantKeepAlive => true;
 
-  final timeout = const Duration(seconds: 15);
-
-  handleTimeout() {}
-
   final _scaffoldkey = new GlobalKey<ScaffoldState>();
 
   @override

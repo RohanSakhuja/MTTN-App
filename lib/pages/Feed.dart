@@ -34,11 +34,9 @@ class Feed extends StatefulWidget {
 class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
-  final timeout = const Duration(minutes: 10);
   GlobalKey _scaffoldKey = new GlobalKey<ScaffoldState>();
   DatabaseReference _databaseReference = new FirebaseDatabase().reference();
 
-  handleTimeout() {}
 
   String _wpApi;
   SharedPreferences _preferences;
@@ -150,52 +148,58 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
     return completer.future;
   }
 
+  floatingActionButton() {
+    return FloatingActionButton(
+      child: Icon(Icons.arrow_upward),
+      foregroundColor: Colors.white,
+      backgroundColor: darkTheme ? Colors.red : Colors.redAccent,
+      onPressed: () {
+        _scrollController.animateTo(0,
+            duration: new Duration(seconds: 1), curve: Curves.ease);
+      },
+    );
+  }
+
+  noInternet(context) {
+    return Container(
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            "No Internet   :P",
+            style: Theme.of(context).textTheme.title,
+          ),
+          Container(
+            height: 10.0,
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.refresh,
+              size: 40.0,
+            ),
+            onPressed: () {
+              setState(() {
+                isOffline = false;
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return new Scaffold(
       key: _scaffoldKey,
-      floatingActionButton: isFabActive
-          ? FloatingActionButton(
-              child: Icon(Icons.arrow_upward),
-              foregroundColor: Colors.white,
-              backgroundColor: darkTheme ? Colors.red : Colors.redAccent,
-              onPressed: () {
-                _scrollController.animateTo(0,
-                    duration: new Duration(seconds: 1), curve: Curves.ease);
-              },
-            )
-          : null,
+      floatingActionButton: isFabActive ? floatingActionButton() : null,
       body: Stack(
         children: <Widget>[
           isOffline && articles.isEmpty
-              ? new Container(
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        "No Internet   :P",
-                        style: Theme.of(context).textTheme.title,
-                      ),
-                      Container(
-                        height: 10.0,
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.refresh,
-                          size: 40.0,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            isOffline = false;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                )
+              ? noInternet(context)
               : new Container(
                   padding: EdgeInsets.fromLTRB(11.0, 10.0, 11.0, 0.0),
                   child: _wpApi != null
@@ -203,9 +207,7 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
                           ? FutureBuilder(
                               future: _getData(),
                               builder: (context, snapshot) {
-                                if (articles.length == 0) {
-                                  return _buildProgressIndicator();
-                                }
+                                return _buildProgressIndicator();
                               },
                             )
                           : new RefreshIndicator(
@@ -360,7 +362,6 @@ class CreateCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return new GestureDetector(
       onTap: () {
-        print(link);
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -411,7 +412,6 @@ class CreateCard extends StatelessWidget {
               margin: EdgeInsets.all(12.0),
               child: InkWell(
                 onTap: () {
-                  print(link);
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -452,9 +452,7 @@ class ArticleState extends State<Article> {
       appBar: AppBar(
         backgroundColor: darkTheme ? primaryDark : primaryLight,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back,
-              color: Colors.white
-              ),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -462,35 +460,33 @@ class ArticleState extends State<Article> {
         actions: <Widget>[
           PopupMenuButton(
             offset: Offset(20.0, 50.0),
-            icon: Icon(Icons.format_size,
-                color: Colors.white
-                ),
+            icon: Icon(Icons.format_size, color: Colors.white),
             itemBuilder: (context) => <PopupMenuEntry>[
-                  PopupMenuItem(
-                    child: IconButton(
-                      icon: Icon(Icons.add),
-                      onPressed: () {
-                        if (_size < 30) {
-                          setState(() {
-                            _size += 2.0;
-                          });
-                        }
-                      },
-                    ),
-                  ),
-                  PopupMenuItem(
-                    child: IconButton(
-                      icon: Icon(Icons.minimize),
-                      onPressed: () {
-                        if (_size > 8) {
-                          setState(() {
-                            _size -= 2.0;
-                          });
-                        }
-                      },
-                    ),
-                  )
-                ],
+              PopupMenuItem(
+                child: IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    if (_size < 30) {
+                      setState(() {
+                        _size += 2.0;
+                      });
+                    }
+                  },
+                ),
+              ),
+              PopupMenuItem(
+                child: IconButton(
+                  icon: Icon(Icons.minimize),
+                  onPressed: () {
+                    if (_size > 8) {
+                      setState(() {
+                        _size -= 2.0;
+                      });
+                    }
+                  },
+                ),
+              )
+            ],
           ),
         ],
       ),

@@ -91,7 +91,7 @@ class HomePageState extends State<HomePage> {
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
-        print('on message $message');
+        // print('on message $message');
         String url = message["data"]["URL"] ?? "null";
         String tab = message["data"]["TAB"] ?? "null";
 
@@ -102,19 +102,18 @@ class HomePageState extends State<HomePage> {
         }
       },
       onResume: (Map<String, dynamic> message) async {
-        print('on resume $message');
+        // print('on resume $message');
         String url = message["data"]["URL"] ?? "null";
         String tab = message["data"]["TAB"] ?? "null";
         if (url != "null") {
           _launchURL(url);
         }
         if (tab != "null") {
-          print(tab);
           fcmChangeTab(tab);
         }
       },
       onLaunch: (Map<String, dynamic> message) async {
-        print('on launch $message');
+        // print('on launch $message');
         String url = message["data"]["URL"] ?? "null";
         String tab = message["data"]["TAB"] ?? "null";
         if (url != "null") {
@@ -173,7 +172,6 @@ class HomePageState extends State<HomePage> {
         IosNotificationSettings(sound: true, badge: true, alert: true));
     _firebaseMessaging.onIosSettingsRegistered
         .listen((IosNotificationSettings settings) {
-      print("Settings registered: $settings");
     });
   }
 
@@ -349,9 +347,9 @@ class HomePageState extends State<HomePage> {
       _buildBottomNavBarItem(
           "Feed", Icon(Icons.developer_board), Icon(Icons.dashboard)),
       _buildBottomNavBarItem(
-          "SLCM", Icon(Icons.local_library), Icon(Icons.local_library)),
+          "SLCM", Icon(Icons.person_pin), Icon(Icons.person_outline)),
       _buildBottomNavBarItem(
-          "Social", Icon(Icons.gps_fixed), Icon(Icons.gps_not_fixed)),
+          "Social", Icon(Icons.favorite), Icon(Icons.public)),
       _buildBottomNavBarItem(
           "Directory", Icon(Icons.contact_phone), Icon(Icons.contacts)),
       _buildBottomNavBarItem(

@@ -1,9 +1,10 @@
+import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:html/parser.dart' show parse;
 
 class YouTubeItem {
@@ -23,6 +24,8 @@ class YouTubeItem {
       this.link});
 }
 
+enum SocialState { success, error, noInternet }
+
 class YouTubeFeed extends StatefulWidget {
   @override
   _YouTubeFeedState createState() => _YouTubeFeedState();
@@ -40,29 +43,37 @@ String parseTitle(String title) {
 class _YouTubeFeedState extends State<YouTubeFeed>
     with AutomaticKeepAliveClientMixin {
   bool get wantKeepAlive => true;
+  
+  Future<SocialState> _fetchItems() async {
+    try {
+      String uri =
+          "https://www.googleapis.com/youtube/v3/search?key=AIzaSyDMzJvdj7xH40CMVnoW6kZPgVpXhn93aA8&channelId=UCwW9nPcEM2wGfsa06LTYlFg&part=snippet,id&order=date&maxResults=50";
+      var response = await http.get(uri);
+      var body = jsonDecode(response.body);
 
-  Future<String> _fetchItems() async {
-    String uri =
-        "https://www.googleapis.com/youtube/v3/search?key=AIzaSyDMzJvdj7xH40CMVnoW6kZPgVpXhn93aA8&channelId=UCwW9nPcEM2wGfsa06LTYlFg&part=snippet,id&order=date&maxResults=50";
-    var response = await http.get(uri);
-    var body = jsonDecode(response.body);
-
-    for (var item in body['items']) {
-      String temp = item['id']['kind'].substring(8);
-      String id =
-          (temp == 'video') ? item['id']['videoId'] : item['id']['playlistId'];
-      String link = (temp == 'video')
-          ? 'https://www.youtube.com/watch?v=$id'
-          : 'https://www.youtube.com/watch?v=I5y-v_QDmwg&list=$id';
-      items.add(new YouTubeItem(
-          type: temp,
-          title: parseTitle(item['snippet']['title']),
-          itemId: id,
-          description: item['snippet']['description'],
-          thumbnail: item['snippet']['thumbnails']['medium']['url'],
-          link: link));
+      for (var item in body['items']) {
+        String temp = item['id']['kind'].substring(8);
+        String id = (temp == 'video')
+            ? item['id']['videoId']
+            : item['id']['playlistId'];
+        String link = (temp == 'video')
+            ? 'https://www.youtube.com/watch?v=$id'
+            : 'https://www.youtube.com/watch?v=I5y-v_QDmwg&list=$id';
+        items.add(new YouTubeItem(
+            type: temp,
+            title: parseTitle(item['snippet']['title']),
+            itemId: id,
+            description: item['snippet']['description'],
+            thumbnail: item['snippet']['thumbnails']['medium']['url'],
+            link: link));
+      }
+    } on SocketException {
+      return SocialState.noInternet;
+    } catch (e) {
+      print(e);
+      return SocialState.error;
     }
-    return "success";
+    return SocialState.success;
   }
 
   _launchUrl(url) async =>
@@ -73,7 +84,7 @@ class _YouTubeFeedState extends State<YouTubeFeed>
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
 
-    return FutureBuilder<String>(
+    return FutureBuilder<SocialState>(
       future: _fetchItems(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
@@ -88,56 +99,82 @@ class _YouTubeFeedState extends State<YouTubeFeed>
                   style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.w600),
                 ),
               ),
-              Center(
-                child: SizedBox.fromSize(
-                  size: Size.fromHeight(height * 0.3),
-                  child: ListView.builder(
-                    padding: EdgeInsets.only(left: 15.0),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: items.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return GestureDetector(
-                        child: SizedBox(
-                          width: width * 0.68,
-                          child: Column(
-                            children: <Widget>[
-                              Container(
-                                margin: EdgeInsets.only(right: 10.0),
-                                child: ClipRRect(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(12.0)),
-                                    child: GestureDetector(
-                                        onTap: () =>
-                                            _launchUrl(items[index].link),
-                                        child: CachedNetworkImage(
-                                            imageUrl: items[index].thumbnail,
-                                            fit: BoxFit.fill))),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 5.0),
-                              ),
-                              Flexible(
-                                child: Container(
-                                    alignment: Alignment.topCenter,
-                                    padding: EdgeInsets.only(right: 20.0),
-                                    child: Text(
-                                      items[index].type == 'playlist'
-                                          ? 'Playlist: ' + items[index].title
-                                          : items[index].title,
-                                      style:
-                                          Theme.of(context).textTheme.subhead,
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis,
-                                    )),
-                              )
-                            ],
+              snapshot.data != SocialState.success
+                  ? Center(
+                      child: Column(
+                        children: <Widget>[
+                          SizedBox(
+                            height: 30,
                           ),
+                          Text(
+                            snapshot.data == SocialState.noInternet
+                                ? "No Internet."
+                                : "An unexpected error occured.",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.red,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                        ],
+                      ),
+                    )
+                  : Center(
+                      child: SizedBox.fromSize(
+                        size: Size.fromHeight(height * 0.3),
+                        child: ListView.builder(
+                          padding: EdgeInsets.only(left: 15.0),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: items.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return GestureDetector(
+                              child: SizedBox(
+                                width: width * 0.68,
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.only(right: 10.0),
+                                      child: ClipRRect(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(12.0)),
+                                          child: GestureDetector(
+                                              onTap: () =>
+                                                  _launchUrl(items[index].link),
+                                              child: CachedNetworkImage(
+                                                  imageUrl:
+                                                      items[index].thumbnail,
+                                                  fit: BoxFit.fill))),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 5.0),
+                                    ),
+                                    Flexible(
+                                      child: Container(
+                                          alignment: Alignment.topCenter,
+                                          padding: EdgeInsets.only(right: 20.0),
+                                          child: Text(
+                                            items[index].type == 'playlist'
+                                                ? 'Playlist: ' +
+                                                    items[index].title
+                                                : items[index].title,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .subhead,
+                                            maxLines: 3,
+                                            overflow: TextOverflow.ellipsis,
+                                          )),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
-                ),
-              ),
+                      ),
+                    ),
             ],
           );
         } else {

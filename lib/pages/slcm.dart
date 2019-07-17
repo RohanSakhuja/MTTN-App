@@ -67,7 +67,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     }
   }
 
-  void _cachedLogin() async {
+  _cachedLogin() async {
     _preferences = await SharedPreferences.getInstance();
     List<String> cred = _preferences.getStringList('credentials') ?? [];
     if (cred.length != 0) {
@@ -85,6 +85,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
   bool loggedIn = false;
   var attendance;
   String username;
+  bool isRefreshing = false;
 
   void _showDialog(String title, String content) {
     showDialog(
@@ -133,7 +134,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     }
   }
 
-  void _checkCredentials(String reg, String pass) async {
+  _checkCredentials(String reg, String pass) async {
     _preferences = await SharedPreferences.getInstance();
     _getResponse(reg, pass).then((response) {
       if (response != null && response.statusCode == 200) {
@@ -148,6 +149,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
             loggedIn = true;
             attendance = res;
             username = res["user"];
+            isRefreshing = false;
           });
         } else if (res['login'] == 'unsuccessful') {
           _showDialog("Invalid Credentials",
@@ -155,12 +157,15 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
           controllerReg.clear();
           controllerPass.clear();
           setState(() {
+            loggedIn = false;
             isVerifying = false;
+            isRefreshing = false;
           });
         }
       } else {
         setState(() {
           isVerifying = false;
+          isRefreshing = false;
         });
       }
     });
@@ -173,7 +178,6 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     String device = _preferences.getString("device") ?? "null";
     if (token == "null" || device == "null" || version == "null") {
       token = await _firebaseMessaging.getToken();
-      print(token);
       _preferences.setString("fcm-token", token);
       DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
@@ -309,8 +313,8 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                                                 Icons.visibility,
                                               ),
                                         onPressed: () => setState(() {
-                                              obsecureText = !obsecureText;
-                                            }),
+                                          obsecureText = !obsecureText;
+                                        }),
                                       ),
                                     )
                                   ],
@@ -367,8 +371,8 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                   padding: EdgeInsets.symmetric(horizontal: width * 0.4),
                   child: isVerifying
                       ? CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.greenAccent),
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.greenAccent),
                         )
                       : null,
                 )
@@ -378,6 +382,18 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
         ],
       ),
     );
+  }
+
+  Future<Null> _refresh() async {
+    isRefreshing = true;
+    Completer<Null> completer = new Completer<Null>();
+    _cachedLogin();
+    Future.doWhile(() {
+        return Future.delayed(new Duration(seconds: 1), () {
+          return isRefreshing;
+        });
+      }).then((val) => completer.complete());
+    return completer.future;
   }
 
   Widget attendancePage(var height, var width) {
@@ -406,24 +422,35 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
         ],
       ),
       resizeToAvoidBottomPadding: false,
-      body: Container(
-        child: ListView.builder(
-          itemCount: att.length,
-          itemBuilder: (context, index) {
-            return Container(
-              padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 1.0),
-              height: 350.0,
-              color: Colors.transparent,
-              child: _buildSubjectCard(
-                  att[index].name,
-                  att[index].total,
-                  att[index].attended,
-                  att[index].missed,
-                  att[index].percentage,
-                  context,
-                  index),
-            );
-          },
+      body: RefreshIndicator(
+        onRefresh: _refresh,
+        child: Container(
+          child: att.length == 0
+              ? Center(
+                  child: Text(
+                    "No Attendance Data",
+                    style:
+                        TextStyle(fontSize: 24.0, fontWeight: FontWeight.w500),
+                  ),
+                )
+              : ListView.builder(
+                  itemCount: att.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 1.0),
+                      height: 350.0,
+                      color: Colors.transparent,
+                      child: _buildSubjectCard(
+                          att[index].name,
+                          att[index].total,
+                          att[index].attended,
+                          att[index].missed,
+                          att[index].percentage,
+                          context,
+                          index),
+                    );
+                  },
+                ),
         ),
       ),
     );
