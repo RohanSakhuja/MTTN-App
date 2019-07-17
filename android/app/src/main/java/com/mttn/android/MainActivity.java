@@ -1,4 +1,4 @@
-package com.example.mttnapp;
+package com.mttn.android;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
