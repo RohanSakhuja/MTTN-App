@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -30,14 +32,14 @@ class MyApp extends StatelessWidget {
     return DynamicTheme(
       defaultBrightness: Brightness.light,
       data: (brightness) => new ThemeData(
-            primarySwatch: Colors.indigo,
-            fontFamily: 'Cabin',
-            floatingActionButtonTheme:
-                FloatingActionButtonThemeData(backgroundColor: Colors.blueGrey),
-            primaryColor: primaryLight,
-            brightness: brightness,
-            secondaryHeaderColor: Colors.white,
-          ),
+        primarySwatch: Colors.indigo,
+        fontFamily: 'Cabin',
+        floatingActionButtonTheme:
+            FloatingActionButtonThemeData(backgroundColor: Colors.blueGrey),
+        primaryColor: primaryLight,
+        brightness: brightness,
+        secondaryHeaderColor: Colors.white,
+      ),
       themedWidgetBuilder: (context, theme) {
         return MaterialApp(
           theme: theme,
@@ -171,14 +173,14 @@ class HomePageState extends State<HomePage> {
     _firebaseMessaging.requestNotificationPermissions(
         IosNotificationSettings(sound: true, badge: true, alert: true));
     _firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings) {
-    });
+        .listen((IosNotificationSettings settings) {});
   }
 
   void _startupCache() async {
     _preferences = await SharedPreferences.getInstance();
     _cacheDirectory();
     _cacheUrls();
+    _cacheAvatars();
     // var temp = _preferences.getBool("Notifications") ?? null;
     // if (temp == null) {
     //   _preferences.setBool("Notifications", true);
@@ -196,6 +198,13 @@ class HomePageState extends State<HomePage> {
   void _cacheDirectory() async {
     _databaseReference.child('Dir').once().then((data) {
       _preferences.setString('directory', jsonEncode(data.value));
+    });
+  }
+
+  void _cacheAvatars() async {
+    _databaseReference.child('Avatars').once().then((data) {
+      _preferences.setString("Akshit", data.value["Akshit"]);
+      _preferences.setString("Rohan", data.value["Rohan"]);
     });
   }
 
@@ -249,8 +258,7 @@ class HomePageState extends State<HomePage> {
                     color: !darkTheme ? Colors.white : Colors.white)),
             accountEmail: InkWell(
               onTap: () {
-                _launchURL(
-                    "mailto:editors@manipalthetalk.org?subject=&body=");
+                _launchURL("mailto:editors@manipalthetalk.org?subject=&body=");
               },
               child: Text(
                 "editors@manipalthetalk.org",
@@ -270,21 +278,21 @@ class HomePageState extends State<HomePage> {
         ListTile(
           leading: Icon(Icons.people),
           title: Text("Connect with Us",
-              style: TextStyle(fontWeight: FontWeight.w700)),
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
         ),
-        _buildDrawerTile(Icon(Icons.arrow_right), "Instagram",
+        _buildDrawerTile(Icon(FontAwesomeIcons.instagram), "Instagram",
             "https://www.instagram.com/manipalthetalk/"),
-        _buildDrawerTile(Icon(Icons.arrow_right), "Facebook",
+        _buildDrawerTile(Icon(FontAwesomeIcons.facebook), "Facebook",
             "https://facebook.com/manipalthetalk/"),
-        _buildDrawerTile(Icon(Icons.arrow_right), "Twitter",
+        _buildDrawerTile(Icon(FontAwesomeIcons.twitter), "Twitter",
             "https://twitter.com/manipalthetalk?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"),
-        _buildDrawerTile(Icon(Icons.arrow_right), "Website",
+        _buildDrawerTile(Icon(FontAwesomeIcons.wordpress), "Website",
             "https://www.manipalthetalk.org"),
         Divider(),
         ListTile(
           leading: Icon(Icons.settings),
           title: Text("App Settings",
-              style: TextStyle(fontWeight: FontWeight.w700)),
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
         ),
         ListTile(
           leading: Icon(Icons.settings_brightness),
@@ -319,12 +327,239 @@ class HomePageState extends State<HomePage> {
         Divider(),
         ListTile(
           leading: Icon(Icons.hdr_weak),
-          title: Text("Others", style: TextStyle(fontWeight: FontWeight.w700)),
+          title: Text("Others", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
         ),
+        ListTile(
+          leading: Icon(Icons.developer_mode),
+          title: Text(
+            "Developers",
+            style: TextStyle(fontWeight: FontWeight.w400),
+          ),
+          onTap: () {
+            Navigator.of(context).pop();
+            _showDevelopersSheet(_scaffoldkey.currentContext);
+          },
+        ),
+        _buildDrawerTile(Icon(FontAwesomeIcons.github), "Source Code",
+            "https://github.com/RohanSakhuja/MTTN-App"),
         _buildDrawerTile(Icon(Icons.assignment), "Privacy Policy",
             "https://www.termsfeed.com/privacy-policy/ec69fc0be140c10cf91cf70816a8ba79"),
       ],
     ));
+  }
+
+  _showDevelopersSheet(context) {
+    String avatar1 = _preferences.getString("Rohan");
+    String avatar2 = _preferences.getString("Akshit");
+    showModalBottomSheet<void>(
+        backgroundColor: Colors.transparent,
+        context: context,
+        builder: (BuildContext buildContext) {
+          return Container(
+            decoration: new BoxDecoration(
+                color: darkTheme ? secondaryDark : secondaryLight,
+                borderRadius: new BorderRadius.only(
+                  topLeft: const Radius.circular(30.0),
+                  topRight: const Radius.circular(30.0),
+                )),
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  height: 10,
+                ),
+                Material(
+                  color: darkTheme ? Colors.white : primaryLight,
+                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                  child: Container(
+                    height: 5,
+                    width: 35,
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "Developers",
+                  style: TextStyle(
+                      fontSize: 24,
+                      color: darkTheme ? Colors.white : primaryLight),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        CircleAvatar(
+                          minRadius: 40,
+                          maxRadius: 60,
+                          backgroundImage: avatar1 == null
+                              ? AssetImage("assets/avatar.jpg")
+                              : CachedNetworkImageProvider(avatar1),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "Rohan Sakhuja",
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: darkTheme ? Colors.white : primaryLight),
+                        ),
+                        Row(
+                          children: <Widget>[
+                            IconButton(
+                              icon: Icon(
+                                FontAwesomeIcons.github,
+                                color: darkTheme ? Colors.white : primaryLight,
+                              ),
+                              onPressed: () =>
+                                  _launchURL("https://github.com/RohanSakhuja"),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                FontAwesomeIcons.linkedin,
+                                color: darkTheme ? Colors.white : primaryLight,
+                              ),
+                              onPressed: () => _launchURL(
+                                  "https://www.linkedin.com/in/rohan-sakhuja-b633a514b/"),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                FontAwesomeIcons.instagram,
+                                color: darkTheme ? Colors.white : primaryLight,
+                              ),
+                              onPressed: () => _launchURL(
+                                  "https://www.instagram.com/rohan_sakhuja/"),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: <Widget>[
+                        CircleAvatar(
+                          minRadius: 40,
+                          maxRadius: 60,
+                          backgroundImage: avatar2 == null
+                              ? AssetImage("assets/avatar.jpg")
+                              : CachedNetworkImageProvider(avatar2),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "Akshit Saxena",
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: darkTheme ? Colors.white : primaryLight),
+                        ),
+                        Row(
+                          children: <Widget>[
+                            IconButton(
+                              icon: Icon(
+                                FontAwesomeIcons.github,
+                                color: darkTheme ? Colors.white : primaryLight,
+                              ),
+                              onPressed: () => _launchURL(
+                                  "https://github.com/Akshiiitsaxena"),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                FontAwesomeIcons.linkedin,
+                                color: darkTheme ? Colors.white : primaryLight,
+                              ),
+                              onPressed: () => _launchURL(
+                                  "https://www.linkedin.com/in/akshit-saxena-b6b613184"),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                FontAwesomeIcons.instagram,
+                                color: darkTheme ? Colors.white : primaryLight,
+                              ),
+                              onPressed: () => _launchURL(
+                                  "https://www.instagram.com/akshit.saxenamide/"),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Material(
+                      color: darkTheme ? Colors.red : Colors.redAccent,
+                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                      child: InkWell(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text(
+                                "Report a Bug",
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.white),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Icon(
+                                Icons.bug_report,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
+                        ),
+                        onTap: () => _launchURL(
+                            "mailto:mttndevelopers@gmail.com?subject=&body="),
+                      ),
+                    ),
+                    Material(
+                      color: darkTheme ? Colors.red : Colors.redAccent,
+                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                      child: InkWell(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Text(
+                                "Rate the App",
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.white),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Icon(
+                                Icons.star_half,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
+                        ),
+                        onTap: () => _launchURL(
+                            "https://play.google.com/store/apps/details?id=com.mttn.android"),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   _launchURL(url) async =>

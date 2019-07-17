@@ -339,7 +339,6 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                     width: width * 0.6,
                     height: height * 0.055,
                     child: Material(
-                      //color: Color.fromRGBO(64, 224, 208, 1.0),
                       color: Colors.greenAccent,
                       borderRadius: BorderRadius.all(Radius.circular(20.0)),
                       child: InkWell(

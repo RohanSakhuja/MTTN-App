@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter/material.dart';
@@ -382,7 +383,7 @@ class CreateCard extends StatelessWidget {
                 color: Colors.transparent,
                 image: DecorationImage(
                   fit: BoxFit.fitWidth,
-                  image: NetworkImage(img),
+                  image: CachedNetworkImageProvider(img),
                 )),
           ),
           Container(
