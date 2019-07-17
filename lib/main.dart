@@ -352,7 +352,7 @@ class HomePageState extends State<HomePage> {
     String avatar1 = _preferences.getString("Rohan");
     String avatar2 = _preferences.getString("Akshit");
     showModalBottomSheet<void>(
-        backgroundColor: Colors.transparent,
+      backgroundColor: Colors.transparent,
         context: context,
         builder: (BuildContext buildContext) {
           return Container(
@@ -368,7 +368,7 @@ class HomePageState extends State<HomePage> {
                   height: 10,
                 ),
                 Material(
-                  color: darkTheme ? Colors.white : primaryLight,
+                  color: darkTheme ? Colors.redAccent : primaryLight,
                   borderRadius: BorderRadius.all(Radius.circular(20.0)),
                   child: Container(
                     height: 5,
@@ -382,7 +382,7 @@ class HomePageState extends State<HomePage> {
                   "Developers",
                   style: TextStyle(
                       fontSize: 24,
-                      color: darkTheme ? Colors.white : primaryLight),
+                      color: darkTheme ? Colors.white : Colors.black),
                 ),
                 SizedBox(
                   height: 20,
@@ -406,7 +406,7 @@ class HomePageState extends State<HomePage> {
                           "Rohan Sakhuja",
                           style: TextStyle(
                               fontSize: 20,
-                              color: darkTheme ? Colors.white : primaryLight),
+                              color: darkTheme ? Colors.white : Colors.black),
                         ),
                         Row(
                           children: <Widget>[
@@ -454,7 +454,7 @@ class HomePageState extends State<HomePage> {
                           "Akshit Saxena",
                           style: TextStyle(
                               fontSize: 20,
-                              color: darkTheme ? Colors.white : primaryLight),
+                              color: darkTheme ? Colors.white : Colors.black),
                         ),
                         Row(
                           children: <Widget>[
@@ -491,70 +491,73 @@ class HomePageState extends State<HomePage> {
                 SizedBox(
                   height: 20,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Material(
-                      color: darkTheme ? Colors.red : Colors.redAccent,
-                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                      child: InkWell(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(
-                                "Report a Bug",
-                                style: TextStyle(
-                                    fontSize: 20, color: Colors.white),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Icon(
-                                Icons.bug_report,
-                                color: Colors.white,
-                              ),
-                            ],
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 30.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Material(
+                        color: darkTheme ? Colors.red : Colors.redAccent,
+                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                        child: InkWell(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text(
+                                  "Report a Bug",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Icon(
+                                  Icons.bug_report,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
                           ),
+                          onTap: () => _launchURL(
+                              "mailto:mttndevelopers@gmail.com?subject=&body="),
                         ),
-                        onTap: () => _launchURL(
-                            "mailto:mttndevelopers@gmail.com?subject=&body="),
                       ),
-                    ),
-                    Material(
-                      color: darkTheme ? Colors.red : Colors.redAccent,
-                      borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                      child: InkWell(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(
-                                "Rate the App",
-                                style: TextStyle(
-                                    fontSize: 20, color: Colors.white),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Icon(
-                                Icons.star_half,
-                                color: Colors.white,
-                              ),
-                            ],
+                      Material(
+                        color: darkTheme ? Colors.red : Colors.redAccent,
+                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                        child: InkWell(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Text(
+                                  "Rate the App",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Icon(
+                                  Icons.star_half,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
                           ),
+                          onTap: () => _launchURL(
+                              "https://play.google.com/store/apps/details?id=com.mttn.android"),
                         ),
-                        onTap: () => _launchURL(
-                            "https://play.google.com/store/apps/details?id=com.mttn.android"),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
