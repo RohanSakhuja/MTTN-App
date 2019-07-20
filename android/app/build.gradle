@@ -58,10 +58,10 @@ android {
     }
     buildTypes {
         release {
-            profile{
-                matchingFallbacks = ['debug','release']
-            }
-            signingConfig signingConfigs.debug
+            // profile{
+            //     matchingFallbacks = ['debug','release']
+            // }
+            signingConfig signingConfigs.release
             
             // minifyEnabled true
             // useProguard true

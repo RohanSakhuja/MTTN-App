@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mttn_app/pages/InstagramSection.dart';
 import 'ScrollingSocial.dart';
 import 'Events.dart';
 import 'YouTubeSection.dart';
@@ -23,9 +24,15 @@ class SocialBodyState extends State<SocialBody>
         key: _scaffoldkey,
         body: ListView(children: <Widget>[
           BuildSocial().createState().build(context),
-          Card(child: new UpcomingEvents(_scaffoldkey).createState().build(context)),
+          Card(
+              child: new UpcomingEvents(_scaffoldkey)
+                  .createState()
+                  .build(context)),
           Padding(padding: EdgeInsets.only(top: 10.0)),
-          Card(child: new NoirOffers(_scaffoldkey).createState().build(context)),
+          Card(
+              child: new NoirOffers(_scaffoldkey).createState().build(context)),
+          Padding(padding: EdgeInsets.only(top: 10.0)),
+          Card(child: InstagramFeed().createState().build(context),),
           Padding(padding: EdgeInsets.only(top: 10.0)),
           Card(child: YouTubeFeed().createState().build(context)),
           Padding(padding: EdgeInsets.only(top: 10.0)),
