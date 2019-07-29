@@ -43,7 +43,7 @@ String parseTitle(String title) {
 class _YouTubeFeedState extends State<YouTubeFeed>
     with AutomaticKeepAliveClientMixin {
   bool get wantKeepAlive => true;
-  
+
   Future<SocialState> _fetchItems() async {
     try {
       String uri =
@@ -100,25 +100,18 @@ class _YouTubeFeedState extends State<YouTubeFeed>
                 ),
               ),
               snapshot.data != SocialState.success
-                  ? Center(
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(
-                            height: 30,
+                  ? Container(
+                      height: 100,
+                      child: Center(
+                        child: Text(
+                          snapshot.data == SocialState.noInternet
+                              ? "No Internet."
+                              : "An unexpected error occured.",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.red,
                           ),
-                          Text(
-                            snapshot.data == SocialState.noInternet
-                                ? "No Internet."
-                                : "An unexpected error occured.",
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.red,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 30,
-                          ),
-                        ],
+                        ),
                       ),
                     )
                   : Center(
@@ -129,46 +122,44 @@ class _YouTubeFeedState extends State<YouTubeFeed>
                           scrollDirection: Axis.horizontal,
                           itemCount: items.length,
                           itemBuilder: (BuildContext context, int index) {
-                            return GestureDetector(
-                              child: SizedBox(
-                                width: width * 0.68,
-                                child: Column(
-                                  children: <Widget>[
-                                    Container(
-                                      margin: EdgeInsets.only(right: 10.0),
-                                      child: ClipRRect(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(12.0)),
-                                          child: GestureDetector(
-                                              onTap: () =>
-                                                  _launchUrl(items[index].link),
-                                              child: CachedNetworkImage(
-                                                  imageUrl:
-                                                      items[index].thumbnail,
-                                                  fit: BoxFit.fill))),
-                                    ),
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 5.0),
-                                    ),
-                                    Flexible(
-                                      child: Container(
-                                          alignment: Alignment.topCenter,
-                                          padding: EdgeInsets.only(right: 20.0),
-                                          child: Text(
-                                            items[index].type == 'playlist'
-                                                ? 'Playlist: ' +
-                                                    items[index].title
-                                                : items[index].title,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .subhead,
-                                            maxLines: 3,
-                                            overflow: TextOverflow.ellipsis,
-                                          )),
-                                    )
-                                  ],
-                                ),
+                            return SizedBox(
+                              width: width * 0.62,
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.only(right: 10.0),
+                                    child: ClipRRect(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(12.0)),
+                                        child: GestureDetector(
+                                            onTap: () =>
+                                                _launchUrl(items[index].link),
+                                            child: CachedNetworkImage(
+                                                imageUrl:
+                                                    items[index].thumbnail,
+                                                fit: BoxFit.fill))),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(vertical: 5.0),
+                                  ),
+                                  Flexible(
+                                    child: Container(
+                                        alignment: Alignment.topCenter,
+                                        padding: EdgeInsets.only(right: 20.0),
+                                        child: Text(
+                                          items[index].type == 'playlist'
+                                              ? 'Playlist: ' +
+                                                  items[index].title
+                                              : items[index].title,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .subhead,
+                                          maxLines: 3,
+                                          overflow: TextOverflow.ellipsis,
+                                        )),
+                                  )
+                                ],
                               ),
                             );
                           },
