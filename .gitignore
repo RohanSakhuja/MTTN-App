@@ -56,7 +56,7 @@ pubspec.lock
 **/android/app/.classpath
 **/android/app/.settings/
 **/android/app/.project
-**/android/.gradle/buildOutputCleanup
+**/android/.gradle/buildOutputCleanup/
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
