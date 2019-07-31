@@ -120,7 +120,7 @@ class _NoirOffersState extends State<NoirOffers>
           alignment: Alignment.centerLeft,
           padding: EdgeInsets.only(bottom: 7.0),
           width: width * 0.915,
-          child: GestureDetector(
+          child: FlatButton(
             child: Container(
               width: 120.0,
               child: Row(
@@ -131,7 +131,7 @@ class _NoirOffersState extends State<NoirOffers>
                 ],
               ),
             ),
-            onTap: (){_launchUrl("https://manipalthetalk.org/NoirSelectPrivileges.pdf");},
+            onPressed: (){_launchUrl("https://manipalthetalk.org/NoirSelectPrivileges.pdf");},
           ),
         )
       ],
