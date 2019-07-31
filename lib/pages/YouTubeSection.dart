@@ -123,7 +123,7 @@ class _YouTubeFeedState extends State<YouTubeFeed>
                           itemCount: items.length,
                           itemBuilder: (BuildContext context, int index) {
                             return SizedBox(
-                              width: width * 0.68,
+                              width: width * 0.62,
                               child: Column(
                                 children: <Widget>[
                                   Container(
