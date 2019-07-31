@@ -113,6 +113,8 @@ class _BlitzFeedState extends State<BlitzFeed>
                   child: Column(
                     children: <Widget>[
                       Container(
+                        height: height * 0.17,
+                        width: width * 0.62,
                         margin: EdgeInsets.only(right: 10.0),
                         child: ClipRRect(
                             borderRadius:
@@ -121,7 +123,7 @@ class _BlitzFeedState extends State<BlitzFeed>
                                 onTap: () => _launchUrl(blitzItems[index].link),
                                 child: CachedNetworkImage(
                                     imageUrl: blitzItems[index].thumbnail,
-                                    fit: BoxFit.fill))),
+                                    fit: BoxFit.fitWidth))),
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 5.0),
