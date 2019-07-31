@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Offer {
   String imageUri;
@@ -114,6 +115,25 @@ class _NoirOffersState extends State<NoirOffers>
             ),
           ),
         ),
+        Container(
+          height: 40,
+          alignment: Alignment.centerLeft,
+          padding: EdgeInsets.only(bottom: 7.0),
+          width: width * 0.915,
+          child: GestureDetector(
+            child: Container(
+              width: 120.0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Icon(Icons.picture_as_pdf,size: 20.0,),
+                  Text("View in PDF")
+                ],
+              ),
+            ),
+            onTap: (){_launchUrl("https://manipalthetalk.org/NoirSelectPrivileges.pdf");},
+          ),
+        )
       ],
     );
   }
@@ -164,3 +184,6 @@ class _NoirOffersState extends State<NoirOffers>
     });
   }
 }
+
+_launchUrl(url) async =>
+    (await canLaunch(url)) ? await launch(url) : throw 'Could not lauch $url';
