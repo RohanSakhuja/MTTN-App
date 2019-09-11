@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mttn_app/pages/BlitzYouTube.dart';
 import 'package:mttn_app/pages/InstagramSection.dart';
+import 'package:mttn_app/pages/NoirCard.dart';
 import 'ScrollingSocial.dart';
 import 'Events.dart';
 import 'YouTubeSection.dart';
@@ -16,7 +17,7 @@ class SocialBodyState extends State<SocialBody>
   @override
   bool get wantKeepAlive => true;
 
-  final _scaffoldkey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldkey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -24,20 +25,15 @@ class SocialBodyState extends State<SocialBody>
     return Scaffold(
         key: _scaffoldkey,
         body: ListView(children: <Widget>[
-          BuildSocial().createState().build(context),
-          Card(child: BlitzFeed().createState().build(context)),
+          NoirCard(_scaffoldkey),
+          Padding(padding: EdgeInsets.only(top: 10.0)),
+          Card(child: new UpcomingEvents(_scaffoldkey)),
           Padding(padding: EdgeInsets.only(top: 10.0)),
           Card(
-              child: new UpcomingEvents(_scaffoldkey)
-                  .createState()
-                  .build(context)),
+            child: InstagramFeed(),
+          ),
           Padding(padding: EdgeInsets.only(top: 10.0)),
-          Card(
-              child: new NoirOffers(_scaffoldkey).createState().build(context)),
-          Padding(padding: EdgeInsets.only(top: 10.0)),
-          Card(child: InstagramFeed().createState().build(context),),
-          Padding(padding: EdgeInsets.only(top: 10.0)),
-          Card(child: YouTubeFeed().createState().build(context)),
+          Card(child: YouTubeFeed()),
           Padding(padding: EdgeInsets.only(top: 10.0)),
         ]));
   }

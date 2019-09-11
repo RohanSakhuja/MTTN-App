@@ -184,7 +184,6 @@ class _InstagramFeedState extends State<InstagramFeed>
             return Container(
               child: Center(
                 child: CircularProgressIndicator(
-                  backgroundColor: Colors.purple,
                   valueColor: new AlwaysStoppedAnimation<Color>(Colors.purple),
                 ),
               ),

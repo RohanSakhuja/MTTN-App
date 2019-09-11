@@ -275,25 +275,17 @@ class HomePageState extends State<HomePage> {
                     : AssetImage(
                         "assets/ic_launcher_white.png",
                       ))),
-        ListTile(
-          leading: Icon(Icons.people),
-          title: Text("Connect with Us",
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-        ),
-        _buildDrawerTile(Icon(FontAwesomeIcons.instagram), "Instagram",
-            "https://www.instagram.com/manipalthetalk/"),
-        _buildDrawerTile(Icon(FontAwesomeIcons.facebook), "Facebook",
-            "https://facebook.com/manipalthetalk/"),
-        _buildDrawerTile(Icon(FontAwesomeIcons.twitter), "Twitter",
-            "https://twitter.com/manipalthetalk?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"),
-        _buildDrawerTile(Icon(FontAwesomeIcons.wordpress), "Website",
-            "https://www.manipalthetalk.org"),
-        Divider(),
-        ListTile(
-          leading: Icon(Icons.settings),
-          title: Text("App Settings",
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-        ),
+       
+        // _buildDrawerTile(Icon(FontAwesomeIcons.instagram), "Instagram",
+        //     "https://www.instagram.com/manipalthetalk/"),
+        // _buildDrawerTile(Icon(FontAwesomeIcons.facebook), "Facebook",
+        //     "https://facebook.com/manipalthetalk/"),
+        // _buildDrawerTile(Icon(FontAwesomeIcons.twitter), "Twitter",
+        //     "https://twitter.com/manipalthetalk?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"),
+        // _buildDrawerTile(Icon(FontAwesomeIcons.wordpress), "Website",
+        //     "https://www.manipalthetalk.org"),
+        
+       
         ListTile(
           leading: Icon(Icons.settings_brightness),
           title:
@@ -326,10 +318,6 @@ class HomePageState extends State<HomePage> {
         // ),
         Divider(),
         ListTile(
-          leading: Icon(Icons.hdr_weak),
-          title: Text("Others", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-        ),
-        ListTile(
           leading: Icon(Icons.developer_mode),
           title: Text(
             "Developers",
@@ -344,6 +332,20 @@ class HomePageState extends State<HomePage> {
             "https://github.com/RohanSakhuja/MTTN-App"),
         _buildDrawerTile(Icon(Icons.assignment), "Privacy Policy",
             "https://www.termsfeed.com/privacy-policy/ec69fc0be140c10cf91cf70816a8ba79"),
+             Divider(),ListTile(
+          leading: Icon(Icons.people),
+          title: Text("Connect with Us",
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            IconButton(icon: Icon(FontAwesomeIcons.instagram,size: 20.0,),onPressed: (){_launchURL("https://github.com/RohanSakhuja");},),
+            IconButton(icon: Icon(FontAwesomeIcons.facebook,size: 20.0,),onPressed: (){_launchURL("https://github.com/RohanSakhuja");},),
+            IconButton(icon: Icon(FontAwesomeIcons.twitter,size: 20.0,),onPressed: (){_launchURL("https://github.com/RohanSakhuja");},),
+            IconButton(icon: Icon(FontAwesomeIcons.wordpress,size: 20.0,),onPressed: (){_launchURL("https://github.com/RohanSakhuja");},),
+          ],
+        ),
       ],
     ));
   }
@@ -645,7 +647,7 @@ class HomePageState extends State<HomePage> {
             bottomNavigationBar: BottomNavigationBar(
               //backgroundColor: darkTheme ? turq : Colors.brown,
               selectedItemColor:
-                  darkTheme ? Colors.indigo : Colors.indigoAccent,
+                  darkTheme ? Colors.greenAccent.withOpacity(0.7) : Colors.indigoAccent,
               unselectedItemColor:
                   darkTheme ? Colors.white24 : Colors.black.withOpacity(0.65),
               currentIndex: _page,

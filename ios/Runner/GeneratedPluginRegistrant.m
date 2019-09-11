@@ -4,6 +4,7 @@
 
 #import "GeneratedPluginRegistrant.h"
 #import <device_info/DeviceInfoPlugin.h>
+#import <firebase_auth/FirebaseAuthPlugin.h>
 #import <firebase_core/FirebaseCorePlugin.h>
 #import <firebase_database/FirebaseDatabasePlugin.h>
 #import <firebase_messaging/FirebaseMessagingPlugin.h>
@@ -18,6 +19,7 @@
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
   [FLTDeviceInfoPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTDeviceInfoPlugin"]];
+  [FLTFirebaseAuthPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseAuthPlugin"]];
   [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
   [FLTFirebaseDatabasePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseDatabasePlugin"]];
   [FLTFirebaseMessagingPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseMessagingPlugin"]];
