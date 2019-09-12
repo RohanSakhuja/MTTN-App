@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:mttn_app/pages/BlitzYouTube.dart';
 import 'package:mttn_app/pages/InstagramSection.dart';
 import 'package:mttn_app/pages/NoirCard.dart';
+import 'ScrollingSocial.dart';
 import 'Events.dart';
 import 'YouTubeSection.dart';
+import 'NoirOffers.dart';
 
 class SocialBody extends StatefulWidget {
   @override
@@ -22,13 +25,12 @@ class SocialBodyState extends State<SocialBody>
     return Scaffold(
         key: _scaffoldkey,
         body: ListView(children: <Widget>[
+          Padding(padding: EdgeInsets.only(top: 10.0)),
           NoirCard(_scaffoldkey),
           Padding(padding: EdgeInsets.only(top: 10.0)),
           Card(child: new UpcomingEvents(_scaffoldkey)),
           Padding(padding: EdgeInsets.only(top: 10.0)),
-          Card(
-            child: InstagramFeed(),
-          ),
+          Card(child: InstagramFeed(),),
           Padding(padding: EdgeInsets.only(top: 10.0)),
           Card(child: YouTubeFeed()),
           Padding(padding: EdgeInsets.only(top: 10.0)),

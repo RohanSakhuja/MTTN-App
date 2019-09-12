@@ -331,6 +331,10 @@ class HomePageState extends State<HomePage> {
             "https://github.com/RohanSakhuja/MTTN-App"),
         _buildDrawerTile(Icon(Icons.assignment), "Privacy Policy",
             "https://www.termsfeed.com/privacy-policy/ec69fc0be140c10cf91cf70816a8ba79"),
+        _buildDrawerTile(Icon(Icons.bug_report), "Report a Bug",
+            "mailto:mttndevelopers@gmail.com?subject=&body="),
+            _buildDrawerTile(Icon(Icons.star), "Rate the App",
+            "https://play.google.com/store/apps/details?id=com.mttn.android"),
         Divider(),
         ListTile(
           leading: Icon(Icons.people),
@@ -522,77 +526,77 @@ class HomePageState extends State<HomePage> {
                     )
                   ],
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 30.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Material(
-                        color: darkTheme ? Colors.red : Colors.redAccent,
-                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                        child: InkWell(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Text(
-                                  "Report a Bug",
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.white),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Icon(
-                                  Icons.bug_report,
-                                  color: Colors.white,
-                                ),
-                              ],
-                            ),
-                          ),
-                          onTap: () => _launchURL(
-                              "mailto:mttndevelopers@gmail.com?subject=&body="),
-                        ),
-                      ),
-                      Material(
-                        color: darkTheme ? Colors.red : Colors.redAccent,
-                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                        child: InkWell(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Text(
-                                  "Rate the App",
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.white),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Icon(
-                                  Icons.star_half,
-                                  color: Colors.white,
-                                ),
-                              ],
-                            ),
-                          ),
-                          onTap: () => _launchURL(
-                              "https://play.google.com/store/apps/details?id=com.mttn.android"),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // SizedBox(
+                //   height: 20,
+                // ),
+                // Container(
+                //   padding: EdgeInsets.symmetric(horizontal: 30.0),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: <Widget>[
+                //       // Material(
+                //       //   color: darkTheme ? Colors.red : Colors.redAccent,
+                //       //   borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                //       //   child: InkWell(
+                //       //     child: Padding(
+                //       //       padding: const EdgeInsets.symmetric(
+                //       //           horizontal: 15, vertical: 8),
+                //       //       child: Row(
+                //       //         mainAxisAlignment: MainAxisAlignment.center,
+                //       //         mainAxisSize: MainAxisSize.min,
+                //       //         children: <Widget>[
+                //       //           Text(
+                //       //             "Report a Bug",
+                //       //             style: TextStyle(
+                //       //                 fontSize: 16, color: Colors.white),
+                //       //           ),
+                //       //           SizedBox(
+                //       //             width: 10,
+                //       //           ),
+                //       //           Icon(
+                //       //             Icons.bug_report,
+                //       //             color: Colors.white,
+                //       //           ),
+                //       //         ],
+                //       //       ),
+                //       //     ),
+                //       //     onTap: () => _launchURL(
+                //       //         "mailto:mttndevelopers@gmail.com?subject=&body="),
+                //       //   ),
+                //       // ),
+                //       // Material(
+                //       //   color: darkTheme ? Colors.red : Colors.redAccent,
+                //       //   borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                //       //   child: InkWell(
+                //       //     child: Padding(
+                //       //       padding: const EdgeInsets.symmetric(
+                //       //           horizontal: 15, vertical: 8),
+                //       //       child: Row(
+                //       //         mainAxisAlignment: MainAxisAlignment.center,
+                //       //         mainAxisSize: MainAxisSize.min,
+                //       //         children: <Widget>[
+                //       //           Text(
+                //       //             "Rate the App",
+                //       //             style: TextStyle(
+                //       //                 fontSize: 16, color: Colors.white),
+                //       //           ),
+                //       //           SizedBox(
+                //       //             width: 10,
+                //       //           ),
+                //       //           Icon(
+                //       //             Icons.star_half,
+                //       //             color: Colors.white,
+                //       //           ),
+                //       //         ],
+                //       //       ),
+                //       //     ),
+                //       //     onTap: () => _launchURL(
+                //       //         "https://play.google.com/store/apps/details?id=com.mttn.android"),
+                //       //   ),
+                //       // ),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           );

@@ -135,7 +135,7 @@ class NoirVerification {
   showSnackbar(String message) {
     print(message);
     key.currentState.showSnackBar(SnackBar(
-      content: Text(message),
+      content: message.contains("failed") ? Text(":( Looks like the verification faces some error, please try again or contact us.") : Text(message)
     ));
   }
 }

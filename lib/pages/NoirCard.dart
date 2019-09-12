@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mttn_app/utils/NoirVerfication.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:mttn_app/main.dart';
 
 class NoirCard extends StatefulWidget {
   final GlobalKey<ScaffoldState> _key;
@@ -157,20 +158,52 @@ class NoirCardState extends State<NoirCard> with AutomaticKeepAliveClientMixin {
                 context: widget._key.currentContext,
                 builder: (context) {
                   return AlertDialog(
-                    title: Text("OTP Verification"),
-                    content: TextFormField(
-                      controller: _otp,
-                      keyboardType: TextInputType.number,
+                    title: Text(
+                      "OTP Verification",
+                      textAlign: TextAlign.center,
                     ),
-                    actions: <Widget>[
-                      FlatButton(
-                        child: Text('Redeem'),
-                        onPressed: () async {
-                          noir.signInWithPhoneNumber(_otp.text);
-                          Navigator.pop(context);
-                        },
+                    content: Container(
+                      height: 120.0,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          TextFormField(
+                            textAlign: TextAlign.center,
+                            controller: _otp,
+                            keyboardType: TextInputType.number,
+                          ),
+                          Container(
+                            width: 2,
+                            height: 10,
+                          ),
+                          MaterialButton(
+                            color: darkTheme
+                                ? Colors.greenAccent.withOpacity(0.7)
+                                : Colors.indigoAccent,
+                            child: Container(
+                                width: MediaQuery.of(context).size.width * 0.55,
+                                alignment: Alignment.center,
+                                child: Text(
+                                  "Redeem Instantly!",
+                                  style: TextStyle(color: Colors.white),
+                                )),
+                            onPressed: () async {
+                              noir.signInWithPhoneNumber(_otp.text);
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
+                    // actions: <Widget>[
+                    //   FlatButton(
+                    //     child: Text('Redeem'),
+                    //     onPressed: () async {
+                    //       noir.signInWithPhoneNumber(_otp.text);
+                    //       Navigator.pop(context);
+                    //     },
+                    //   ),
+                    // ],
                   );
                 });
           }
@@ -183,23 +216,69 @@ class NoirCardState extends State<NoirCard> with AutomaticKeepAliveClientMixin {
         context: widget._key.currentContext,
         builder: (context) {
           return AlertDialog(
-            title: Text("Phone Number"),
-            content: TextFormField(
-              controller: _phoneNumber,
-              keyboardType: TextInputType.number,
+            title: Text(
+              "Enter Phone Number",
+              textAlign: TextAlign.center,
             ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("Verify"),
-                onPressed: () async {
-                  await noir.verifyPhoneNumber(_phoneNumber.text);
-                  var temp = await noir.currentUser();
-                  print(temp);
-                  Navigator.pop(context);
-                  handleOTP();
-                },
-              )
-            ],
+            content: Container(
+              height: 120.0,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  TextFormField(
+                    textAlign: TextAlign.center,
+                    controller: _phoneNumber,
+                    keyboardType: TextInputType.number,
+                  ),
+                  Container(
+                    width: 2,
+                    height: 10,
+                  ),
+                  MaterialButton(
+                    color: darkTheme
+                        ? Colors.greenAccent.withOpacity(0.7)
+                        : Colors.indigoAccent,
+                    child: Container(
+                        width: MediaQuery.of(context).size.width * 0.55,
+                        alignment: Alignment.center,
+                        child: Text(
+                          "Verify",
+                          style: TextStyle(color: Colors.white),
+                        )),
+                    onPressed: () async {
+                      await noir.verifyPhoneNumber(_phoneNumber.text);
+                      var temp = await noir.currentUser();
+                      print(temp);
+                      Navigator.pop(context);
+                      handleOTP();
+                    },
+                  ),
+                ],
+              ),
+            ),
+            // actions: <Widget>[
+            //     //color: Colors.greenAccent,
+            //     //width: MediaQuery.of(context).size.width * 0.7,
+            //     MaterialButton(
+            //       color: Colors.greenAccent.withOpacity(0.7),
+            //       padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.2),
+            //       child: Container(
+            //         width: MediaQuery.of(context).size.width * 0.55,
+            //         alignment: Alignment.center,
+            //           child: Text(
+            //         "Verify",
+            //         style: TextStyle(color: Colors.white),
+            //       )),
+            //       onPressed: () async {
+            //         await noir.verifyPhoneNumber(_phoneNumber.text);
+            //         var temp = await noir.currentUser();
+            //         print(temp);
+            //         Navigator.pop(context);
+            //         handleOTP();
+            //       },
+            //     ),
+
+            // ],
           );
         });
   }
