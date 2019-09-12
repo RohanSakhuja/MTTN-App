@@ -1,7 +1,15 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:rxdart/rxdart.dart';
+
+class NoirUser {
+  String cardNumber;
+  String username;
+  NoirUser({this.username, this.cardNumber});
+}
 
 class NoirVerification {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -10,51 +18,61 @@ class NoirVerification {
   String smsCode;
   String phoneNumber;
 
-  GlobalKey<ScaffoldState> key;
+  NoirUser cardDetails;
+  Observable<FirebaseUser> firebaseUser;
 
-  NoirVerification(this.key);
+  GlobalKey<ScaffoldState> key = new GlobalKey<ScaffoldState>();
 
-  Future<String> currentUser() async {
-    FirebaseUser user = await _auth.currentUser();
-    String temp = user != null ? user.phoneNumber : "No number";
-    print("temp:"+temp);
-    return temp;
+  NoirVerification(this.key) {
+    firebaseUser = Observable(_auth.onAuthStateChanged);
   }
 
-  void setup(phone) {
-    phoneNumber = phone;
-    _verifyPhoneNumber();
+  Future<NoirUser> currentUser() async {
+    FirebaseUser user = await _auth.currentUser();
+    if (user != null) {
+      var snap = await _reference
+          .child("NOIR")
+          .child(user.phoneNumber.replaceFirst("+91", ""))
+          .once();
+      cardDetails = NoirUser(
+          username: snap.value["Name"], cardNumber: snap.value["Card Number"]);
+      return cardDetails;
+    } else {
+      return null;
+    }
   }
 
   void signOut() async {
     if (_auth.currentUser() != null) {
       await _auth.signOut();
-      print(currentUser());
+      print((cardDetails?.username) ?? "No user signed in");
+      cardDetails = null;
       showSnackbar("Successfully Signed out");
     }
   }
 
-  void _verifyPhoneNumber() async {
+  Future<bool> verifyPhoneNumber(phone) async {
+    phoneNumber = phone;
     var temp = await _reference.child("NOIR").child(phoneNumber).once();
     if (temp.value != null) {
       bool verified = await _processNumber();
       print(verified);
+      return true;
     } else {
       print("Invalid User");
       showSnackbar('Invalid User');
+      return false;
     }
   }
 
   // Example code of how to verify phone number
-  Future<bool> _processNumber() async {
+  _processNumber() async {
     final PhoneVerificationCompleted verificationCompleted =
-        (AuthCredential phoneAuthCredential) {
-      _auth.signInWithCredential(phoneAuthCredential);
-
-      String message = 'Received phone auth credential: $phoneAuthCredential';
+        (AuthCredential phoneAuthCredential) async {
+      await _auth.signInWithCredential(phoneAuthCredential);
+      print(cardDetails?.username);
+      String message = 'Received phone auth credential';
       showSnackbar(message);
-
-      return true;
     };
 
     final PhoneVerificationFailed verificationFailed =
@@ -62,7 +80,6 @@ class NoirVerification {
       String message =
           'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}';
       showSnackbar(message);
-      return false;
     };
 
     final PhoneCodeSent codeSent =
@@ -84,7 +101,7 @@ class NoirVerification {
         codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
   }
 
-  void _signInWithPhoneNumber() async {
+  void signInWithPhoneNumber(smsCode) async {
     try {
       final AuthCredential credential = PhoneAuthProvider.getCredential(
         verificationId: _verificationId,

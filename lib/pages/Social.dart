@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mttn_app/pages/BlitzYouTube.dart';
 import 'package:mttn_app/pages/InstagramSection.dart';
 import 'package:mttn_app/pages/NoirCard.dart';
-import 'ScrollingSocial.dart';
 import 'Events.dart';
 import 'YouTubeSection.dart';
-import 'NoirOffers.dart';
 
 class SocialBody extends StatefulWidget {
   @override

@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mttn_app/utils/NoirVerfication.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NoirCard extends StatefulWidget {
   final GlobalKey<ScaffoldState> _key;
@@ -13,23 +15,18 @@ class NoirCardState extends State<NoirCard> with AutomaticKeepAliveClientMixin {
   String phoneNumber;
   String smsCode;
   bool isRedeemed = false;
-  FirebaseUser _currentUser;
-
+  NoirUser card;
+  NoirVerification noir;
   @override
   void initState() {
-    NoirVerification(widget._key).currentUser().then((val) {
-      phoneNumber = val ?? "";
-      print("constructor: " + phoneNumber);
-    });
+    noir = NoirVerification(widget._key);
     super.initState();
   }
 
   @override
-  bool get wantKeepAlive => true;
-
-  @override
   Widget build(BuildContext context) {
     super.build(context);
+    print("Rebuilt");
     return InkWell(
       onTap: handleActivation,
       child: Card(
@@ -65,41 +62,29 @@ class NoirCardState extends State<NoirCard> with AutomaticKeepAliveClientMixin {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 15),
-                    child: buildInfoTile(),
-                  ),
+                      padding: const EdgeInsets.only(top: 15),
+                      child: buildInfoTile()),
                   Align(
                     alignment: Alignment.centerRight,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         IconButton(
                           icon: Icon(
-                            Icons.power,
+                            Icons.delete_outline,
                             color: Colors.white,
                             size: 30,
                           ),
-                          onPressed: () =>
-                              NoirVerification(widget._key).signOut(),
+                          onPressed: () => noir.signOut(),
                         ),
-                         IconButton(
-                          icon: Icon(
-                            Icons.account_balance_wallet,
-                            color: Colors.white,
-                            size: 30,
-                          ),
-                          // onPressed: () =>
-                          //     NoirVerification(widget._key).signOut(),
-                          onPressed: () => handleOTP(),
-                        ),
-                        
                         IconButton(
                           icon: Icon(
                             Icons.info_outline,
                             size: 30,
                             color: Colors.white,
                           ),
-                          onPressed: info,
+                          onPressed: () => _launchUrl(
+                              "https://manipalthetalk.org/NoirSelectPrivileges.pdf"),
                         ),
                       ],
                     ),
@@ -113,47 +98,83 @@ class NoirCardState extends State<NoirCard> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  info() {
-    NoirVerification(widget._key).currentUser().then((val) {
-      phoneNumber = val;
-      print("Value: " + phoneNumber);
-      setState(() {});
-    });
-  }
-
   buildInfoTile() {
-    return ListTile(
-      title: Text(
-        "ROHAN SAKHUJA",
-        style: TextStyle(color: Color.fromRGBO(255, 215, 0, 0.7), fontSize: 18),
-      ),
-      subtitle: Text(
-        phoneNumber??"",
-        style: TextStyle(
-          color: Color.fromRGBO(255, 215, 0, 0.7),
-          fontSize: 18,
-        ),
-      ),
+    print("###");
+    print(card);
+    print("###");
+    return StreamBuilder(
+      stream: noir.firebaseUser,
+      builder: (context, snap) {
+        if (snap.hasData) {
+          return FutureBuilder<NoirUser>(
+              future: noir.currentUser(),
+              builder: (context, snapshot) {
+                if (snap.hasData && snapshot.data?.username != null) {
+                  // print(snapshot.data.username);
+                  return ListTile(
+                    title: Text(
+                      snapshot.data.username,
+                      style: TextStyle(
+                          color: Color.fromRGBO(255, 215, 0, 0.7),
+                          fontSize: 18),
+                    ),
+                    subtitle: Text(
+                      snapshot.data.cardNumber,
+                      style: TextStyle(
+                        color: Color.fromRGBO(255, 215, 0, 0.7),
+                        fontSize: 18,
+                      ),
+                    ),
+                  );
+                } else {
+                  return CircularProgressIndicator(
+                    valueColor: new AlwaysStoppedAnimation<Color>(
+                        Color.fromRGBO(255, 215, 0, 0.7)),
+                  );
+                }
+              });
+        } else {
+          return Text(
+            "TAP TO ACTIVATE NOIR CARD",
+            style: TextStyle(
+              color: Color.fromRGBO(255, 215, 0, 0.7),
+              fontSize: 15,
+            ),
+          );
+        }
+      },
     );
   }
 
-  handleOTP(){
-    TextEditingController _OTP = new TextEditingController();
-    showDialog(
-      context: widget._key.currentContext,
-      builder: (context){
-        return AlertDialog(
-          title: Text("OTP Verification"),
-          content: TextFormField(
-            controller: _OTP,
-            keyboardType: TextInputType.number,
-          ),
-          actions: <Widget>[
-            
-          ],
-        );
-      }
-    );
+  handleOTP() {
+    TextEditingController _otp = new TextEditingController();
+    return StreamBuilder<FirebaseUser>(
+        stream: noir.firebaseUser,
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data?.phoneNumber != null) {
+          } else {
+            showDialog(
+                context: widget._key.currentContext,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text("OTP Verification"),
+                    content: TextFormField(
+                      controller: _otp,
+                      keyboardType: TextInputType.number,
+                    ),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text('Redeem'),
+                        onPressed: () async {
+                          noir.signInWithPhoneNumber(_otp.text);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  );
+                });
+          }
+        });
   }
 
   handleActivation() {
@@ -170,14 +191,22 @@ class NoirCardState extends State<NoirCard> with AutomaticKeepAliveClientMixin {
             actions: <Widget>[
               FlatButton(
                 child: Text("Verify"),
-                onPressed: () {
-                  handleOTP();
+                onPressed: () async {
+                  await noir.verifyPhoneNumber(_phoneNumber.text);
+                  var temp = await noir.currentUser();
+                  print(temp);
                   Navigator.pop(context);
-                  NoirVerification(widget._key).setup(_phoneNumber.text);
+                  handleOTP();
                 },
               )
             ],
           );
         });
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
+
+_launchUrl(url) async =>
+    (await canLaunch(url)) ? await launch(url) : throw 'Could not lauch $url';
