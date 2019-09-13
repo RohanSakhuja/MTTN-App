@@ -47,20 +47,20 @@ class NoirVerification {
       await _auth.signOut();
       print((cardDetails?.username) ?? "No user signed in");
       cardDetails = null;
-      showSnackbar("Successfully Signed out");
+      print("Successfully Signed out");
     }
   }
 
   Future<bool> verifyPhoneNumber(phone) async {
     phoneNumber = phone;
     var temp = await _reference.child("NOIR").child(phoneNumber).once();
-    if (temp.value != null) {
+    if (temp.value != null && temp.value["Redeemed"] == false) {
       bool verified = await _processNumber();
       print(verified);
       return true;
     } else {
       print("Invalid User");
-      showSnackbar('Invalid User');
+      showSnackbar('No Noir card registered for this number.');
       return false;
     }
   }
@@ -72,14 +72,17 @@ class NoirVerification {
       await _auth.signInWithCredential(phoneAuthCredential);
       print(cardDetails?.username);
       String message = 'Received phone auth credential';
-      showSnackbar(message);
+      print(message);
+      _reference.child("NOIR").child(phoneNumber).child("Redeemed").set(true);
+      showSnackbar("Noir card successfully redeemed");
     };
 
     final PhoneVerificationFailed verificationFailed =
         (AuthException authException) {
       String message =
           'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}';
-      showSnackbar(message);
+      print(message);
+      showSnackbar("Phone number verification failed.");
     };
 
     final PhoneCodeSent codeSent =
@@ -113,16 +116,17 @@ class NoirVerification {
       final FirebaseUser currentUser = await _auth.currentUser();
       assert(user.uid == currentUser.uid);
       if (user != null) {
-        showSnackbar('Successfully signed in, uid: ' + user.uid);
+        print('Successfully signed in, uid: ' + user.uid);
+        showSnackbar("Noir card successfully redeemed");
       } else {
-        showSnackbar('Sign in failed');
+        showSnackbar('Redeem failed. Please try again');
       }
     } on PlatformException catch (e) {
       print(e.code);
       if (e.code == "ERROR_SESSION_EXPIRED") {
-        showSnackbar('ERROR_SESSION_EXPIRED');
+        showSnackbar('Session expired');
       } else if (e.code == "ERROR_INVALID_VERIFICATION_CODE") {
-        showSnackbar("ERROR_INVALID_VERIFICATION_CODE");
+        showSnackbar("Invalid verification code");
       } else {
         showSnackbar('Platform Exception occured');
       }
@@ -135,7 +139,7 @@ class NoirVerification {
   showSnackbar(String message) {
     print(message);
     key.currentState.showSnackBar(SnackBar(
-      content: message.contains("failed") ? Text(":( Looks like the verification faces some error, please try again or contact us.") : Text(message)
+      content: Text(message),
     ));
   }
 }
