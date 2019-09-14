@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NoirUser {
   String cardNumber;
@@ -54,13 +55,19 @@ class NoirVerification {
   Future<bool> verifyPhoneNumber(phone) async {
     phoneNumber = phone;
     var temp = await _reference.child("NOIR").child(phoneNumber).once();
-    if (temp.value != null && temp.value["Redeemed"] == false) {
-      bool verified = await _processNumber();
-      print(verified);
-      return true;
+    if (temp.value != null) {
+      if (temp.value["Redeemed"] == false) {
+        bool verified = await _processNumber();
+        print(verified);
+        return true;
+      } else {
+        print("Already redeemed");
+        showSnackbar('Noir card already redeemed for this number.', pr: true);
+        return false;
+      }
     } else {
       print("Invalid User");
-      showSnackbar('No Noir card registered for this number.');
+      showSnackbar('No Noir card registered for this number.', pr: true);
       return false;
     }
   }
@@ -119,7 +126,7 @@ class NoirVerification {
         print('Successfully signed in, uid: ' + user.uid);
         showSnackbar("Noir card successfully redeemed");
       } else {
-        showSnackbar('Redeem failed. Please try again');
+        showSnackbar('Redeem failed. Please try again', pr: true);
       }
     } on PlatformException catch (e) {
       print(e.code);
@@ -136,10 +143,17 @@ class NoirVerification {
     }
   }
 
-  showSnackbar(String message) {
+  showSnackbar(String message, {bool pr}) {
     print(message);
     key.currentState.showSnackBar(SnackBar(
       content: Text(message),
+      action: SnackBarAction(
+        label: "Contact us",
+        onPressed: () => _launchUrl("whatsapp://send?phone=+917411447558"),
+      ),
     ));
   }
+
+  _launchUrl(url) async =>
+      (await canLaunch(url)) ? await launch(url) : throw 'Could not lauch $url';
 }

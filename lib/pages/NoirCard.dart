@@ -31,7 +31,7 @@ class NoirCardState extends State<NoirCard> with AutomaticKeepAliveClientMixin {
     print("Rebuilt");
     return InkWell(
       onTap: handleActivation,
-      onLongPress: () => _launchUrl("whatsapp://send?phone=+919632247503"),
+      onLongPress: () => _launchUrl("whatsapp://send?phone=+917411447558"),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         child: Card(
@@ -186,7 +186,7 @@ class NoirCardState extends State<NoirCard> with AutomaticKeepAliveClientMixin {
                         width: MediaQuery.of(context).size.width * 0.55,
                         alignment: Alignment.center,
                         child: Text(
-                          "Redeem Instantly!",
+                          "Redeem Card",
                           style: TextStyle(color: Colors.white),
                         )),
                     onPressed: () async {
@@ -203,7 +203,10 @@ class NoirCardState extends State<NoirCard> with AutomaticKeepAliveClientMixin {
 
   handleActivation() {
     if (noir.cardDetails?.cardNumber != null) {
-      print("Tap ignored");
+      SnackBar snackbar = new SnackBar(
+        content: Text("Long press the card to contact MTTN PR"),
+      );
+      widget._key.currentState.showSnackBar(snackbar);
       return;
     }
     TextEditingController _phoneNumber = new TextEditingController();
