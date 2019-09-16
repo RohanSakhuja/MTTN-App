@@ -275,25 +275,16 @@ class HomePageState extends State<HomePage> {
                     : AssetImage(
                         "assets/ic_launcher_white.png",
                       ))),
-        ListTile(
-          leading: Icon(Icons.people),
-          title: Text("Connect with Us",
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-        ),
-        _buildDrawerTile(Icon(FontAwesomeIcons.instagram), "Instagram",
-            "https://www.instagram.com/manipalthetalk/"),
-        _buildDrawerTile(Icon(FontAwesomeIcons.facebook), "Facebook",
-            "https://facebook.com/manipalthetalk/"),
-        _buildDrawerTile(Icon(FontAwesomeIcons.twitter), "Twitter",
-            "https://twitter.com/manipalthetalk?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"),
-        _buildDrawerTile(Icon(FontAwesomeIcons.wordpress), "Website",
-            "https://www.manipalthetalk.org"),
-        Divider(),
-        ListTile(
-          leading: Icon(Icons.settings),
-          title: Text("App Settings",
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-        ),
+
+        // _buildDrawerTile(Icon(FontAwesomeIcons.instagram), "Instagram",
+        //     "https://www.instagram.com/manipalthetalk/"),
+        // _buildDrawerTile(Icon(FontAwesomeIcons.facebook), "Facebook",
+        //     "https://facebook.com/manipalthetalk/"),
+        // _buildDrawerTile(Icon(FontAwesomeIcons.twitter), "Twitter",
+        //     "https://twitter.com/manipalthetalk?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"),
+        // _buildDrawerTile(Icon(FontAwesomeIcons.wordpress), "Website",
+        //     "https://www.manipalthetalk.org"),
+
         ListTile(
           leading: Icon(Icons.settings_brightness),
           title:
@@ -326,10 +317,6 @@ class HomePageState extends State<HomePage> {
         // ),
         Divider(),
         ListTile(
-          leading: Icon(Icons.hdr_weak),
-          title: Text("Others", style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-        ),
-        ListTile(
           leading: Icon(Icons.developer_mode),
           title: Text(
             "Developers",
@@ -344,6 +331,57 @@ class HomePageState extends State<HomePage> {
             "https://github.com/RohanSakhuja/MTTN-App"),
         _buildDrawerTile(Icon(Icons.assignment), "Privacy Policy",
             "https://www.termsfeed.com/privacy-policy/ec69fc0be140c10cf91cf70816a8ba79"),
+        _buildDrawerTile(Icon(Icons.bug_report), "Report a Bug",
+            "mailto:mttndevelopers@gmail.com?subject=&body="),
+            _buildDrawerTile(Icon(Icons.star), "Rate the App",
+            "https://play.google.com/store/apps/details?id=com.mttn.android"),
+        Divider(),
+        ListTile(
+          leading: Icon(Icons.people),
+          title: Text("Connect with Us",
+              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            IconButton(
+              icon: Icon(
+                FontAwesomeIcons.instagram,
+                size: 20.0,
+              ),
+              onPressed: () {
+                _launchURL("https://github.com/RohanSakhuja");
+              },
+            ),
+            IconButton(
+              icon: Icon(
+                FontAwesomeIcons.facebook,
+                size: 20.0,
+              ),
+              onPressed: () {
+                _launchURL("https://github.com/RohanSakhuja");
+              },
+            ),
+            IconButton(
+              icon: Icon(
+                FontAwesomeIcons.twitter,
+                size: 20.0,
+              ),
+              onPressed: () {
+                _launchURL("https://github.com/RohanSakhuja");
+              },
+            ),
+            IconButton(
+              icon: Icon(
+                FontAwesomeIcons.wordpress,
+                size: 20.0,
+              ),
+              onPressed: () {
+                _launchURL("https://github.com/RohanSakhuja");
+              },
+            ),
+          ],
+        ),
       ],
     ));
   }
@@ -352,7 +390,7 @@ class HomePageState extends State<HomePage> {
     String avatar1 = _preferences.getString("Rohan");
     String avatar2 = _preferences.getString("Akshit");
     showModalBottomSheet<void>(
-      backgroundColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
         context: context,
         builder: (BuildContext buildContext) {
           return Container(
@@ -488,77 +526,77 @@ class HomePageState extends State<HomePage> {
                     )
                   ],
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 30.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Material(
-                        color: darkTheme ? Colors.red : Colors.redAccent,
-                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                        child: InkWell(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Text(
-                                  "Report a Bug",
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.white),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Icon(
-                                  Icons.bug_report,
-                                  color: Colors.white,
-                                ),
-                              ],
-                            ),
-                          ),
-                          onTap: () => _launchURL(
-                              "mailto:mttndevelopers@gmail.com?subject=&body="),
-                        ),
-                      ),
-                      Material(
-                        color: darkTheme ? Colors.red : Colors.redAccent,
-                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                        child: InkWell(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Text(
-                                  "Rate the App",
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.white),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Icon(
-                                  Icons.star_half,
-                                  color: Colors.white,
-                                ),
-                              ],
-                            ),
-                          ),
-                          onTap: () => _launchURL(
-                              "https://play.google.com/store/apps/details?id=com.mttn.android"),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // SizedBox(
+                //   height: 20,
+                // ),
+                // Container(
+                //   padding: EdgeInsets.symmetric(horizontal: 30.0),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: <Widget>[
+                //       // Material(
+                //       //   color: darkTheme ? Colors.red : Colors.redAccent,
+                //       //   borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                //       //   child: InkWell(
+                //       //     child: Padding(
+                //       //       padding: const EdgeInsets.symmetric(
+                //       //           horizontal: 15, vertical: 8),
+                //       //       child: Row(
+                //       //         mainAxisAlignment: MainAxisAlignment.center,
+                //       //         mainAxisSize: MainAxisSize.min,
+                //       //         children: <Widget>[
+                //       //           Text(
+                //       //             "Report a Bug",
+                //       //             style: TextStyle(
+                //       //                 fontSize: 16, color: Colors.white),
+                //       //           ),
+                //       //           SizedBox(
+                //       //             width: 10,
+                //       //           ),
+                //       //           Icon(
+                //       //             Icons.bug_report,
+                //       //             color: Colors.white,
+                //       //           ),
+                //       //         ],
+                //       //       ),
+                //       //     ),
+                //       //     onTap: () => _launchURL(
+                //       //         "mailto:mttndevelopers@gmail.com?subject=&body="),
+                //       //   ),
+                //       // ),
+                //       // Material(
+                //       //   color: darkTheme ? Colors.red : Colors.redAccent,
+                //       //   borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                //       //   child: InkWell(
+                //       //     child: Padding(
+                //       //       padding: const EdgeInsets.symmetric(
+                //       //           horizontal: 15, vertical: 8),
+                //       //       child: Row(
+                //       //         mainAxisAlignment: MainAxisAlignment.center,
+                //       //         mainAxisSize: MainAxisSize.min,
+                //       //         children: <Widget>[
+                //       //           Text(
+                //       //             "Rate the App",
+                //       //             style: TextStyle(
+                //       //                 fontSize: 16, color: Colors.white),
+                //       //           ),
+                //       //           SizedBox(
+                //       //             width: 10,
+                //       //           ),
+                //       //           Icon(
+                //       //             Icons.star_half,
+                //       //             color: Colors.white,
+                //       //           ),
+                //       //         ],
+                //       //       ),
+                //       //     ),
+                //       //     onTap: () => _launchURL(
+                //       //         "https://play.google.com/store/apps/details?id=com.mttn.android"),
+                //       //   ),
+                //       // ),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           );
@@ -644,8 +682,9 @@ class HomePageState extends State<HomePage> {
             ),
             bottomNavigationBar: BottomNavigationBar(
               //backgroundColor: darkTheme ? turq : Colors.brown,
-              selectedItemColor:
-                  darkTheme ? Colors.indigo : Colors.indigoAccent,
+              selectedItemColor: darkTheme
+                  ? Colors.greenAccent.withOpacity(0.7)
+                  : Colors.indigoAccent,
               unselectedItemColor:
                   darkTheme ? Colors.white24 : Colors.black.withOpacity(0.65),
               currentIndex: _page,

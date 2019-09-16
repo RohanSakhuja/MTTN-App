@@ -388,10 +388,10 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     Completer<Null> completer = new Completer<Null>();
     _cachedLogin();
     Future.doWhile(() {
-        return Future.delayed(new Duration(seconds: 1), () {
-          return isRefreshing;
-        });
-      }).then((val) => completer.complete());
+      return Future.delayed(new Duration(seconds: 1), () {
+        return isRefreshing;
+      });
+    }).then((val) => completer.complete());
     return completer.future;
   }
 
@@ -471,8 +471,14 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     return data;
   }
 
-  capFirst(List<String> name) =>
-      '${name[0][0].toUpperCase()}${name[0].substring(1)} ${name[1][0].toUpperCase()}${name[1].substring(1)}';
+  capFirst(List<String> name) {
+    for (var i = 0; i < name.length; i++) {
+      name[i] = "${name[i][0].toUpperCase()}${name[i].substring(1)}";
+    }
+    String temp = name.join(" ");
+    print(temp);
+    return temp;
+  }
 
   _buildSubjectCard(subName, subClasses, subPresent, subAbsent, subPercentage,
       context, index) {
