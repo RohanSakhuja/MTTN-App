@@ -28,7 +28,6 @@ class NoirCardState extends State<NoirCard> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    print("Rebuilt");
     return InkWell(
       onTap: handleActivation,
       onLongPress: () => _launchUrl("whatsapp://send?phone=+917411447558"),
@@ -71,18 +70,7 @@ class NoirCardState extends State<NoirCard> with AutomaticKeepAliveClientMixin {
                         child: buildInfoTile()),
                     Align(
                       alignment: Alignment.centerRight,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          IconButton(
-                            icon: Icon(
-                              Icons.delete_outline,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                            onPressed: () => noir.signOut(),
-                          ),
-                          IconButton(
+                      child: IconButton(
                             icon: Icon(
                               Icons.info_outline,
                               size: 30,
@@ -91,8 +79,28 @@ class NoirCardState extends State<NoirCard> with AutomaticKeepAliveClientMixin {
                             onPressed: () => _launchUrl(
                                 "https://manipalthetalk.org/NoirSelectPrivileges.pdf"),
                           ),
-                        ],
-                      ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: <Widget>[
+                      //     IconButton(
+                      //       icon: Icon(
+                      //         Icons.delete_outline,
+                      //         color: Colors.white,
+                      //         size: 30,
+                      //       ),
+                      //       onPressed: () => noir.signOut(),
+                      //     ),
+                      //     IconButton(
+                      //       icon: Icon(
+                      //         Icons.info_outline,
+                      //         size: 30,
+                      //         color: Colors.white,
+                      //       ),
+                      //       onPressed: () => _launchUrl(
+                      //           "https://manipalthetalk.org/NoirSelectPrivileges.pdf"),
+                      //     ),
+                      //   ],
+                      // ),
                     )
                   ],
                 ),
@@ -105,9 +113,6 @@ class NoirCardState extends State<NoirCard> with AutomaticKeepAliveClientMixin {
   }
 
   buildInfoTile() {
-    print("###");
-    print(card);
-    print("###");
     return StreamBuilder(
       stream: noir.firebaseUser,
       builder: (context, snap) {
@@ -116,7 +121,6 @@ class NoirCardState extends State<NoirCard> with AutomaticKeepAliveClientMixin {
               future: noir.currentUser(),
               builder: (context, snapshot) {
                 if (snap.hasData && snapshot.data?.username != null) {
-                  Navigator.maybePop(context);
                   return ListTile(
                     title: Text(
                       snapshot.data.username,
@@ -248,11 +252,9 @@ class NoirCardState extends State<NoirCard> with AutomaticKeepAliveClientMixin {
                           style: TextStyle(color: Colors.white),
                         )),
                     onPressed: () async {
+                      Navigator.pop(context);
                       bool flag =
                           await noir.verifyPhoneNumber(_phoneNumber.text);
-                      var temp = await noir.currentUser();
-                      print(temp);
-                      Navigator.pop(context);
                       if (flag) {
                         handleOTP();
                       }

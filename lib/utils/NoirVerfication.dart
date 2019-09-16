@@ -35,6 +35,10 @@ class NoirVerification {
           .child("NOIR")
           .child(user.phoneNumber.replaceFirst("+91", ""))
           .once();
+      if (snap.value["Redeemed"] == false) {
+        signOut();
+        return null;
+      }
       cardDetails = NoirUser(
           username: snap.value["Name"], cardNumber: snap.value["Card Number"]);
       return cardDetails;
@@ -72,7 +76,6 @@ class NoirVerification {
     }
   }
 
-  // Example code of how to verify phone number
   _processNumber() async {
     final PhoneVerificationCompleted verificationCompleted =
         (AuthCredential phoneAuthCredential) async {
@@ -82,6 +85,7 @@ class NoirVerification {
       print(message);
       _reference.child("NOIR").child(phoneNumber).child("Redeemed").set(true);
       showSnackbar("Noir card successfully redeemed");
+      Navigator.maybePop(key.currentContext);
     };
 
     final PhoneVerificationFailed verificationFailed =
@@ -89,7 +93,9 @@ class NoirVerification {
       String message =
           'Phone number verification failed. Code: ${authException.code}. Message: ${authException.message}';
       print(message);
-      showSnackbar("Phone number verification failed.");
+      showSnackbar(
+          "Phone number verification failed.\nMessage: ${authException.message}",
+          pr: true);
     };
 
     final PhoneCodeSent codeSent =
@@ -124,6 +130,7 @@ class NoirVerification {
       assert(user.uid == currentUser.uid);
       if (user != null) {
         print('Successfully signed in, uid: ' + user.uid);
+        _reference.child("NOIR").child(phoneNumber).child("Redeemed").set(true);
         showSnackbar("Noir card successfully redeemed");
       } else {
         showSnackbar('Redeem failed. Please try again', pr: true);
@@ -135,11 +142,12 @@ class NoirVerification {
       } else if (e.code == "ERROR_INVALID_VERIFICATION_CODE") {
         showSnackbar("Invalid verification code");
       } else {
-        showSnackbar('Platform Exception occured');
+        showSnackbar('Something went wrong. Please try again later.', pr: true);
       }
     } catch (e) {
       print(e);
-      showSnackbar('Exception occured');
+      showSnackbar('An unexpected error occured. Please try again later.',
+          pr: true);
     }
   }
 
@@ -147,10 +155,13 @@ class NoirVerification {
     print(message);
     key.currentState.showSnackBar(SnackBar(
       content: Text(message),
-      action: SnackBarAction(
-        label: "Contact us",
-        onPressed: () => _launchUrl("whatsapp://send?phone=+917411447558"),
-      ),
+      action: (pr ?? false)
+          ? SnackBarAction(
+              label: "Contact us",
+              onPressed: () =>
+                  _launchUrl("whatsapp://send?phone=+917411447558"),
+            )
+          : null,
     ));
   }
 
