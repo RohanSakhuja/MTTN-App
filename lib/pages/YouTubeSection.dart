@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -44,10 +45,12 @@ class _YouTubeFeedState extends State<YouTubeFeed>
     with AutomaticKeepAliveClientMixin {
   bool get wantKeepAlive => true;
 
+  final DatabaseReference _reference =
+      FirebaseDatabase().reference().child('URL/YouTube');
+
   Future<SocialState> _fetchItems() async {
     try {
-      String uri =
-          "https://www.googleapis.com/youtube/v3/search?key=AIzaSyDMzJvdj7xH40CMVnoW6kZPgVpXhn93aA8&channelId=UCwW9nPcEM2wGfsa06LTYlFg&part=snippet,id&order=date&maxResults=50";
+      String uri = (await _reference.once()).value;
       var response = await http.get(uri);
       var body = jsonDecode(response.body);
 

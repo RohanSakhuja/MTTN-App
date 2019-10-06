@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -30,10 +30,11 @@ class _InstagramFeedState extends State<InstagramFeed>
 
   List<Post> posts = new List();
 
+  final DatabaseReference _reference = FirebaseDatabase().reference().child('URL/Instagram'); 
+
   Future<SocialState> _fetchPosts() async {
     try {
-      String uri =
-          "https://api.instagram.com/v1/users/self/media/recent/?access_token=1605816208.94452f5.889dcc69bb6546cbac349d542d1b49ef";
+      String uri = (await _reference.once()).value;
       var response = await http.get(uri);
       var body = jsonDecode(response.body);
 
