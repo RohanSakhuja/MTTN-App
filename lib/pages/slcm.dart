@@ -19,9 +19,32 @@ class Attendance {
   final String name;
   final String percentage;
   final String total;
+  final String code;
 
   Attendance(
-      {this.attended, this.missed, this.name, this.percentage, this.total});
+      {this.attended,
+      this.missed,
+      this.name,
+      this.percentage,
+      this.total,
+      this.code});
+}
+
+class Marks {
+  final String name;
+  final String obtained;
+  final String total;
+
+  Marks({this.name, this.obtained, this.total});
+}
+
+class SubjectMarks {
+  final String code;
+  final List<Marks> assignments;
+  final List<Marks> sessionals;
+  final List<Marks> otherMarks;
+
+  SubjectMarks({this.code, this.assignments, this.sessionals, this.otherMarks});
 }
 
 class SLCM extends StatefulWidget {
@@ -397,7 +420,14 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
 
   Widget attendancePage(var height, var width) {
     List<Attendance> att = _parseAttendace();
+
+    att.sort((a, b) {
+      return a.percentage.compareTo(b.percentage);
+    });
+
+    List<SubjectMarks> marks = _parseMarks();
     return Scaffold(
+      backgroundColor: darkTheme ? Colors.black : Colors.white,
       appBar: AppBar(
         backgroundColor: darkTheme ? primaryDark : primaryLight,
         elevation: 0.0,
@@ -437,7 +467,6 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                   itemBuilder: (context, index) {
                     return Container(
                       padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 1.0),
-                      height: 350.0,
                       color: Colors.transparent,
                       child: _buildSubjectCard(
                           att[index].name,
@@ -445,8 +474,10 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                           att[index].attended,
                           att[index].missed,
                           att[index].percentage,
+                          att[index].code,
                           context,
-                          index),
+                          index,
+                          marks),
                     );
                   },
                 ),
@@ -457,18 +488,74 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
 
   List<Attendance> _parseAttendace() {
     List<Attendance> data = [];
+
     var temp = attendance['Attendance'];
-    for (var key in temp.keys) {
-      Attendance att = Attendance(
-        name: temp[key]['Name'],
-        attended: temp[key]['Attended'],
-        missed: temp[key]['Missed'],
-        total: temp[key]['Total'],
-        percentage: temp[key]['Percentage'],
-      );
-      data.add(att);
+
+    try {
+      for (var key in temp.keys) {
+        Attendance att = Attendance(
+            name: temp[key]['Name'],
+            attended: temp[key]['Attended'],
+            missed: temp[key]['Missed'],
+            total: temp[key]['Total'],
+            percentage: temp[key]['Percentage'],
+            code: temp[key]['Code']);
+        data.add(att);
+      }
+    } catch (e) {
+      print(e);
     }
+
     return data;
+  }
+
+  List<SubjectMarks> _parseMarks() {
+    List<SubjectMarks> marks = [];
+
+    var tempMarks;
+
+    try {
+      tempMarks = attendance['Marks'];
+    } catch (e) {}
+
+    //print(tempMarks);
+
+    try {
+      for (var key in tempMarks.keys) {
+        var code = key;
+        List<Marks> assign = [];
+        List<Marks> sess = [];
+        List<Marks> other = [];
+
+        for (var temp in tempMarks[key].keys) {
+          Marks m = Marks(
+              name: temp,
+              obtained: tempMarks[key][temp]['Obtained'],
+              total: tempMarks[key][temp]['Total']);
+
+          if (m.name != 'Total Marks') {
+            if (temp.toString().contains('Assignment')) {
+              assign.add(m);
+            } else if (temp.toString().contains('Sessionals')) {
+              sess.add(m);
+            } else {
+              other.add(m);
+            }
+          }
+        }
+
+        marks.add(SubjectMarks(
+            code: code,
+            assignments: assign,
+            sessionals: sess,
+            otherMarks: other));
+      }
+    } catch (e) {
+      print(e);
+      //print(e);
+    }
+
+    return marks;
   }
 
   capFirst(List<String> name) {
@@ -480,20 +567,165 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     return temp;
   }
 
-  _buildSubjectCard(subName, subClasses, subPresent, subAbsent, subPercentage,
-      context, index) {
+  showSubjectMarks(name, index, SubjectMarks subjectMarks) {
     CachedImg camm = new CachedImg();
+
+    SubjectMarks tempMarks = subjectMarks;
+    List<Marks> mainMarks = [];
+    mainMarks.addAll(tempMarks.assignments);
+    mainMarks.addAll(tempMarks.sessionals);
+    mainMarks.addAll(tempMarks.otherMarks);
+
+    showModalBottomSheet(
+        context: context,
+        builder: (builder) {
+          return Stack(
+            children: <Widget>[
+              Container(
+                height: 350.0,
+                width: MediaQuery.of(context).size.width,
+                child: camm.images[index],
+              ),
+              Container(
+                  height: 350.0,
+                  padding: EdgeInsets.all(18.0),
+                  color: Colors.black.withOpacity(0.3),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                          alignment: Alignment.center,
+                          child: Text(
+                            name,
+                            textAlign: TextAlign.center,
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 28.0),
+                          )),
+                      Container(
+                        height: 240,
+                        padding: EdgeInsets.only(top: 16.0),
+                        child: ListView.builder(
+                          itemCount: mainMarks.length,
+                          itemBuilder: (context, ind) {
+                            return Container(
+                              padding: EdgeInsets.all(2.0),
+                              child: Column(
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Container(
+                                        width: 180,
+                                        child: Text(
+                                          mainMarks[ind].name,
+                                          style: TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 16.0),
+                                        ),
+                                      ),
+                                      Text(
+                                        "${mainMarks[ind].obtained} / ${mainMarks[ind].total}",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 24.0),
+                                      )
+                                    ],
+                                  ),
+                                  (ind + 1 < mainMarks.length &&
+                                          mainMarks[ind + 1]
+                                              .name
+                                              .contains('Sessional 1'))
+                                      ? Container(
+                                          margin: EdgeInsets.all(20.0),
+                                          color: Colors.white.withOpacity(1.0),
+                                          height: 0.5,
+                                          width: 300.0,
+                                        )
+                                      : Container()
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    ],
+                  )),
+            ],
+          );
+        });
+  }
+
+  _getMarks(SubjectMarks marks, String type) {
+    try {
+      if (type == "obtained") {
+        double sum = 0;
+
+        for (Marks temp in marks.assignments)
+          sum += double.parse(temp.obtained);
+
+        for (Marks temp in marks.sessionals) sum += double.parse(temp.obtained);
+
+        for (Marks temp in marks.otherMarks) sum += double.parse(temp.obtained);
+
+        return sum;
+      } else {
+        double sum = 0;
+
+        for (Marks temp in marks.assignments) sum += double.parse(temp.total);
+
+        for (Marks temp in marks.sessionals) sum += double.parse(temp.total);
+
+        for (Marks temp in marks.otherMarks) sum += double.parse(temp.total);
+
+        return sum;
+      }
+    } catch (e) {
+      //print(e);
+      return "null on marks";
+    }
+  }
+
+  _buildSubjectCard(subName, subClasses, subPresent, subAbsent, subPercentage,
+      subCode, context, index, List<SubjectMarks> marks) {
+    CachedImg camm = new CachedImg();
+
+    SubjectMarks subMarks;
+    bool hasMarks = false;
+
+    print(marks.length);
+    print(subCode);
+
+    for (var i in marks) {
+      if (i.code == subCode) {
+        subMarks = i;
+      }
+    }
+
+    var marksObtained = _getMarks(subMarks, "obtained");
+    var marksMax = _getMarks(subMarks, "max");
+
+    bool nullMarks = false;
+
+    if (marksObtained == "null on marks" || marksMax == "null on marks") {
+      nullMarks = true;
+      hasMarks = false;
+    }
+    try {
+      hasMarks = (marksMax > 0 && marksMax != "null on marks") ? true : false;
+    } catch (e) {}
+
+    print(hasMarks);
 
     return ClipRRect(
       borderRadius: BorderRadius.all(Radius.circular(10.0)),
       child: GestureDetector(
         onTap: () {
-          // showSubjectMarks(); // functionality for marks
+          if (hasMarks) showSubjectMarks(subName, index, subMarks);
         },
         child: Stack(
           children: <Widget>[
             Container(
-                height: 350.0,
+                height: 395.0,
                 child: Parallax.inside(
                   mainAxisExtent: 200.0,
                   child: camm.images[index],
@@ -542,6 +774,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                     )),
                   ),
                   Container(
+                    margin: EdgeInsets.only(top: 12.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
@@ -605,9 +838,49 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                                   fontSize: 15.0, color: Colors.white),
                             ),
                           ],
-                        )
+                        ),
                       ],
                     ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(24.0),
+                    color: Colors.white70,
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    height: 1,
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(bottom: 0.0),
+                    child: !(nullMarks || !hasMarks)
+                        ? RichText(
+                            text: TextSpan(
+                                style: Theme.of(context).textTheme.body1,
+                                children: [
+                                  TextSpan(
+                                      text: marksObtained.toString(),
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 32.0)),
+                                  TextSpan(
+                                      text: " / ",
+                                      style: TextStyle(
+                                          color: Colors.white70,
+                                          fontSize: 16.0)),
+                                  TextSpan(
+                                      text: marksMax.toString(),
+                                      style: TextStyle(
+                                          color: Colors.white70,
+                                          fontSize: 16.0)),
+                                ]),
+                          )
+                        : Container(),
+                  ),
+                  Container(
+                    child: Text(
+                        //  (!hasMarks || nullMarks) ? (hasMarks && !nullMarks ? "tap for more" : "") : "tap for more.",
+                        (hasMarks)
+                            ? "tap for more"
+                            : ((nullMarks) ? "" : "no marks uploaded"),
+                        style:
+                            TextStyle(color: Colors.white54, fontSize: 12.0)),
                   )
                 ],
               ),

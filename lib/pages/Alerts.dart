@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:mttn_app/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Alerts {
@@ -63,6 +64,7 @@ class _AlertsHomePageState extends State<AlertsHomePage>
                         elevation: 3.0,
                         child: InkWell(
                           child: Container(
+                            color: darkTheme ? Colors.black54 : Colors.white60,
                             padding:
                                 EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 15.0),
                             child: Column(
@@ -112,6 +114,7 @@ class _AlertsHomePageState extends State<AlertsHomePage>
             _parseAlerts(snap.data.snapshot.value);
           }
           return Scaffold(
+            backgroundColor: darkTheme ? Colors.black : Colors.white,
             body: _buildAlerts(),
           );
         });

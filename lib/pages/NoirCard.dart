@@ -45,7 +45,7 @@ class NoirCardState extends State<NoirCard> with AutomaticKeepAliveClientMixin {
                       begin: Alignment.bottomLeft,
                       end: Alignment.topRight,
                       colors: [
-                    Color.fromRGBO(0, 0, 0, 1.0),
+                    Color.fromRGBO(15, 15, 15, 1.0),
                     Color.fromRGBO(25, 25, 25, 1.0),
                     Color.fromRGBO(65, 65, 65, 1.0),
                   ])),

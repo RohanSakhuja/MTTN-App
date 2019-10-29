@@ -18,7 +18,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Color primaryLight = Colors.indigoAccent;
-Color primaryDark = Colors.black12;
+Color primaryDark = Colors.black;
 Color secondaryLight = Color.fromRGBO(240, 240, 240, 1);
 Color secondaryDark = Color.fromRGBO(25, 25, 25, 1);
 
@@ -250,7 +250,7 @@ class HomePageState extends State<HomePage> {
       children: <Widget>[
         UserAccountsDrawerHeader(
             decoration:
-                BoxDecoration(color: darkTheme ? primaryDark : primaryLight),
+                BoxDecoration(color: darkTheme ? Colors.black26 : primaryLight),
             accountName: Text("MTTN",
                 style: TextStyle(
                     fontWeight: FontWeight.w600,
@@ -333,7 +333,7 @@ class HomePageState extends State<HomePage> {
             "https://www.termsfeed.com/privacy-policy/ec69fc0be140c10cf91cf70816a8ba79"),
         _buildDrawerTile(Icon(Icons.bug_report), "Report a Bug",
             "mailto:mttndevelopers@gmail.com?subject=&body="),
-            _buildDrawerTile(Icon(Icons.star), "Rate the App",
+        _buildDrawerTile(Icon(Icons.star), "Rate the App",
             "https://play.google.com/store/apps/details?id=com.mttn.android"),
         Divider(),
         ListTile(
@@ -350,7 +350,7 @@ class HomePageState extends State<HomePage> {
                 size: 20.0,
               ),
               onPressed: () {
-                _launchURL("https://github.com/RohanSakhuja");
+                _launchURL("https://instagram.com/manipalthetalk");
               },
             ),
             IconButton(
@@ -359,7 +359,7 @@ class HomePageState extends State<HomePage> {
                 size: 20.0,
               ),
               onPressed: () {
-                _launchURL("https://github.com/RohanSakhuja");
+                _launchURL("https://facebook.com/manipalthetalk");
               },
             ),
             IconButton(
@@ -368,7 +368,7 @@ class HomePageState extends State<HomePage> {
                 size: 20.0,
               ),
               onPressed: () {
-                _launchURL("https://github.com/RohanSakhuja");
+                _launchURL("https://twitter.com/manipalthetalk");
               },
             ),
             IconButton(
@@ -377,7 +377,7 @@ class HomePageState extends State<HomePage> {
                 size: 20.0,
               ),
               onPressed: () {
-                _launchURL("https://github.com/RohanSakhuja");
+                _launchURL("https://www.manipalthetalk.org");
               },
             ),
           ],
@@ -608,7 +608,7 @@ class HomePageState extends State<HomePage> {
 
   _buildBottomNavBarItem(String title, Icon activeIcon, Icon icon) {
     return BottomNavigationBarItem(
-      backgroundColor: darkTheme ? secondaryDark : secondaryLight,
+      backgroundColor: darkTheme ? Colors.black : secondaryLight,
       title: Text(title),
       activeIcon: activeIcon,
       icon: icon,

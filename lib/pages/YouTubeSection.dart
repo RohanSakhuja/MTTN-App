@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:mttn_app/main.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
@@ -87,101 +88,104 @@ class _YouTubeFeedState extends State<YouTubeFeed>
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
 
-    return FutureBuilder<SocialState>(
-      future: _fetchItems(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Column(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 10.0),
-                width: MediaQuery.of(context).size.width * 0.915,
-                child: Text(
-                  "YouTube",
-                  textAlign: TextAlign.left,
-                  style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.w600),
+    return Container(
+      color: darkTheme ? Colors.black54 : Colors.white70,
+      child: FutureBuilder<SocialState>(
+        future: _fetchItems(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Column(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 10.0),
+                  width: MediaQuery.of(context).size.width * 0.915,
+                  child: Text(
+                    "YouTube",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.w600),
+                  ),
                 ),
-              ),
-              snapshot.data != SocialState.success
-                  ? Container(
-                      height: 100,
-                      child: Center(
-                        child: Text(
-                          snapshot.data == SocialState.noInternet
-                              ? "No Internet."
-                              : "An unexpected error occured.",
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.red,
+                snapshot.data != SocialState.success
+                    ? Container(
+                        height: 100,
+                        child: Center(
+                          child: Text(
+                            snapshot.data == SocialState.noInternet
+                                ? "No Internet."
+                                : "An unexpected error occured.",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Center(
+                        child: SizedBox.fromSize(
+                          size: Size.fromHeight(height * 0.3),
+                          child: ListView.builder(
+                            padding: EdgeInsets.only(left: 15.0),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: items.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return SizedBox(
+                                width: width * 0.62,
+                                child: Column(
+                                  children: <Widget>[
+                                    Container(
+                                      margin: EdgeInsets.only(right: 10.0),
+                                      child: ClipRRect(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(12.0)),
+                                          child: GestureDetector(
+                                              onTap: () =>
+                                                  _launchUrl(items[index].link),
+                                              child: CachedNetworkImage(
+                                                  imageUrl:
+                                                      items[index].thumbnail,
+                                                  fit: BoxFit.fill))),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 5.0),
+                                    ),
+                                    Flexible(
+                                      child: Container(
+                                          alignment: Alignment.topCenter,
+                                          padding: EdgeInsets.only(right: 20.0),
+                                          child: Text(
+                                            items[index].type == 'playlist'
+                                                ? 'Playlist: ' +
+                                                    items[index].title
+                                                : items[index].title,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .subhead,
+                                            maxLines: 3,
+                                            overflow: TextOverflow.ellipsis,
+                                          )),
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),
-                    )
-                  : Center(
-                      child: SizedBox.fromSize(
-                        size: Size.fromHeight(height * 0.3),
-                        child: ListView.builder(
-                          padding: EdgeInsets.only(left: 15.0),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: items.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return SizedBox(
-                              width: width * 0.62,
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    margin: EdgeInsets.only(right: 10.0),
-                                    child: ClipRRect(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(12.0)),
-                                        child: GestureDetector(
-                                            onTap: () =>
-                                                _launchUrl(items[index].link),
-                                            child: CachedNetworkImage(
-                                                imageUrl:
-                                                    items[index].thumbnail,
-                                                fit: BoxFit.fill))),
-                                  ),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 5.0),
-                                  ),
-                                  Flexible(
-                                    child: Container(
-                                        alignment: Alignment.topCenter,
-                                        padding: EdgeInsets.only(right: 20.0),
-                                        child: Text(
-                                          items[index].type == 'playlist'
-                                              ? 'Playlist: ' +
-                                                  items[index].title
-                                              : items[index].title,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .subhead,
-                                          maxLines: 3,
-                                          overflow: TextOverflow.ellipsis,
-                                        )),
-                                  )
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-            ],
-          );
-        } else {
-          return Container(
-            height: height * 0.2,
-            child: Center(
-              child: CircularProgressIndicator(
-                valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),
+              ],
+            );
+          } else {
+            return Container(
+              height: height * 0.2,
+              child: Center(
+                child: CircularProgressIndicator(
+                  valueColor: new AlwaysStoppedAnimation<Color>(Colors.red),
+                ),
               ),
-            ),
-          );
-        }
-      },
+            );
+          }
+        },
+      ),
     );
   }
 }

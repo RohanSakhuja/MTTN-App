@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mttn_app/main.dart';
 import 'package:mttn_app/pages/InstagramSection.dart';
 import 'package:mttn_app/pages/NoirCard.dart';
 import 'Events.dart';
@@ -20,6 +21,7 @@ class SocialBodyState extends State<SocialBody>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
+      backgroundColor: darkTheme ? Colors.black : Colors.white,
         key: _scaffoldkey,
         body: ListView(children: <Widget>[
           Padding(padding: EdgeInsets.only(top: 10.0)),

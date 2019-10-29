@@ -195,6 +195,7 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
   Widget build(BuildContext context) {
     super.build(context);
     return new Scaffold(
+      backgroundColor: darkTheme ? Colors.black : Colors.white,
       key: _scaffoldKey,
       floatingActionButton: isFabActive ? floatingActionButton() : null,
       body: Stack(
@@ -372,74 +373,77 @@ class CreateCard extends StatelessWidget {
                       link: link,
                     )));
       },
-      child: Stack(
-        children: <Widget>[
-          Container(
-            // height: MediaQuery.of(context).size.height * 0.25,
-            height: 200.0,
-            margin: EdgeInsets.all(12.0),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                color: Colors.transparent,
-                image: DecorationImage(
-                  fit: BoxFit.fitWidth,
-                  image: CachedNetworkImageProvider(img),
-                )),
-          ),
-          Container(
-            //height: MediaQuery.of(context).size.height * 0.25,
-            height: 200.0,
-            margin: EdgeInsets.all(12.0),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8.0),
-                color: Colors.white,
-                gradient: LinearGradient(
-                    begin: FractionalOffset.topCenter,
-                    end: FractionalOffset.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.6),
-                    ],
-                    stops: [
-                      0.0,
-                      1.0
-                    ])),
-          ),
-          Material(
-            type: MaterialType.transparency,
-            child: Container(
+      child: Container(
+        padding: EdgeInsets.only(bottom: 8),
+        child: Stack(
+          children: <Widget>[
+            Container(
               // height: MediaQuery.of(context).size.height * 0.25,
               height: 200.0,
-              margin: EdgeInsets.all(12.0),
-              child: InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Article(
-                                title: title,
-                                content: content,
-                                link: link,
-                              )));
-                },
+              margin: EdgeInsets.all(2.0),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: Colors.transparent,
+                  image: DecorationImage(
+                    fit: BoxFit.fitWidth,
+                    image: CachedNetworkImageProvider(img),
+                  )),
+            ),
+            Container(
+              //height: MediaQuery.of(context).size.height * 0.25,
+              height: 200.0,
+              margin: EdgeInsets.all(2.0),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: Colors.white,
+                  gradient: LinearGradient(
+                      begin: FractionalOffset.topCenter,
+                      end: FractionalOffset.bottomCenter,
+                      colors: [
+                        Colors.black.withOpacity(0.6),
+                        Colors.black.withOpacity(0.6),
+                      ],
+                      stops: [
+                        0.0,
+                        1.0
+                      ])),
+            ),
+            Material(
+              type: MaterialType.transparency,
+              child: Container(
+                // height: MediaQuery.of(context).size.height * 0.25,
+                height: 200.0,
+                margin: EdgeInsets.all(2.0),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Article(
+                                  title: title,
+                                  content: content,
+                                  link: link,
+                                )));
+                  },
+                ),
               ),
             ),
-          ),
-          Container(
-            height: 200.0,
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            alignment: Alignment.bottomCenter,
-            child: Text(
-              title.length > 60 ? title.substring(0, 60) + '...' : title,
-              style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.height * 0.025,
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.white),
-              textAlign: TextAlign.center,
-            ),
-          )
-        ],
+            Container(
+              height: 200.0,
+              padding: EdgeInsets.symmetric(horizontal: 20.0,vertical: 12.0),
+              alignment: Alignment.bottomCenter,
+              child: Text(
+                title.length > 60 ? title.substring(0, 60) + '...' : title,
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height * 0.025,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white),
+                textAlign: TextAlign.center,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -491,21 +495,24 @@ class ArticleState extends State<Article> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(10.0),
-        child: new Column(
-          children: <Widget>[
-            new Text(
-              widget.title,
-              style: TextStyle(fontSize: 30.0, fontStyle: FontStyle.italic),
-              textAlign: TextAlign.center,
-            ),
-            Html(
-              data: widget.content,
-              padding: EdgeInsets.fromLTRB(20.0, 20.0, 10.0, 20.0),
-              defaultTextStyle: TextStyle(fontSize: _size),
-            ),
-          ],
+      body: Container(
+        color: darkTheme ? Colors.black : Colors.white,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(10.0),
+          child: new Column(
+            children: <Widget>[
+              new Text(
+                widget.title,
+                style: TextStyle(fontSize: 30.0, fontStyle: FontStyle.italic),
+                textAlign: TextAlign.center,
+              ),
+              Html(
+                data: widget.content,
+                padding: EdgeInsets.fromLTRB(20.0, 20.0, 10.0, 20.0),
+                defaultTextStyle: TextStyle(fontSize: _size,color: darkTheme ? Colors.white70 : Colors.black),
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(

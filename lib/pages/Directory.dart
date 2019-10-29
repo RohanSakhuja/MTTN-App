@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:mttn_app/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,15 +33,18 @@ class Category {
       bool location = url != "null";
       return Card(
         elevation: 0.0,
-        child: new ListTile(
-          leading: Icon(Icons.phone, color: Colors.blue,),
-          title: Text(this.entry[index].name),
-          subtitle: Text(this.entry[index].contact),
-          onTap: () => _launchURL("tel:" + str),
-          trailing: location?IconButton(
-            icon: Icon(Icons.map, color: Colors.blue,),
-            onPressed: () => _launchURL(url),
-          ):null,
+        child: Container(
+          color: darkTheme ? Colors.black45 : Colors.white,
+          child: new ListTile(
+            leading: Icon(Icons.phone, color: Colors.blue,),
+            title: Text(this.entry[index].name),
+            subtitle: Text(this.entry[index].contact),
+            onTap: () => _launchURL("tel:" + str),
+            trailing: location?IconButton(
+              icon: Icon(Icons.map, color: Colors.blue,),
+              onPressed: () => _launchURL(url),
+            ):null,
+          ),
         ),
       );
     });
@@ -111,6 +115,7 @@ class _DirectoryHomePageState extends State<DirectoryHomePage>
     super.build(context);
 
     return Scaffold(
+      backgroundColor: darkTheme ? Colors.black : Colors.white,
       key: _scaffoldKey,
       body: FutureBuilder(
         future: loadAsset(),
@@ -122,9 +127,11 @@ class _DirectoryHomePageState extends State<DirectoryHomePage>
                 itemCount: data.length,
                 itemBuilder: (context, index) {
                   return Card(
+                    color: darkTheme ? Colors.white10 : Colors.white,
                     elevation: 4.0,
                     margin: EdgeInsets.all(3.0),
                     child: ExpansionTile(
+                      //backgroundColor: darkTheme ? Colors.white60 : Colors.white60,
                       leading: _getIcon(data[index].catName),
                       key: PageStorageKey(data[index].catName),
                       title: Text(data[index].catName),

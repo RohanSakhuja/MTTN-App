@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:mttn_app/main.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -197,23 +198,26 @@ class _InstagramFeedState extends State<InstagramFeed>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Column(
-      children: <Widget>[
-        Container(
-          padding: EdgeInsets.only(top: 10.0),
-          width: MediaQuery.of(context).size.width * 0.915,
-          child: Text(
-            "Instagram",
-            textAlign: TextAlign.left,
-            style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.w600),
+    return Container(
+      color: darkTheme ? Colors.black54 : Colors.white70,
+      child: Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(top: 10.0),
+            width: MediaQuery.of(context).size.width * 0.915,
+            child: Text(
+              "Instagram",
+              textAlign: TextAlign.left,
+              style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.w600),
+            ),
           ),
-        ),
-        Padding(padding: EdgeInsets.symmetric(vertical: 15.0)),
-        Center(
-          child: buildChild(context),
-        ),
-        Padding(padding: EdgeInsets.symmetric(vertical: 15.0)),
-      ],
+          Padding(padding: EdgeInsets.symmetric(vertical: 15.0)),
+          Center(
+            child: buildChild(context),
+          ),
+          Padding(padding: EdgeInsets.symmetric(vertical: 15.0)),
+        ],
+      ),
     );
   }
 }
