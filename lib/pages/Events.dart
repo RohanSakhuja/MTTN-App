@@ -41,7 +41,8 @@ _parseEvents(var data) async {
         }
       }
     } else {
-      var keys = data.keys;
+      var keys = data.keys.toList();
+      keys.sort();
       for (var key in keys) {
         var item = data["$key"];
         if (item != null) {
