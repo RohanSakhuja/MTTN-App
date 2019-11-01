@@ -129,12 +129,14 @@ class _AlertsHomePageState extends State<AlertsHomePage>
           title: new Text(heading),
           content: new Text(content),
           actions: <Widget>[
-            new FlatButton(
-              child: new Text("Know more"),
-              onPressed: () {
-                _launchURL(url);
-              },
-            ),
+            url == ""
+                ? FlatButton(
+                    child: new Text("Know more"),
+                    onPressed: () {
+                      _launchURL(url);
+                    },
+                  )
+                : Container(),
           ],
         );
       },

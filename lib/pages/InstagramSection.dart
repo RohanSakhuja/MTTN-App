@@ -31,7 +31,8 @@ class _InstagramFeedState extends State<InstagramFeed>
 
   List<Post> posts = new List();
 
-  final DatabaseReference _reference = FirebaseDatabase().reference().child('URL/Instagram'); 
+  final DatabaseReference _reference =
+      FirebaseDatabase().reference().child('URL/Instagram');
 
   Future<SocialState> _fetchPosts() async {
     try {
@@ -57,6 +58,7 @@ class _InstagramFeedState extends State<InstagramFeed>
             ),
             type: item['type'],
             link: item['link']));
+        print("eded");
       }
       return SocialState.success;
     } on SocketException {
