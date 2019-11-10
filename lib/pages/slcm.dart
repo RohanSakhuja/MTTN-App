@@ -750,59 +750,49 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.32),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Container(
-                          child: Center(
-                              child: CircularPercentIndicator(
-                            //radius: height * 0.11,
-                            radius: 110.0,
-                            animation: true,
-                            animationDuration: 100,
-                            lineWidth: 7.0,
-                            percent: double.parse(subPercentage.substring(
-                                    0, subPercentage.length - 1)) /
-                                100,
-                            center: Text(
-                                subPercentage.substring(
-                                    0, subPercentage.length - 3),
-                                style: TextStyle(
-                                    fontSize: 45.0,
-                                    fontWeight: FontWeight.w300,
-                                    color: Colors.white)),
-                            progressColor: Colors.white,
-                            circularStrokeCap: CircularStrokeCap.round,
-                            backgroundColor: Colors.white10,
-                          )),
-                        ),
-                        Container(
-                          padding: EdgeInsets.only(bottom: 1.0),
-                          alignment: Alignment.center,
-                          child: double.parse(subPercentage) <= 76
-                              ? Icon(
-                                  Icons.warning,
-                                  size: 12.0,
-                                  color: Colors.redAccent.withOpacity(0.7),
-                                )
-                              : Container(),
-                        ),
-                        Container(
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.only(left: 4.0),
-                            child: double.parse(subPercentage) <= 76
-                                ? Text(
-                                    "low attendance",
-                                    style: TextStyle(
-                                      color: Colors.redAccent.withOpacity(0.7),
-                                    ),
-                                  )
-                                : Container())
-                      ],
-                    ),
+                    child: Center(
+                        child: CircularPercentIndicator(
+                      //radius: height * 0.11,
+                      radius: 110.0,
+                      animation: true,
+                      animationDuration: 100,
+                      lineWidth: 7.0,
+                      percent: double.parse(subPercentage.substring(
+                              0, subPercentage.length - 1)) /
+                          100,
+                      center: Text(
+                          subPercentage.substring(0, subPercentage.length - 3),
+                          style: TextStyle(
+                              fontSize: 45.0,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white)),
+                      progressColor: Colors.white,
+                      circularStrokeCap: CircularStrokeCap.round,
+                      backgroundColor: Colors.white10,
+                    )),
                   ),
+                  // Container(
+                  //   padding: EdgeInsets.only(bottom: 1.0),
+                  //   alignment: Alignment.center,
+                  //   child: double.parse(subPercentage) <= 76
+                  //       ? Icon(
+                  //           Icons.warning,
+                  //           size: 12.0,
+                  //           color: Colors.redAccent.withOpacity(0.7),
+                  //         )
+                  //       : Container(),
+                  // ),
+                  // Container(
+                  //     alignment: Alignment.center,
+                  //     padding: EdgeInsets.only(left: 4.0),
+                  //     child: double.parse(subPercentage) <= 76
+                  //         ? Text(
+                  //             "low attendance",
+                  //             style: TextStyle(
+                  //               color: Colors.redAccent.withOpacity(0.7),
+                  //             ),
+                  //           )
+                  //         : Container()),
                   Container(
                     margin: EdgeInsets.only(top: 12.0),
                     child: Row(
