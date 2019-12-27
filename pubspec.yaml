@@ -30,7 +30,6 @@ dependencies:
   percent_indicator: ^1.0.13
   progress_button: ^0.0.1
   flutter_parallax: ^0.1.2
-  flare_flutter: 1.0.2
   dynamic_theme: ^1.0.1
   transparent_image: 1.0.0
 
@@ -42,14 +41,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - facebook.png
-    - instagram.png
-    - youtube.png
-    - earthlogin.flr
-    - freshers.png
     - ic_launcher.png
     - ic_launcher_white.png
     - avatar.jpg
+    - ic.png
+    - edu.png
 
   fonts:
     - family: Open Sans
