@@ -93,7 +93,6 @@ class HomePageState extends State<HomePage> {
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
-        // print('on message $message');
         String url = message["data"]["URL"] ?? "null";
         String tab = message["data"]["TAB"] ?? "null";
 
@@ -104,7 +103,6 @@ class HomePageState extends State<HomePage> {
         }
       },
       onResume: (Map<String, dynamic> message) async {
-        // print('on resume $message');
         String url = message["data"]["URL"] ?? "null";
         String tab = message["data"]["TAB"] ?? "null";
         if (url != "null") {
@@ -115,7 +113,6 @@ class HomePageState extends State<HomePage> {
         }
       },
       onLaunch: (Map<String, dynamic> message) async {
-        // print('on launch $message');
         String url = message["data"]["URL"] ?? "null";
         String tab = message["data"]["TAB"] ?? "null";
         if (url != "null") {
@@ -275,16 +272,6 @@ class HomePageState extends State<HomePage> {
                     : AssetImage(
                         "assets/ic_launcher_white.png",
                       ))),
-
-        // _buildDrawerTile(Icon(FontAwesomeIcons.instagram), "Instagram",
-        //     "https://www.instagram.com/manipalthetalk/"),
-        // _buildDrawerTile(Icon(FontAwesomeIcons.facebook), "Facebook",
-        //     "https://facebook.com/manipalthetalk/"),
-        // _buildDrawerTile(Icon(FontAwesomeIcons.twitter), "Twitter",
-        //     "https://twitter.com/manipalthetalk?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"),
-        // _buildDrawerTile(Icon(FontAwesomeIcons.wordpress), "Website",
-        //     "https://www.manipalthetalk.org"),
-
         ListTile(
           leading: Icon(Icons.settings_brightness),
           title:
@@ -526,77 +513,6 @@ class HomePageState extends State<HomePage> {
                     )
                   ],
                 ),
-                // SizedBox(
-                //   height: 20,
-                // ),
-                // Container(
-                //   padding: EdgeInsets.symmetric(horizontal: 30.0),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //     children: <Widget>[
-                //       // Material(
-                //       //   color: darkTheme ? Colors.red : Colors.redAccent,
-                //       //   borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                //       //   child: InkWell(
-                //       //     child: Padding(
-                //       //       padding: const EdgeInsets.symmetric(
-                //       //           horizontal: 15, vertical: 8),
-                //       //       child: Row(
-                //       //         mainAxisAlignment: MainAxisAlignment.center,
-                //       //         mainAxisSize: MainAxisSize.min,
-                //       //         children: <Widget>[
-                //       //           Text(
-                //       //             "Report a Bug",
-                //       //             style: TextStyle(
-                //       //                 fontSize: 16, color: Colors.white),
-                //       //           ),
-                //       //           SizedBox(
-                //       //             width: 10,
-                //       //           ),
-                //       //           Icon(
-                //       //             Icons.bug_report,
-                //       //             color: Colors.white,
-                //       //           ),
-                //       //         ],
-                //       //       ),
-                //       //     ),
-                //       //     onTap: () => _launchURL(
-                //       //         "mailto:mttndevelopers@gmail.com?subject=&body="),
-                //       //   ),
-                //       // ),
-                //       // Material(
-                //       //   color: darkTheme ? Colors.red : Colors.redAccent,
-                //       //   borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                //       //   child: InkWell(
-                //       //     child: Padding(
-                //       //       padding: const EdgeInsets.symmetric(
-                //       //           horizontal: 15, vertical: 8),
-                //       //       child: Row(
-                //       //         mainAxisAlignment: MainAxisAlignment.center,
-                //       //         mainAxisSize: MainAxisSize.min,
-                //       //         children: <Widget>[
-                //       //           Text(
-                //       //             "Rate the App",
-                //       //             style: TextStyle(
-                //       //                 fontSize: 16, color: Colors.white),
-                //       //           ),
-                //       //           SizedBox(
-                //       //             width: 10,
-                //       //           ),
-                //       //           Icon(
-                //       //             Icons.star_half,
-                //       //             color: Colors.white,
-                //       //           ),
-                //       //         ],
-                //       //       ),
-                //       //     ),
-                //       //     onTap: () => _launchURL(
-                //       //         "https://play.google.com/store/apps/details?id=com.mttn.android"),
-                //       //   ),
-                //       // ),
-                //     ],
-                //   ),
-                // ),
               ],
             ),
           );
@@ -631,8 +547,6 @@ class HomePageState extends State<HomePage> {
       _buildBottomNavBarItem(
           "Alerts", Icon(Icons.notifications), Icon(Icons.notifications_none)),
     ];
-
-    //feed slcm social direc alerts
 
     routes = <Widget>[
       new Feed(),
@@ -681,7 +595,6 @@ class HomePageState extends State<HomePage> {
                   : routes,
             ),
             bottomNavigationBar: BottomNavigationBar(
-              //backgroundColor: darkTheme ? turq : Colors.brown,
               selectedItemColor: darkTheme
                   ? Colors.greenAccent.withOpacity(0.7)
                   : Colors.indigoAccent,

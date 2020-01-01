@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mttn_app/main.dart';
 import 'package:mttn_app/pages/InstagramSection.dart';
-import 'package:mttn_app/pages/NoirCard.dart';
 import 'Events.dart';
 import 'YouTubeSection.dart';
 
@@ -24,8 +23,6 @@ class SocialBodyState extends State<SocialBody>
       backgroundColor: darkTheme ? Colors.black : Colors.white,
         key: _scaffoldkey,
         body: ListView(children: <Widget>[
-          Padding(padding: EdgeInsets.only(top: 10.0)),
-          NoirCard(_scaffoldkey),
           Padding(padding: EdgeInsets.only(top: 10.0)),
           Card(child: new UpcomingEvents(_scaffoldkey)),
           Padding(padding: EdgeInsets.only(top: 10.0)),

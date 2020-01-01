@@ -65,7 +65,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     List<String> cred = _preferences.getStringList('credentials') ?? [];
     var temp = _preferences.getBool('isSLCM');
     if (temp == null) {
-      logout();
+      logout(cachedLogout: true);
       return;
     }
     if (cred.length != 0) {
@@ -110,7 +110,6 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     try {
       var match = {'username': reg, 'password': pass};
       setState(() {
-        print("we're verifying");
         isVerifying = true;
       });
       final response = await http.post(
@@ -149,6 +148,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
           _preferences.setStringList('credentials', [reg, pass]);
           _preferences.setString('attendance', response.body);
           _preferences.setString('username', res["user"]);
+          clearControllers();
           storeUserInfo(reg);
           setState(() {
             isVerifying = false;
@@ -160,7 +160,6 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
         } else if (res['login'] == 'unsuccessful') {
           _showDialog("Invalid Credentials",
               "Please enter a valid registration number and/or ${slcmSelected ? "password" : "date of birth"}.");
-          clearControllers();
           setState(() {
             loggedIn = false;
             isVerifying = false;
@@ -168,6 +167,8 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
           });
         }
       } else {
+        _showDialog("Server Error",
+            "Trouble communicating with the university server. Please try again later.");
         setState(() {
           isVerifying = false;
           isRefreshing = false;
@@ -180,6 +181,8 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     controllerReg.clear();
     controllerPass.clear();
     controllerDOB.clear();
+    _passFocus.unfocus();
+    _regFocus.unfocus();
   }
 
   storeUserInfo(String reg) async {
@@ -207,11 +210,14 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     });
   }
 
-  logout() {
+  logout({bool cachedLogout = false}) {
     _preferences.remove('credentials');
     _preferences.remove('attendance');
     _preferences.remove('username');
     _preferences.remove('isSLCM');
+    if (!cachedLogout) {
+      showSnackbar("Successfully logged out.");
+    }
     setState(() {
       loggedIn = false;
     });
@@ -245,10 +251,11 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     super.build(context);
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       key: _key,
       backgroundColor: darkTheme ? Colors.black : Colors.white,
-      floatingActionButton: !loggedIn && !isVerifying
+      floatingActionButton: (!loggedIn && !isVerifying)
           ? Container(
               height: height / 12,
               width: height / 12,
@@ -425,11 +432,16 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                   ),
                 ),
                 onTap: () {
-                  _passFocus.unfocus();
-                  _regFocus.unfocus();
-                  isVerifying = true;
-                  _checkCredentials(controllerReg.text,
-                      slcmSelected ? controllerPass.text : controllerDOB.text);
+                  if (!isVerifying) {
+                    _passFocus.unfocus();
+                    _regFocus.unfocus();
+                    isVerifying = true;
+                    _checkCredentials(
+                        controllerReg.text,
+                        slcmSelected
+                            ? controllerPass.text
+                            : controllerDOB.text);
+                  }
                 },
               ),
             ),
@@ -471,7 +483,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
   }
 
   Widget sisAttendancePage(var height, var width) {
-    List<SisAttendance> att = _parseSISAttendance();
+    List<SisAttendance> att = parseSISAttendance();
     return Scaffold(
       backgroundColor: darkTheme ? Colors.black : Colors.white,
       appBar: AppBar(
@@ -613,54 +625,38 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     return data;
   }
 
-  List<SisAttendance> _parseSISAttendance() {
-    List<SisAttendance> data = [];
-    var temp = attendance['Attendance'];
-
+  List<SisAttendance> parseSISAttendance() {
+    List<SisAttendance> sis = new List();
     try {
-      for (var key in temp.keys) {
-        List<Attendance> types = new List();
-        if (temp[key]['Clinical (Attd.)'] != "" &&
-            temp[key]['Clinical (Attd.)'] != null) {
-          types.add(Attendance(
-              name: "Clinical",
-              attended: temp[key]['Clinical (Attd.)'],
-              missed: (int.parse(temp[key]['Clinical (Held)'] ?? 0) -
-                      int.parse(temp[key]['Clinical (Attd.)'] ?? 0))
-                  .toString(),
-              total: temp[key]['Clinical (Held)'],
-              percentage: temp[key]['Clinical (%)']));
+      Map json = attendance["Attendance"];
+      for (var key in json.keys) {
+        String subname = (json[key].containsKey("Subject")
+                ? json[key]["Subject"]
+                : json[key]["Subject name"]) ??
+            "";
+        if (subname != null && subname != "") {
+          List<Attendance> att = new List();
+          for (String element in json[key].keys) {
+            if (json[key][element] != null && json[key][element] != "") {
+              if (element.contains("(%)")) {
+                var temp = element.replaceFirst(" (%)", "");
+                att.add(new Attendance(
+                    attended: json[key][temp + " (Attd.)"],
+                    percentage: json[key][temp + " (%)"],
+                    total: json[key][temp + " (Held)"],
+                    name: temp,
+                    missed: null));
+              }
+            }
+          }
+          sis.add(SisAttendance(subname, att));
         }
-        if (temp[key]['Practicals (Attd.)'] != "" &&
-            temp[key]['Practicals (Attd.)'] != null) {
-          types.add(Attendance(
-              name: "Practicals",
-              attended: temp[key]['Practicals (Attd.)'],
-              missed: (int.parse(temp[key]['Practicals (Held)'] ?? 0) -
-                      int.parse(temp[key]['Practicals (Attd.)'] ?? 0))
-                  .toString(),
-              total: temp[key]['Practicals (Held)'],
-              percentage: temp[key]['Practical (%)']));
-        }
-        if (temp[key]['Theory (Attd.)'] != "" &&
-            temp[key]['Theory (Attd.)'] != null) {
-          types.add(Attendance(
-              name: "Theory",
-              attended: temp[key]['Theory (Attd.)'],
-              missed: (int.parse(temp[key]['Theory (Held)'] ?? 0) -
-                      int.parse(temp[key]['Theory (Attd.)'] ?? 0))
-                  .toString(),
-              total: temp[key]['Theory (Held)'],
-              percentage: temp[key]['Theory (%)']));
-        }
-        SisAttendance att = SisAttendance(temp[key]["Subject"], types);
-        data.add(att);
       }
+      return sis;
     } catch (e) {
       print(e);
     }
-
-    return data;
+    return new List();
   }
 
   List<SubjectMarks> _parseMarks() {

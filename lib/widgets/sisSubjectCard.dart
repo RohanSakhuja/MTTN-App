@@ -25,8 +25,11 @@ class SISSubjectCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              subject.subjectName,
-              style: TextStyle(fontSize: 24, color: Colors.white),
+              subject.subjectName.toUpperCase(),
+              style: TextStyle(
+                  fontSize: 27,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
             ),
             Padding(
               padding: const EdgeInsets.all(10),
@@ -47,40 +50,48 @@ class SISSubjectCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text(
-              att.name ?? "",
-              style: TextStyle(fontSize: 23, color: Colors.white),
+              att.name.toUpperCase() ?? "",
+              style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
             ),
             Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Text(
-                  "${att.percentage ?? ""}%",
+                  att.percentage ?? "",
                   style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 26,
                       fontWeight: FontWeight.bold,
                       color: Colors.white),
                 ),
                 Text(
                   "ATTENDED ${att.attended ?? ""}",
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
                 ),
                 Text(
                   "OUT OF ${att.total ?? ""}",
-                  style: TextStyle(color: Colors.white),
-                ),
-                Text(
-                  "MISSED ${att.missed ?? ""}",
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
                 ),
               ],
             )
           ],
         ));
-        widgets.add(Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 100.0),
-          child: Divider(
-            thickness: 1.5,
-          ),
-        ));
+        if (subject.subs.indexOf(att) != (subject.subs.length - 1)) {
+          widgets.add(Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 100.0),
+            child: Divider(
+              thickness: 1.5,
+            ),
+          ));
+        }
       } catch (e) {
         print(e);
       }

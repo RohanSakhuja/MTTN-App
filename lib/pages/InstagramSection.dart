@@ -13,8 +13,9 @@ class Post {
   CachedNetworkImage thumbnail;
   CachedNetworkImage original;
   String link;
+  String caption;
 
-  Post({this.type, this.thumbnail, this.original, this.link});
+  Post({this.type, this.thumbnail, this.original, this.link, this.caption});
 }
 
 enum SocialState { success, error, noInternet }
@@ -32,7 +33,7 @@ class _InstagramFeedState extends State<InstagramFeed>
   List<Post> posts = new List();
 
   final DatabaseReference _reference =
-      FirebaseDatabase().reference().child('URL/Instagram');
+      FirebaseDatabase().reference().child('URL/Instagram Graph');
 
   Future<SocialState> _fetchPosts() async {
     try {
@@ -44,44 +45,29 @@ class _InstagramFeedState extends State<InstagramFeed>
       for (var item in body['data']) {
         posts.add(new Post(
             thumbnail: CachedNetworkImage(
-              imageUrl: item['images']['thumbnail']['url'],
+              imageUrl: item['media_type'] == "VIDEO"
+                  ? item['thumbnail_url']
+                  : item['media_url'],
               placeholder: (context, url) => new Container(),
               errorWidget: (context, url, error) => new Icon(Icons.error),
               fit: BoxFit.cover,
             ),
             original: CachedNetworkImage(
-              imageUrl: item['images']['standard_resolution']['url'],
+              imageUrl: item['media_url'],
               placeholder: (context, url) => new CircularProgressIndicator(),
               errorWidget: (context, url, error) => new Icon(Icons.error),
               alignment: Alignment.center,
               fit: BoxFit.contain,
             ),
-            type: item['type'],
-            link: item['link']));
-        print("eded");
+            type: item['media_type'],
+            caption: item['caption'],
+            link: item['permalink']));
       }
       return SocialState.success;
     } on SocketException {
       return SocialState.noInternet;
     } catch (e) {
-      // posts.add(new Post(
-      //     thumbnail: CachedNetworkImage(
-      //       imageUrl:
-      //           'https://i.pinimg.com/originals/ca/0f/23/ca0f2340449cbba72890692026f10520.jpg',
-      //       placeholder: (context, url) => new CircularProgressIndicator(),
-      //       errorWidget: (context, url, error) => new Icon(Icons.error),
-      //       fit: BoxFit.cover,
-      //     ),
-      //     original: CachedNetworkImage(
-      //       imageUrl:
-      //           'https://i.pinimg.com/originals/ca/0f/23/ca0f2340449cbba72890692026f10520.jpg',
-      //       placeholder: (context, url) => new CircularProgressIndicator(),
-      //       errorWidget: (context, url, error) => new Icon(Icons.error),
-      //       alignment: Alignment.center,
-      //       fit: BoxFit.contain,
-      //     ),
-      //     type: "efef",
-      //     link: "eef"));
+      print(e);
       return SocialState.error;
     }
   }
@@ -119,7 +105,9 @@ class _InstagramFeedState extends State<InstagramFeed>
                         Center(
                           child: new InkWell(
                             child: new Hero(
-                              child: posts[index].original,
+                              child: posts[index].type != "VIDEO"
+                                  ? posts[index].original
+                                  : posts[index].thumbnail,
                               tag: index,
                             ),
                             onTap: () {

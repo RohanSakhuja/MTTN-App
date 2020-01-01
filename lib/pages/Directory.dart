@@ -131,7 +131,6 @@ class _DirectoryHomePageState extends State<DirectoryHomePage>
                     elevation: 4.0,
                     margin: EdgeInsets.all(3.0),
                     child: ExpansionTile(
-                      //backgroundColor: darkTheme ? Colors.white60 : Colors.white60,
                       leading: _getIcon(data[index].catName),
                       key: PageStorageKey(data[index].catName),
                       title: Text(data[index].catName),

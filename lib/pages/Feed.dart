@@ -26,7 +26,6 @@ class Post {
       this.imageUrl, this.date);
 }
 
-// Feed
 class Feed extends StatefulWidget {
   @override
   FeedState createState() => new FeedState();
@@ -286,7 +285,6 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
     );
   }
 
-  // Have to fix the status codes thrown other than 200
   Future<List<Post>> _getPosts(int index) async {
     List<Post> posts = [];
 
@@ -307,7 +305,7 @@ class FeedState extends State<Feed> with AutomaticKeepAliveClientMixin {
                     ['medium']['source_url']
                 : json['better_featured_image']['media_details']['sizes']
                     ['wp_review_large']['source_url'];
-          } // when no image in available
+          } 
           catch (e) {
             img =
                 'https://i.pinimg.com/originals/ca/0f/23/ca0f2340449cbba72890692026f10520.jpg';
@@ -378,7 +376,6 @@ class CreateCard extends StatelessWidget {
         child: Stack(
           children: <Widget>[
             Container(
-              // height: MediaQuery.of(context).size.height * 0.25,
               height: 200.0,
               margin: EdgeInsets.all(2.0),
               decoration: BoxDecoration(
@@ -390,7 +387,6 @@ class CreateCard extends StatelessWidget {
                   )),
             ),
             Container(
-              //height: MediaQuery.of(context).size.height * 0.25,
               height: 200.0,
               margin: EdgeInsets.all(2.0),
               decoration: BoxDecoration(
@@ -411,7 +407,6 @@ class CreateCard extends StatelessWidget {
             Material(
               type: MaterialType.transparency,
               child: Container(
-                // height: MediaQuery.of(context).size.height * 0.25,
                 height: 200.0,
                 margin: EdgeInsets.all(2.0),
                 child: InkWell(

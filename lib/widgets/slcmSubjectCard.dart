@@ -48,7 +48,6 @@ class SLCMSubjectCardState extends State<SLCMSubjectCard> {
         hasMarks = (marksMax > 0) ? true : false;
       } catch (e) {}
     }
-    // print(hasMarks);
 
     return ClipRRect(
       borderRadius: BorderRadius.all(Radius.circular(10.0)),
