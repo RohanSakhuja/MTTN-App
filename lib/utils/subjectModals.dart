@@ -1,3 +1,10 @@
+class SemesterAttendace {
+  String semester;
+  List<SisAttendance> semAtt;
+
+  SemesterAttendace({this.semester, this.semAtt});
+}
+
 class Attendance {
   final String attended;
   final String missed;

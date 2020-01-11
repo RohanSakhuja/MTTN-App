@@ -71,6 +71,9 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     if (cred.length != 0) {
       slcmSelected = temp;
       setState(() {});
+      if (!loadedCache) {
+        await getCache();
+      }
       _checkCredentials(cred[0], cred[1]);
     }
   }
@@ -85,6 +88,10 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
   String username;
   bool isRefreshing = false;
   bool slcmSelected = true;
+  int semIndex = 0;
+  List<String> semList = new List();
+  bool loadedCache = false;
+  String loadingText = "";
 
   void _showDialog(String title, String content) {
     showDialog(
@@ -112,11 +119,13 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
       setState(() {
         isVerifying = true;
       });
+      // print("sending request");
       final response = await http.post(
         slcmSelected ? _slcmApi : _sisApi,
         headers: {HttpHeaders.contentTypeHeader: 'application/json'},
         body: json.encode(match),
       );
+      // print(response.body);
       return response;
     } on SocketException catch (e) {
       if (e.osError.errorCode == 111) {
@@ -135,6 +144,9 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
         isVerifying = false;
       });
       return null;
+    } catch (e) {
+      print(e);
+      return null;
     }
   }
 
@@ -143,6 +155,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     _getResponse(reg, pass).then((response) {
       if (response != null && response.statusCode == 200) {
         var res = json.decode(response.body);
+        // print(res);
         if (res['login'] == 'successful') {
           _preferences.setBool('isSLCM', slcmSelected);
           _preferences.setStringList('credentials', [reg, pass]);
@@ -157,7 +170,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
             username = slcmSelected ? res["user"] : res["Name"];
             isRefreshing = false;
           });
-        } else if (res['login'] == 'unsuccessful') {
+        } else if (res['login'] == 'unsuccessful' || res['login'] != null) {
           _showDialog("Invalid Credentials",
               "Please enter a valid registration number and/or ${slcmSelected ? "password" : "date of birth"}.");
           setState(() {
@@ -169,6 +182,10 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
       } else {
         _showDialog("Server Error",
             "Trouble communicating with the university server. Please try again later.");
+        if (loggedIn) {
+          showSnackbar(
+              "Cached attendance loaded. Please check your internet connection and try again!");
+        }
         setState(() {
           isVerifying = false;
           isRefreshing = false;
@@ -240,6 +257,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
         attendance = res;
         username = slcmSelected ? res["user"] : res["Name"];
         isRefreshing = false;
+        loadedCache = true;
       });
       return true;
     }
@@ -286,8 +304,12 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
               ),
             )
           : Container(),
-      body: loggedIn ? attendancePage(height, width) : loginPage(height, width),
+      body: scaffoldBody(height, width),
     );
+  }
+
+  scaffoldBody(height, width) {
+    return loggedIn ? attendancePage(height, width) : loginPage(height, width);
   }
 
   final FocusNode _regFocus = FocusNode();
@@ -303,7 +325,20 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     return ListView(
       children: <Widget>[
         Container(
-          height: height * 0.45,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 30.0),
+            child: Text(
+              slcmSelected ? "SLCM" : "SIS",
+              style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.greenAccent),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+        Container(
+          height: height * 0.38,
           padding: const EdgeInsets.fromLTRB(10, 130, 10, 40),
           child: AnimatedCrossFade(
             firstChild: Image.asset('assets/ic.png'),
@@ -441,6 +476,7 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                         slcmSelected
                             ? controllerPass.text
                             : controllerDOB.text);
+                    loading();
                   }
                 },
               ),
@@ -453,15 +489,52 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
         Container(
           child: Center(
             child: isVerifying
-                ? CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(Colors.greenAccent),
+                ? Column(
+                    children: <Widget>[
+                      CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Colors.greenAccent),
+                      ),
+                      !slcmSelected
+                          ? Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Text(loadingText),
+                            )
+                          : Container(),
+                    ],
                   )
                 : null,
           ),
         )
       ],
     );
+  }
+
+  loading() async {
+    setState(() {
+      loadingText = "Connecting to sis portal";
+    });
+    await Future.delayed(Duration(seconds: 2));
+    setState(() {
+      loadingText = "Solving captcha";
+    });
+    await Future.delayed(Duration(seconds: 2));
+    setState(() {
+      loadingText = "Authenticating user";
+    });
+    await Future.delayed(Duration(seconds: 2));
+    setState(() {
+      loadingText = "Finding semester";
+    });
+    await Future.delayed(Duration(seconds: 2));
+    setState(() {
+      loadingText = "Opening attendance";
+    });
+    await Future.delayed(Duration(seconds: 2));
+    setState(() {
+      loadingText = "Fetching data";
+    });
+    await Future.delayed(Duration(seconds: 2));
   }
 
   Future<Null> _refresh() async {
@@ -483,10 +556,11 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
   }
 
   Widget sisAttendancePage(var height, var width) {
-    List<SisAttendance> att = parseSISAttendance();
+    List<SemesterAttendace> att = parseSISAttendance();
     return Scaffold(
       backgroundColor: darkTheme ? Colors.black : Colors.white,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: darkTheme ? primaryDark : primaryLight,
         elevation: 0.0,
         title: Text(
@@ -494,9 +568,19 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
           style: TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
+          semIndex != null && semList.length > 0
+              ? IconButton(
+                  icon: CircleAvatar(
+                      child: Text("${semList[semIndex] ?? ""}"),
+                      foregroundColor: darkTheme ? Colors.white : primaryLight,
+                      backgroundColor:
+                          darkTheme ? secondaryDark : secondaryLight),
+                  onPressed: _selectSem,
+                )
+              : Container(),
           InkWell(
             child: Container(
-                padding: EdgeInsets.only(right: 10.0),
+                padding: EdgeInsets.only(right: 10.0, left: 40),
                 alignment: Alignment.center,
                 child: Text(
                   "Logout",
@@ -521,15 +605,69 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
                   ),
                 )
               : ListView.builder(
-                  itemCount: att.length,
+                  itemCount: att[semIndex].semAtt.length,
                   itemBuilder: (context, index) {
                     return Container(
                       padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 1.0),
                       color: Colors.transparent,
-                      child: SISSubjectCard(att[index]),
+                      child: SISSubjectCard(att[semIndex].semAtt[index]),
                     );
                   },
                 ),
+        ),
+      ),
+    );
+  }
+
+  _selectSem() {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      builder: (context) {
+        return ListView.builder(
+          shrinkWrap: true,
+          itemCount: semList.length,
+          itemBuilder: (context, index) {
+            return Container(
+              child: Column(
+                children: <Widget>[
+                  index == 0
+                      ? ListTile(
+                          title: Text(
+                            "Choose Semester",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                        )
+                      : Container(),
+                  Divider(),
+                  ListTile(
+                    title: Text(
+                      "Semester ${semList[index].toString()}",
+                      textAlign: TextAlign.center,
+                    ),
+                    onTap: () {
+                      setState(() {
+                        semIndex = index;
+                      });
+                      if (Navigator.canPop(context)) {
+                        Navigator.pop(context);
+                      }
+                      ;
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15),
+          topRight: Radius.circular(15),
         ),
       ),
     );
@@ -625,32 +763,55 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     return data;
   }
 
-  List<SisAttendance> parseSISAttendance() {
-    List<SisAttendance> sis = new List();
+  List<SemesterAttendace> parseSISAttendance() {
+    List<SemesterAttendace> sis = new List();
     try {
       Map json = attendance["Attendance"];
-      for (var key in json.keys) {
-        String subname = (json[key].containsKey("Subject")
-                ? json[key]["Subject"]
-                : json[key]["Subject name"]) ??
-            "";
-        if (subname != null && subname != "") {
-          List<Attendance> att = new List();
-          for (String element in json[key].keys) {
-            if (json[key][element] != null && json[key][element] != "") {
-              if (element.contains("(%)")) {
-                var temp = element.replaceFirst(" (%)", "");
-                att.add(new Attendance(
-                    attended: json[key][temp + " (Attd.)"],
-                    percentage: json[key][temp + " (%)"],
-                    total: json[key][temp + " (Held)"],
-                    name: temp,
-                    missed: null));
+      semList = json.keys.toList();
+      semList.sort();
+      semList = semList.reversed.toList();
+      for (var sem in semList) {
+        var semData = json[sem];
+        List<SisAttendance> temp2 = new List();
+        for (var key in semData.keys) {
+          String subname = (semData[key].containsKey("Subject")
+                  ? semData[key]["Subject"]
+                  : semData[key]["Subject name"]) ??
+              "";
+          if (subname != null && subname != "") {
+            List<Attendance> att = new List();
+            for (String element in semData[key].keys) {
+              if (semData[key][element] != null &&
+                  semData[key][element] != "") {
+                if (element.contains("(%)")) {
+                  var temp = element.replaceFirst(" (%)", "");
+                  var atnew = new Attendance(
+                      attended: semData[key][temp + " (Attd.)"] ??
+                          semData[key][temp + "s (Attd.)"],
+                      percentage: semData[key][temp + " (%)"],
+                      total: semData[key][temp + " (Held)"] ??
+                          semData[key][temp + "s (Held)"],
+                      name: temp,
+                      missed: null);
+                  att.add(atnew);
+                } else if (element.contains("(%.)")) {
+                  var temp = element.replaceFirst(" (%.)", "");
+                  var atnew = new Attendance(
+                      attended: semData[key][temp + " (Attd.)"] ??
+                          semData[key][temp + "s (Attd.)"],
+                      percentage: semData[key][temp + " (%.)"],
+                      total: semData[key][temp + " (Held)"] ??
+                          semData[key][temp + "s (Held)"],
+                      name: temp,
+                      missed: null);
+                  att.add(atnew);
+                }
               }
             }
+            temp2.add(SisAttendance(subname, att));
           }
-          sis.add(SisAttendance(subname, att));
         }
+        sis.add(SemesterAttendace(semester: sem, semAtt: temp2));
       }
       return sis;
     } catch (e) {
@@ -720,3 +881,314 @@ class SLCMState extends State<SLCM> with AutomaticKeepAliveClientMixin {
     return;
   }
 }
+
+String test = """{
+    "Attendance": {
+        "1": {
+            "1": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN101A",
+                "Subject name": "Anatomy",
+                "Theory (%.)": "95",
+                "Theory (Attd.)": "63",
+                "Theory (Held)": "66",
+                "class year": "1"
+            },
+            "10": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN108",
+                "Subject name": "Introduction to Computer",
+                "Theory (%.)": "88",
+                "Theory (Attd.)": "49",
+                "Theory (Held)": "56",
+                "class year": "1"
+            },
+            "2": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN101B",
+                "Subject name": "Physiology",
+                "Theory (%.)": "92",
+                "Theory (Attd.)": "61",
+                "Theory (Held)": "66",
+                "class year": "1"
+            },
+            "3": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN102A",
+                "Subject name": "Nutrition",
+                "Theory (%.)": "90",
+                "Theory (Attd.)": "60",
+                "Theory (Held)": "67",
+                "class year": "1"
+            },
+            "4": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN102B",
+                "Subject name": "Biochemistry",
+                "Theory (%.)": "96",
+                "Theory (Attd.)": "43",
+                "Theory (Held)": "45",
+                "class year": "1"
+            },
+            "5": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN103",
+                "Subject name": "Nursing Foundations",
+                "Theory (%.)": "89",
+                "Theory (Attd.)": "424",
+                "Theory (Held)": "478",
+                "class year": "1"
+            },
+            "6": {
+                "Practical (%.)": "100",
+                "Practical (Attd.)": "469",
+                "Practical (Held)": "469",
+                "Subject code": "BSN104",
+                "Subject name": "Nursing Foundations",
+                "Theory (%.)": "",
+                "Theory (Attd.)": "0",
+                "Theory (Held)": "0",
+                "class year": "1"
+            },
+            "7": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN105",
+                "Subject name": "Psychology",
+                "Theory (%.)": "94",
+                "Theory (Attd.)": "66",
+                "Theory (Held)": "70",
+                "class year": "1"
+            },
+            "8": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN106",
+                "Subject name": "Microbiology",
+                "Theory (%.)": "88",
+                "Theory (Attd.)": "56",
+                "Theory (Held)": "64",
+                "class year": "1"
+            },
+            "9": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN107",
+                "Subject name": "English",
+                "Theory (%.)": "94",
+                "Theory (Attd.)": "66",
+                "Theory (Held)": "70",
+                "class year": "1"
+            }
+        },
+        "2": {
+            "1": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN201",
+                "Subject name": "Sociology",
+                "Theory (%.)": "90",
+                "Theory (Attd.)": "62",
+                "Theory (Held)": "69",
+                "class year": "2"
+            },
+            "2": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN202",
+                "Subject name": "Medical Surgical Nursing – I",
+                "Theory (%.)": "85",
+                "Theory (Attd.)": "204",
+                "Theory (Held)": "241",
+                "class year": "2"
+            },
+            "3": {
+                "Practical (%.)": "100",
+                "Practical (Attd.)": "756",
+                "Practical (Held)": "756",
+                "Subject code": "BSN203",
+                "Subject name": "Medical Surgical Nursing – I",
+                "Theory (%.)": "",
+                "Theory (Attd.)": "0",
+                "Theory (Held)": "0",
+                "class year": "2"
+            },
+            "4": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN204A",
+                "Subject name": "Pharmacology",
+                "Theory (%.)": "90",
+                "Theory (Attd.)": "54",
+                "Theory (Held)": "60",
+                "class year": "2"
+            },
+            "5": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN204B",
+                "Subject name": "Pathology and Genetics",
+                "Theory (%.)": "82",
+                "Theory (Attd.)": "55",
+                "Theory (Held)": "67",
+                "class year": "2"
+            },
+            "6": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN205",
+                "Subject name": "Community Health Nursing – I",
+                "Theory (%.)": "86",
+                "Theory (Attd.)": "99",
+                "Theory (Held)": "115",
+                "class year": "2"
+            },
+            "7": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN206",
+                "Subject name": "Communication and Educational Technology",
+                "Theory (%.)": "85",
+                "Theory (Attd.)": "98",
+                "Theory (Held)": "115",
+                "class year": "2"
+            },
+            "8": {
+                "Practical (%.)": "100",
+                "Practical (Attd.)": "144",
+                "Practical (Held)": "144",
+                "Subject code": "BSN299",
+                "Subject name": "Community Health Nursing",
+                "Theory (%.)": "",
+                "Theory (Attd.)": "0",
+                "Theory (Held)": "0",
+                "class year": "2"
+            }
+        },
+        "3": {
+            "1": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN 307",
+                "Subject name": "Geriatriac nursing",
+                "Theory (%.)": "93",
+                "Theory (Attd.)": "28",
+                "Theory (Held)": "30",
+                "class year": "3"
+            },
+            "2": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN 308",
+                "Subject name": "Nursing research, statistics and EBP",
+                "Theory (%.)": "91",
+                "Theory (Attd.)": "39",
+                "Theory (Held)": "43",
+                "class year": "3"
+            },
+            "3": {
+                "Practical (%.)": "100",
+                "Practical (Attd.)": "32",
+                "Practical (Held)": "32",
+                "Subject code": "BSN 380",
+                "Subject name": "Geriatriac nursing",
+                "Theory (%.)": "",
+                "Theory (Attd.)": "0",
+                "Theory (Held)": "0",
+                "class year": "3"
+            },
+            "4": {
+                "Practical (%.)": "97",
+                "Practical (Attd.)": "33",
+                "Practical (Held)": "34",
+                "Subject code": "BSN 381",
+                "Subject name": "Nursing research, statistics and EBP",
+                "Theory (%.)": "",
+                "Theory (Attd.)": "0",
+                "Theory (Held)": "0",
+                "class year": "3"
+            },
+            "5": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN301",
+                "Subject name": "Medical Surgical Nursing – II",
+                "Theory (%.)": "87",
+                "Theory (Attd.)": "90",
+                "Theory (Held)": "104",
+                "class year": "3"
+            },
+            "6": {
+                "Practical (%.)": "97",
+                "Practical (Attd.)": "101",
+                "Practical (Held)": "104",
+                "Subject code": "BSN302",
+                "Subject name": "Medical Surgical Nursing – II",
+                "Theory (%.)": "",
+                "Theory (Attd.)": "0",
+                "Theory (Held)": "0",
+                "class year": "3"
+            },
+            "7": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN303",
+                "Subject name": "Child Health Nursing",
+                "Theory (%.)": "79",
+                "Theory (Attd.)": "60",
+                "Theory (Held)": "76",
+                "class year": "3"
+            },
+            "8": {
+                "Practical (%.)": "100",
+                "Practical (Attd.)": "184",
+                "Practical (Held)": "184",
+                "Subject code": "BSN304",
+                "Subject name": "Child Health Nursing",
+                "Theory (%.)": "",
+                "Theory (Attd.)": "0",
+                "Theory (Held)": "0",
+                "class year": "3"
+            },
+            "9": {
+                "Practical (%.)": "",
+                "Practical (Attd.)": "0",
+                "Practical (Held)": "0",
+                "Subject code": "BSN305",
+                "Subject name": "Mental Health Nursing",
+                "Theory (%.)": "83",
+                "Theory (Attd.)": "63",
+                "Theory (Held)": "76",
+                "class year": "3"
+            }
+        }
+    },
+    "Marks": {},
+    "Name": "ANDRIA MAGI MATHEW",
+    "login": "successful"
+}""";

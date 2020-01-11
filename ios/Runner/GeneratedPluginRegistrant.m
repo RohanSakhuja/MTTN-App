@@ -22,8 +22,8 @@
 @import firebase_database;
 #endif
 
-#if __has_include(<firebase_messaging/FirebaseMessagingPlugin.h>)
-#import <firebase_messaging/FirebaseMessagingPlugin.h>
+#if __has_include(<firebase_messaging/FLTFirebaseMessagingPlugin.h>)
+#import <firebase_messaging/FLTFirebaseMessagingPlugin.h>
 #else
 @import firebase_messaging;
 #endif
