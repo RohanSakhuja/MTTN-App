@@ -24,8 +24,10 @@ class SLCMSubjectCard extends StatefulWidget {
 class SLCMSubjectCardState extends State<SLCMSubjectCard> {
   CachedImg camm = new CachedImg();
 
+
   @override
   Widget build(BuildContext context) {
+
     SubjectMarks subMarks;
     bool hasMarks = false;
 
@@ -107,13 +109,19 @@ class SLCMSubjectCardState extends State<SLCMSubjectCard> {
                                 style: TextStyle(
                                     fontSize: 45.0,
                                     fontWeight: FontWeight.w300,
-                                    color: Colors.white)),
-                            progressColor: Colors.white,
+                                    color:
+                                        double.parse(widget.subPercentage) <= 76
+                                            ? Colors.redAccent
+                                            : Colors.white)),
+                            progressColor:
+                                double.parse(widget.subPercentage) <= 76
+                                    ? Colors.redAccent
+                                    : Colors.white,
                             circularStrokeCap: CircularStrokeCap.round,
                             backgroundColor: Colors.white10,
                           )),
                         ),
-                        Container(
+                        /*Container(
                           padding: EdgeInsets.only(bottom: 1.0),
                           alignment: Alignment.center,
                           child: double.parse(widget.subPercentage) <= 76
@@ -123,8 +131,8 @@ class SLCMSubjectCardState extends State<SLCMSubjectCard> {
                                   color: Colors.redAccent.withOpacity(0.7),
                                 )
                               : Container(),
-                        ),
-                        Container(
+                        ),*/
+                        /*Container(
                             alignment: Alignment.center,
                             padding: EdgeInsets.only(left: 4.0),
                             child: double.parse(widget.subPercentage) <= 76
@@ -134,7 +142,7 @@ class SLCMSubjectCardState extends State<SLCMSubjectCard> {
                                       color: Colors.redAccent.withOpacity(0.7),
                                     ),
                                   )
-                                : Container())
+                                : Container())*/
                       ],
                     ),
                   ),
